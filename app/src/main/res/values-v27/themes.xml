@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="PlatformAdjusted.Theme.升级Display" parent="NightAdjusted.Theme.升级Display">
+    <style name="PlatformAdjusted.Theme.ShengJiDisplay" parent="NightAdjusted.Theme.ShengJiDisplay">
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>

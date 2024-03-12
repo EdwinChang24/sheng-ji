@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="NightAdjusted.Theme.升级Display" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="NightAdjusted.Theme.ShengJiDisplay" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
     </style>
 
-    <style name="PlatformAdjusted.Theme.升级Display" parent="NightAdjusted.Theme.升级Display" />
+    <style name="PlatformAdjusted.Theme.ShengJiDisplay" parent="NightAdjusted.Theme.ShengJiDisplay" />
 
-    <style name="Theme.升级Display" parent="PlatformAdjusted.Theme.升级Display">
+    <style name="Theme.ShengJiDisplay" parent="PlatformAdjusted.Theme.ShengJiDisplay">
         <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
 
-    <style name="NightAdjusted.Theme.Splash" parent="Theme.升级Display">
+    <style name="NightAdjusted.Theme.Splash" parent="Theme.ShengJiDisplay">
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
     </style>
 
-    <style name="Theme.升级Display.Splash" parent="NightAdjusted.Theme.Splash">
-        <item name="postSplashScreenTheme">@style/Theme.升级Display</item>
+    <style name="Theme.ShengJiDisplay.Splash" parent="NightAdjusted.Theme.Splash">
+        <item name="postSplashScreenTheme">@style/Theme.ShengJiDisplay</item>
     </style>
 
 </resources>

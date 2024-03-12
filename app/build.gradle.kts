@@ -1,9 +1,7 @@
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.detekt)
     alias(libs.plugins.kotlinAndroid)
-    alias(libs.plugins.kotlinter)
 }
 
 android {
@@ -25,8 +23,10 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
+            signingConfig = signingConfigs.findByName("debug")
         }
     }
     compileOptions {
@@ -50,7 +50,6 @@ android {
 }
 
 dependencies {
-    detektPlugins(libs.detekt.rules.compose)
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.activity.compose)

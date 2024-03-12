@@ -15,7 +15,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 @Composable
-fun 升级DisplayTheme(content: @Composable () -> Unit) {
+fun ShengJiDisplayTheme(content: @Composable () -> Unit) {
     val useDarkTheme = isSystemInDarkTheme()
     val useDynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
     val colorScheme =

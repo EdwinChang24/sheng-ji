@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
-import io.github.edwinchang24.shengjidisplay.ui.theme.升级DisplayTheme
+import io.github.edwinchang24.shengjidisplay.ui.theme.ShengJiDisplayTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,7 +19,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
-            升级DisplayTheme {
+            ShengJiDisplayTheme {
                 Scaffold { padding ->
                     Greeting(name = "Android", modifier = Modifier.padding(padding))
                 }
@@ -39,7 +39,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    升级DisplayTheme {
+    ShengJiDisplayTheme {
         Greeting("Android")
     }
 }
