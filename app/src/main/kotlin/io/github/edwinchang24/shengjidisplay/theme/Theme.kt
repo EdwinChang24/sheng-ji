@@ -1,4 +1,4 @@
-package io.github.edwinchang24.shengjidisplay.ui.theme
+package io.github.edwinchang24.shengjidisplay.theme
 
 import android.app.Activity
 import android.os.Build
@@ -18,16 +18,15 @@ import androidx.core.view.WindowCompat
 fun ShengJiDisplayTheme(content: @Composable () -> Unit) {
     val useDarkTheme = isSystemInDarkTheme()
     val useDynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-    val colorScheme =
-        if (useDynamicColor) {
-            if (useDarkTheme) {
-                dynamicDarkColorScheme(LocalContext.current)
-            } else {
-                dynamicLightColorScheme(LocalContext.current)
-            }
+    val colorScheme = if (useDynamicColor) {
+        if (useDarkTheme) {
+            dynamicDarkColorScheme(LocalContext.current)
         } else {
-            if (useDarkTheme) darkColorScheme() else lightColorScheme()
+            dynamicLightColorScheme(LocalContext.current)
         }
+    } else {
+        if (useDarkTheme) darkColorScheme() else lightColorScheme()
+    }
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
@@ -35,5 +34,5 @@ fun ShengJiDisplayTheme(content: @Composable () -> Unit) {
                 !useDarkTheme
         }
     }
-    MaterialTheme(colorScheme = colorScheme, content = content)
+    MaterialTheme(colorScheme = colorScheme, typography = Typography, content = content)
 }
