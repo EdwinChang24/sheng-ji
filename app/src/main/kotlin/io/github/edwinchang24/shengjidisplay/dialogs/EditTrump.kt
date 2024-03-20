@@ -71,7 +71,11 @@ fun EditTrumpDialog(navigator: DestinationsNavigator, viewModel: MainActivityVie
             Row(
                 horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.End), modifier = Modifier.fillMaxWidth()
             ) {
-                OutlinedButton(onClick = navigator::navigateUp) { Text("Cancel") }
+                OutlinedButton(onClick = navigator::navigateUp) {
+                    Icon(painterResource(R.drawable.ic_close), null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Cancel")
+                }
                 Button(onClick = {
                     rank?.let { r ->
                         suit?.let { s ->
