@@ -34,10 +34,10 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.spec.DestinationStyle
 import io.github.edwinchang24.shengjidisplay.MainActivityViewModel
 import io.github.edwinchang24.shengjidisplay.MainNavGraph
-import io.github.edwinchang24.shengjidisplay.model.PlayingCard
 import io.github.edwinchang24.shengjidisplay.R
 import io.github.edwinchang24.shengjidisplay.components.RankPicker
 import io.github.edwinchang24.shengjidisplay.components.SuitPicker
+import io.github.edwinchang24.shengjidisplay.model.PlayingCard
 
 @Destination(style = DestinationStyle.Dialog::class)
 @MainNavGraph
@@ -60,10 +60,14 @@ fun EditTrumpDialog(navigator: DestinationsNavigator, viewModel: MainActivityVie
                 .verticalScroll(rememberScrollState())
         ) {
             Text("Edit trump card", style = MaterialTheme.typography.headlineMedium)
-            Text("Rank", style = MaterialTheme.typography.labelMedium)
-            RankPicker(rank, { rank = it }, modifier = Modifier.align(Alignment.CenterHorizontally))
-            Text("Suit", style = MaterialTheme.typography.labelMedium)
-            SuitPicker(suit, { suit = it }, modifier = Modifier.align(Alignment.CenterHorizontally))
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
+                Text("Rank", style = MaterialTheme.typography.labelMedium)
+                RankPicker(rank, { rank = it }, modifier = Modifier.align(Alignment.CenterHorizontally))
+            }
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
+                Text("Suit", style = MaterialTheme.typography.labelMedium)
+                SuitPicker(suit, { suit = it }, modifier = Modifier.align(Alignment.CenterHorizontally))
+            }
             Row(
                 horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.End), modifier = Modifier.fillMaxWidth()
             ) {

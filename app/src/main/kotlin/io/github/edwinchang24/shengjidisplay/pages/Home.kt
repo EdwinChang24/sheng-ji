@@ -1,8 +1,12 @@
 package io.github.edwinchang24.shengjidisplay.pages
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -31,6 +36,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,6 +48,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.NavResult
+import com.ramcosta.composedestinations.result.ResultRecipient
 import com.ramcosta.composedestinations.spec.DestinationStyle
 import io.github.edwinchang24.shengjidisplay.BuildConfig
 import io.github.edwinchang24.shengjidisplay.MainActivityViewModel
@@ -53,12 +61,18 @@ import io.github.edwinchang24.shengjidisplay.destinations.EditCallDialogDestinat
 import io.github.edwinchang24.shengjidisplay.destinations.EditTrumpDialogDestination
 import io.github.edwinchang24.shengjidisplay.destinations.SettingsPageDestination
 import io.github.edwinchang24.shengjidisplay.util.formatCallNumber
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination(style = HomePageTransitions::class)
 @MainNavGraph(start = true)
 @Composable
-fun HomePage(navigator: DestinationsNavigator, viewModel: MainActivityViewModel) {
+fun HomePage(
+    navigator: DestinationsNavigator,
+    editCallResultRecipient: ResultRecipient<EditCallDialogDestination, Int>,
+    viewModel: MainActivityViewModel
+) {
+    val coroutineScope = rememberCoroutineScope()
     val state by viewModel.state.collectAsStateWithLifecycle()
     Scaffold(topBar = {
         TopAppBar(title = { Text(stringResource(R.string.app_name)) }, actions = {
@@ -79,30 +93,32 @@ fun HomePage(navigator: DestinationsNavigator, viewModel: MainActivityViewModel)
                 "Trump card", style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(horizontal = 24.dp)
             )
-            if (state.trump != null) {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { navigator.navigate(EditTrumpDialogDestination) }
-                        .padding(horizontal = 24.dp, vertical = 16.dp)) {
-                    PlayingCard(state.trump!!, textStyle = LocalTextStyle.current.copy(fontSize = 32.sp))
-                    IconButton(onClick = { viewModel.state.value = state.copy(trump = null) }) {
-                        Icon(painterResource(R.drawable.ic_close), null)
+            AnimatedContent(targetState = state.trump, label = "") { targetTrump ->
+                if (targetTrump != null) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { navigator.navigate(EditTrumpDialogDestination) }
+                            .padding(horizontal = 24.dp, vertical = 16.dp)) {
+                        PlayingCard(targetTrump, textStyle = LocalTextStyle.current.copy(fontSize = 32.sp))
+                        IconButton(onClick = { viewModel.state.value = state.copy(trump = null) }) {
+                            Icon(painterResource(R.drawable.ic_close), null)
+                        }
                     }
-                }
-            } else {
-                Row(verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { navigator.navigate(EditTrumpDialogDestination) }
-                        .padding(horizontal = 24.dp)) {
-                    Text("No trump card selected")
-                    Spacer(modifier = Modifier.weight(1f))
-                    Button(onClick = { navigator.navigate(EditTrumpDialogDestination) }) {
-                        Icon(painterResource(R.drawable.ic_add), null)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Add")
+                } else {
+                    Row(verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { navigator.navigate(EditTrumpDialogDestination) }
+                            .padding(horizontal = 24.dp)) {
+                        Text("No trump card selected")
+                        Spacer(modifier = Modifier.weight(1f))
+                        Button(onClick = { navigator.navigate(EditTrumpDialogDestination) }) {
+                            Icon(painterResource(R.drawable.ic_add), null)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Add")
+                        }
                     }
                 }
             }
@@ -114,7 +130,11 @@ fun HomePage(navigator: DestinationsNavigator, viewModel: MainActivityViewModel)
             ) {
                 Text("Calls", style = MaterialTheme.typography.titleLarge)
                 Spacer(modifier = Modifier.weight(1f))
-                if (state.calls.isNotEmpty()) {
+                AnimatedVisibility(
+                    visible = state.calls.isNotEmpty(),
+                    enter = fadeIn() + expandVertically(expandFrom = Alignment.CenterVertically, clip = false),
+                    exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.CenterVertically, clip = false)
+                ) {
                     OutlinedButton(onClick = { viewModel.state.value = state.copy(calls = emptyList()) }) {
                         Icon(painterResource(R.drawable.ic_clear_all), null)
                         Spacer(modifier = Modifier.width(8.dp))
@@ -123,8 +143,12 @@ fun HomePage(navigator: DestinationsNavigator, viewModel: MainActivityViewModel)
                 }
             }
             if (state.calls.isNotEmpty()) {
+                val listState = rememberLazyListState()
+                editCallResultRecipient.onNavResult {
+                    if (it is NavResult.Value) coroutineScope.launch { listState.animateScrollToItem(it.value) }
+                }
                 LazyRow(
-                    contentPadding = PaddingValues(horizontal = 24.dp),
+                    state = listState, contentPadding = PaddingValues(horizontal = 24.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically
                 ) {
                     itemsIndexed(state.calls) { index, call ->

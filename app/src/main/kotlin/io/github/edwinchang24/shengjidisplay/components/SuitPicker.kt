@@ -1,13 +1,15 @@
 package io.github.edwinchang24.shengjidisplay.components
 
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,10 +28,13 @@ import io.github.edwinchang24.shengjidisplay.theme.ShengJiDisplayTheme
 fun SuitPicker(suit: Suit?, setSuit: (Suit) -> Unit, modifier: Modifier = Modifier) {
     Row(horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = modifier) {
         Suit.entries.forEach {
-            Card(
-                onClick = { setSuit(it) },
-                border = if (suit == it) BorderStroke(4.dp, MaterialTheme.colorScheme.primary) else null,
-                modifier = Modifier.weight(1f)
+            OutlinedCard(
+                onClick = { setSuit(it) }, border = BorderStroke(
+                width = animateDpAsState(
+                    if (suit == it) 4.dp else CardDefaults.outlinedCardBorder().width, label = ""
+                ).value,
+                color = if (suit == it) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
+            ), modifier = Modifier.weight(1f)
             ) {
                 Image(
                     painterResource(it.icon), null,

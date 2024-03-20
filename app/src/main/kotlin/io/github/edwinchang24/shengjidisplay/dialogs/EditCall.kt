@@ -32,15 +32,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.ResultBackNavigator
 import com.ramcosta.composedestinations.spec.DestinationStyle
-import io.github.edwinchang24.shengjidisplay.model.Call
 import io.github.edwinchang24.shengjidisplay.MainActivityViewModel
 import io.github.edwinchang24.shengjidisplay.MainNavGraph
-import io.github.edwinchang24.shengjidisplay.model.PlayingCard
 import io.github.edwinchang24.shengjidisplay.R
 import io.github.edwinchang24.shengjidisplay.components.NumberPicker
 import io.github.edwinchang24.shengjidisplay.components.RankPicker
 import io.github.edwinchang24.shengjidisplay.components.SuitPicker
+import io.github.edwinchang24.shengjidisplay.model.Call
+import io.github.edwinchang24.shengjidisplay.model.PlayingCard
 
 /**
  * @param index index of call to edit; will create a new call if index is out of bounds
@@ -48,7 +49,12 @@ import io.github.edwinchang24.shengjidisplay.components.SuitPicker
 @Destination(style = DestinationStyle.Dialog::class)
 @MainNavGraph
 @Composable
-fun EditCallDialog(index: Int, navigator: DestinationsNavigator, viewModel: MainActivityViewModel) {
+fun EditCallDialog(
+    index: Int,
+    navigator: DestinationsNavigator,
+    resultBackNavigator: ResultBackNavigator<Int>,
+    viewModel: MainActivityViewModel
+) {
     var rank by rememberSaveable { mutableStateOf(viewModel.state.value.calls.getOrNull(index)?.card?.rank) }
     var suit by rememberSaveable { mutableStateOf(viewModel.state.value.calls.getOrNull(index)?.card?.suit) }
     var number by rememberSaveable { mutableIntStateOf(viewModel.state.value.calls.getOrNull(index)?.number ?: 1) }
@@ -67,12 +73,18 @@ fun EditCallDialog(index: Int, navigator: DestinationsNavigator, viewModel: Main
                 .verticalScroll(rememberScrollState())
         ) {
             Text("Edit call", style = MaterialTheme.typography.headlineMedium)
-            Text("Rank", style = MaterialTheme.typography.labelMedium)
-            RankPicker(rank, { rank = it }, modifier = Modifier.align(Alignment.CenterHorizontally))
-            Text("Suit", style = MaterialTheme.typography.labelMedium)
-            SuitPicker(suit, { suit = it }, modifier = Modifier.align(Alignment.CenterHorizontally))
-            Text("Number", style = MaterialTheme.typography.labelMedium)
-            NumberPicker(number, { number = it })
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
+                Text("Rank", style = MaterialTheme.typography.labelMedium)
+                RankPicker(rank, { rank = it }, modifier = Modifier.align(Alignment.CenterHorizontally))
+            }
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
+                Text("Suit", style = MaterialTheme.typography.labelMedium)
+                SuitPicker(suit, { suit = it }, modifier = Modifier.align(Alignment.CenterHorizontally))
+            }
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
+                Text("Number", style = MaterialTheme.typography.labelMedium)
+                NumberPicker(number, { number = it })
+            }
             Row(
                 horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.End), modifier = Modifier.fillMaxWidth()
             ) {
@@ -86,7 +98,7 @@ fun EditCallDialog(index: Int, navigator: DestinationsNavigator, viewModel: Main
                                         this[index].copy(card = PlayingCard(r, s), number = number)
                                     else add(Call(PlayingCard(r, s), number, found = false))
                                 })
-                            navigator.navigateUp()
+                            resultBackNavigator.navigateBack(index)
                         }
                     }
                 }, enabled = rank != null && suit != null) {

@@ -2,7 +2,6 @@ package io.github.edwinchang24.shengjidisplay.pages
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -148,10 +147,7 @@ private fun RowScope.PickerCard(onClick: () -> Unit, selected: Boolean, content:
         onClick = onClick,
         border = BorderStroke(
             width = animateDpAsState(if (selected) 4.dp else CardDefaults.outlinedCardBorder().width, label = "").value,
-            color = animateColorAsState(
-                if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
-                label = ""
-            ).value,
+            color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
         ),
         modifier = Modifier
             .weight(1f)
