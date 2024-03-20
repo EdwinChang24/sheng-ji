@@ -77,7 +77,7 @@ fun HomePage(
     Scaffold(topBar = {
         TopAppBar(title = { Text(stringResource(R.string.app_name)) }, actions = {
             IconButton(onClick = { navigator.navigate(SettingsPageDestination) }) {
-                Icon(painterResource(R.drawable.ic_display_settings), null)
+                Icon(painterResource(R.drawable.ic_settings), null)
             }
         })
     }) { padding ->
