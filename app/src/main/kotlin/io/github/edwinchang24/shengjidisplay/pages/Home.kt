@@ -1,5 +1,8 @@
 package io.github.edwinchang24.shengjidisplay.pages
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -36,8 +39,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavBackStackEntry
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.spec.DestinationStyle
 import io.github.edwinchang24.shengjidisplay.BuildConfig
 import io.github.edwinchang24.shengjidisplay.MainActivityViewModel
 import io.github.edwinchang24.shengjidisplay.MainNavGraph
@@ -46,15 +51,22 @@ import io.github.edwinchang24.shengjidisplay.components.PlayingCard
 import io.github.edwinchang24.shengjidisplay.destinations.DisplayPageDestination
 import io.github.edwinchang24.shengjidisplay.destinations.EditCallDialogDestination
 import io.github.edwinchang24.shengjidisplay.destinations.EditTrumpDialogDestination
+import io.github.edwinchang24.shengjidisplay.destinations.SettingsPageDestination
 import io.github.edwinchang24.shengjidisplay.util.formatCallNumber
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Destination
+@Destination(style = HomePageTransitions::class)
 @MainNavGraph(start = true)
 @Composable
 fun HomePage(navigator: DestinationsNavigator, viewModel: MainActivityViewModel) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    Scaffold(topBar = { TopAppBar(title = { Text(stringResource(R.string.app_name)) }) }) { padding ->
+    Scaffold(topBar = {
+        TopAppBar(title = { Text(stringResource(R.string.app_name)) }, actions = {
+            IconButton(onClick = { navigator.navigate(SettingsPageDestination) }) {
+                Icon(painterResource(R.drawable.ic_display_settings), null)
+            }
+        })
+    }) { padding ->
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier
@@ -190,4 +202,11 @@ fun HomePage(navigator: DestinationsNavigator, viewModel: MainActivityViewModel)
             )
         }
     }
+}
+
+object HomePageTransitions : DestinationStyle.Animated {
+    override fun AnimatedContentTransitionScope<NavBackStackEntry>.enterTransition() = fadeIn()
+    override fun AnimatedContentTransitionScope<NavBackStackEntry>.exitTransition() = fadeOut()
+    override fun AnimatedContentTransitionScope<NavBackStackEntry>.popEnterTransition() = fadeIn()
+    override fun AnimatedContentTransitionScope<NavBackStackEntry>.popExitTransition() = fadeOut()
 }

@@ -25,7 +25,7 @@ fun PlayingCard(card: PlayingCard, modifier: Modifier = Modifier, textStyle: Tex
     Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
         Text(
             card.rank, style = textStyle, fontWeight = FontWeight.Bold,
-            color = if (card.suit in setOf(Suit.HEARTS, Suit.DIAMONDS)) Color.Red else textStyle.color
+            color = if (card.suit in setOf(Suit.HEARTS, Suit.DIAMONDS)) Color.Red else Color.White
         )
         Image(
             painterResource(card.suit.icon), null,

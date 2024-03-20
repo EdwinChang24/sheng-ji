@@ -5,6 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
@@ -22,10 +24,12 @@ class MainActivity : ComponentActivity() {
         viewModel.load(this)
         setContent {
             ShengJiDisplayTheme {
-                DestinationsNavHost(
-                    navGraph = NavGraphs.main, dependenciesContainerBuilder = { dependency(viewModel) },
-                    modifier = Modifier.fillMaxSize()
-                )
+                Surface(color = MaterialTheme.colorScheme.background) {
+                    DestinationsNavHost(
+                        navGraph = NavGraphs.main, dependenciesContainerBuilder = { dependency(viewModel) },
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
             }
         }
     }
