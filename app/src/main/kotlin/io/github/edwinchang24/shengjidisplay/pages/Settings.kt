@@ -3,6 +3,10 @@ package io.github.edwinchang24.shengjidisplay.pages
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.BorderStroke
@@ -46,6 +50,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -96,7 +101,11 @@ fun SettingsPage(navigator: DestinationsNavigator, viewModel: MainActivityViewMo
             BooleanPicker(value = state.settings.perpendicularMode, setValue = {
                 viewModel.state.value = state.copy(settings = state.settings.copy(perpendicularMode = it))
             }) { Text("Perpendicular mode") }
-            AnimatedVisibility(visible = state.settings.perpendicularMode) {
+            AnimatedVisibility(
+                visible = state.settings.perpendicularMode,
+                enter = fadeIn() + expandVertically(expandFrom = Alignment.Top, clip = false),
+                exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Top, clip = false)
+            ) {
                 // @formatter:off
                 HorizontalOrientationPicker(
                     horizontalOrientation = state.settings.horizontalOrientation,
@@ -107,7 +116,9 @@ fun SettingsPage(navigator: DestinationsNavigator, viewModel: MainActivityViewMo
                 // @formatter:on
             }
             AnimatedVisibility(
-                visible = state.settings.verticalOrder == VerticalOrder.Auto || (state.settings.perpendicularMode && state.settings.horizontalOrientation == HorizontalOrientation.Auto)
+                visible = state.settings.verticalOrder == VerticalOrder.Auto || (state.settings.perpendicularMode && state.settings.horizontalOrientation == HorizontalOrientation.Auto),
+                enter = fadeIn() + expandVertically(expandFrom = Alignment.Top, clip = false),
+                exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Top, clip = false)
             ) {
                 AutoSwitchSecondsPicker(autoSwitchSeconds = state.settings.autoSwitchSeconds, setAutoSwitchSeconds = {
                     viewModel.state.value = state.copy(settings = state.settings.copy(autoSwitchSeconds = it))
@@ -275,6 +286,7 @@ private val autoSwitchIntervals = mapOf(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AutoSwitchSecondsPicker(autoSwitchSeconds: Int, setAutoSwitchSeconds: (Int) -> Unit) {
+    val focusManager = LocalFocusManager.current
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
@@ -293,11 +305,15 @@ private fun AutoSwitchSecondsPicker(autoSwitchSeconds: Int, setAutoSwitchSeconds
                 modifier = Modifier.menuAnchor()
             )
             // @formatter:on
-            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            DropdownMenu(expanded = expanded, onDismissRequest = {
+                expanded = false
+                focusManager.clearFocus()
+            }) {
                 autoSwitchIntervals.forEach { (seconds, name) ->
                     DropdownMenuItem(text = { Text(name) }, onClick = {
                         setAutoSwitchSeconds(seconds)
                         expanded = false
+                        focusManager.clearFocus()
                     })
                 }
             }

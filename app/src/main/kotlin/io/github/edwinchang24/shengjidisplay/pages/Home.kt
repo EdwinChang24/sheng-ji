@@ -9,6 +9,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -82,7 +83,7 @@ fun HomePage(
         })
     }) { padding ->
         Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
@@ -95,15 +96,24 @@ fun HomePage(
             )
             AnimatedContent(targetState = state.trump, label = "") { targetTrump ->
                 if (targetTrump != null) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-                        verticalAlignment = Alignment.CenterVertically,
+                    Box(contentAlignment = Alignment.Center,
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable { navigator.navigate(EditTrumpDialogDestination) }
                             .padding(horizontal = 24.dp, vertical = 16.dp)) {
-                        PlayingCard(targetTrump, textStyle = LocalTextStyle.current.copy(fontSize = 32.sp))
-                        IconButton(onClick = { viewModel.state.value = state.copy(trump = null) }) {
-                            Icon(painterResource(R.drawable.ic_close), null)
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .clip(MaterialTheme.shapes.medium)
+                                .clickable { navigator.navigate(EditTrumpDialogDestination) }
+                                .padding(8.dp)) {
+                            PlayingCard(
+                                targetTrump, textStyle = LocalTextStyle.current.copy(fontSize = 32.sp),
+                                modifier = Modifier.padding(8.dp)
+                            )
+                            IconButton(onClick = { viewModel.state.value = state.copy(trump = null) }) {
+                                Icon(painterResource(R.drawable.ic_close), null)
+                            }
                         }
                     }
                 } else {
@@ -111,7 +121,7 @@ fun HomePage(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable { navigator.navigate(EditTrumpDialogDestination) }
-                            .padding(horizontal = 24.dp)) {
+                            .padding(horizontal = 24.dp, vertical = 8.dp)) {
                         Text("No trump card selected")
                         Spacer(modifier = Modifier.weight(1f))
                         Button(onClick = { navigator.navigate(EditTrumpDialogDestination) }) {
@@ -197,7 +207,7 @@ fun HomePage(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable { navigator.navigate(EditCallDialogDestination(0)) }
-                        .padding(horizontal = 24.dp)) {
+                        .padding(horizontal = 24.dp, vertical = 8.dp)) {
                     Text("No calls added")
                     Spacer(modifier = Modifier.weight(1f))
                     Button(onClick = { navigator.navigate(EditCallDialogDestination(0)) }) {
