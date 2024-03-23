@@ -65,6 +65,7 @@ dependencies {
     implementation(libs.kotlinx.serialization)
     implementation(libs.compose.destinations)
     ksp(libs.compose.destinations.ksp)
+    implementation(libs.kotlinx.datetime)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)

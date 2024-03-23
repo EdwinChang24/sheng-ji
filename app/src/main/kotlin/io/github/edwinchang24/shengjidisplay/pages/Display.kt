@@ -1,9 +1,14 @@
 package io.github.edwinchang24.shengjidisplay.pages
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,11 +24,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -38,6 +47,13 @@ import io.github.edwinchang24.shengjidisplay.destinations.SettingsPageDestinatio
 import io.github.edwinchang24.shengjidisplay.model.HorizontalOrientation
 import io.github.edwinchang24.shengjidisplay.model.VerticalOrder
 import kotlinx.coroutines.delay
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format
+import kotlinx.datetime.format.char
+import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Duration.Companion.seconds
 
 sealed interface DisplayContent {
@@ -66,6 +82,7 @@ fun DisplayPage(navigator: DestinationsNavigator, viewModel: MainActivityViewMod
     var topContent: DisplayContent by remember { mutableStateOf(DisplayContent.None) }
     var bottomContent: DisplayContent by remember { mutableStateOf(DisplayContent.None) }
     val showCalls = !(state.settings.autoHideCalls && state.calls.all { it.found })
+    var currentTimeMs by rememberSaveable { mutableLongStateOf(Clock.System.now().toEpochMilliseconds()) }
     LaunchedEffect(state.settings, showCalls) {
         with(state.settings) {
             val topDirection = if (perpendicularMode) when (horizontalOrientation) {
@@ -173,6 +190,13 @@ fun DisplayPage(navigator: DestinationsNavigator, viewModel: MainActivityViewMod
             }
         }
     }
+    LaunchedEffect(true) {
+        currentTimeMs = Clock.System.now().toEpochMilliseconds()
+        while (true) {
+            delay(60_000 - (currentTimeMs % 60_000))
+            currentTimeMs = Clock.System.now().toEpochMilliseconds()
+        }
+    }
     Scaffold { padding ->
         Column(
             modifier = Modifier
@@ -193,14 +217,60 @@ fun DisplayPage(navigator: DestinationsNavigator, viewModel: MainActivityViewMod
                     .background(MaterialTheme.colorScheme.surfaceContainer)
                     .padding(16.dp)
             ) {
-                Text("Clock 1")
+                val timeFormat = LocalDateTime.Format {
+                    amPmHour()
+                    char(':')
+                    minute()
+                }
+                val clockText =
+                    Instant.fromEpochMilliseconds(currentTimeMs).toLocalDateTime(TimeZone.currentSystemDefault())
+                        .format(timeFormat)
+                if (state.settings.showClock) AnimatedContent(
+                    // @formatter:off
+                    targetState = state.settings.clockOrientation,
+                    label = "",
+                    transitionSpec = { fadeIn() + scaleIn() togetherWith fadeOut() + scaleOut() },
+                    modifier = Modifier
+                        .clip(MaterialTheme.shapes.small)
+                        .clickable {
+                            viewModel.state.value = state.copy(
+                                settings = state.settings.copy(clockOrientation = !state.settings.clockOrientation)
+                            )
+                        }
+                        .padding(8.dp)
+                    // @formatter:on
+                ) { targetOrientation ->
+                    Text(
+                        clockText, style = MaterialTheme.typography.headlineSmall,
+                        modifier = Modifier.rotate(if (targetOrientation) 0f else 180f)
+                    )
+                }
                 IconButton(onClick = { navigator.navigate(SettingsPageDestination) }) {
                     Icon(painterResource(R.drawable.ic_settings), null)
                 }
                 IconButton(onClick = { navigator.navigateUp() }) {
                     Icon(painterResource(R.drawable.ic_close), null)
                 }
-                Text("Clock 2")
+                if (state.settings.showClock) AnimatedContent(
+                    // @formatter:off
+                    targetState = state.settings.clockOrientation,
+                    label = "",
+                    transitionSpec = { fadeIn() + scaleIn() togetherWith fadeOut() + scaleOut() },
+                    modifier = Modifier
+                        .clip(MaterialTheme.shapes.small)
+                        .clickable {
+                            viewModel.state.value = state.copy(
+                                settings = state.settings.copy(clockOrientation = !state.settings.clockOrientation)
+                            )
+                        }
+                        .padding(8.dp)
+                    // @formatter:on
+                ) { targetOrientation ->
+                    Text(
+                        clockText, style = MaterialTheme.typography.headlineSmall,
+                        modifier = Modifier.rotate(if (targetOrientation) 180f else 0f)
+                    )
+                }
             }
             Box(
                 contentAlignment = Alignment.Center, modifier = Modifier
