@@ -1,5 +1,11 @@
 package io.github.edwinchang24.shengjidisplay.pages
 
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+import android.content.pm.ActivityInfo
+import android.view.WindowManager
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.fadeIn
@@ -22,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -31,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -81,6 +89,7 @@ data class DisplaySettingsState(
     val showCalls: Boolean
 )
 
+@SuppressLint("SourceLockedOrientationActivity")
 @Destination(style = DisplayPageTransitions::class)
 @MainNavGraph
 @Composable
@@ -89,6 +98,7 @@ fun DisplayPage(
     mainActivityViewModel: MainActivityViewModel,
     displayViewModel: DisplayViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val state by mainActivityViewModel.state.collectAsStateWithLifecycle()
     val showCalls = !(state.settings.autoHideCalls && state.calls.all { it.found })
     val topContent by displayViewModel.topContent.collectAsStateWithLifecycle()
@@ -107,6 +117,21 @@ fun DisplayPage(
         while (true) {
             delay(60_000 - (currentTimeMs % 60_000))
             currentTimeMs = Clock.System.now().toEpochMilliseconds()
+        }
+    }
+    fun Context.activity(): Activity? = this as? Activity ?: (this as? ContextWrapper)?.baseContext?.activity()
+    DisposableEffect(state.settings.keepScreenOn) {
+        context.activity()?.window.let { window ->
+            if (state.settings.keepScreenOn) window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            onDispose { window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) }
+        }
+    }
+    DisposableEffect(state.settings.lockScreenOrientation) {
+        context.activity().let { activity ->
+            if (state.settings.lockScreenOrientation) {
+                activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            }
+            onDispose { activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED }
         }
     }
     Scaffold { padding ->
