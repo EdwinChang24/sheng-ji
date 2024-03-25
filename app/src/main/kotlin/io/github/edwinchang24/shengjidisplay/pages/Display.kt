@@ -25,8 +25,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -35,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import com.ramcosta.composedestinations.annotation.Destination
@@ -54,7 +53,6 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format
 import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
-import kotlin.time.Duration.Companion.seconds
 
 sealed interface DisplayContent {
     sealed interface Direction {
@@ -74,121 +72,35 @@ sealed interface DisplayContent {
     data object None : DisplayContent
 }
 
+data class DisplaySettingsState(
+    val autoHideCalls: Boolean,
+    val verticalOrder: VerticalOrder,
+    val perpendicularMode: Boolean,
+    val horizontalOrientation: HorizontalOrientation,
+    val autoSwitchSeconds: Int,
+    val showCalls: Boolean
+)
+
 @Destination(style = DisplayPageTransitions::class)
 @MainNavGraph
 @Composable
-fun DisplayPage(navigator: DestinationsNavigator, viewModel: MainActivityViewModel) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
-    var topContent: DisplayContent by remember { mutableStateOf(DisplayContent.None) }
-    var bottomContent: DisplayContent by remember { mutableStateOf(DisplayContent.None) }
+fun DisplayPage(
+    navigator: DestinationsNavigator,
+    mainActivityViewModel: MainActivityViewModel,
+    displayViewModel: DisplayViewModel = hiltViewModel()
+) {
+    val state by mainActivityViewModel.state.collectAsStateWithLifecycle()
     val showCalls = !(state.settings.autoHideCalls && state.calls.all { it.found })
+    val topContent by displayViewModel.topContent.collectAsStateWithLifecycle()
+    val bottomContent by displayViewModel.bottomContent.collectAsStateWithLifecycle()
     var currentTimeMs by rememberSaveable { mutableLongStateOf(Clock.System.now().toEpochMilliseconds()) }
     LaunchedEffect(state.settings, showCalls) {
-        with(state.settings) {
-            val topDirection = if (perpendicularMode) when (horizontalOrientation) {
-                HorizontalOrientation.Auto, HorizontalOrientation.TopTowardsRight -> DisplayContent.Direction.Right
-                HorizontalOrientation.BottomTowardsRight -> DisplayContent.Direction.Left
-            } else DisplayContent.Direction.Center
-            topContent = if (!showCalls) DisplayContent.Trump(topDirection) else when (verticalOrder) {
-                VerticalOrder.Auto, VerticalOrder.TrumpOnTop -> DisplayContent.Trump(topDirection)
-                VerticalOrder.CallsOnTop -> DisplayContent.Calls(topDirection)
-            }
-            val bottomDirection = if (perpendicularMode) when (horizontalOrientation) {
-                HorizontalOrientation.Auto, HorizontalOrientation.TopTowardsRight -> DisplayContent.Direction.Left
-                HorizontalOrientation.BottomTowardsRight -> DisplayContent.Direction.Right
-            } else DisplayContent.Direction.Center
-            bottomContent = if (!showCalls) DisplayContent.Trump(bottomDirection) else when (verticalOrder) {
-                VerticalOrder.Auto, VerticalOrder.TrumpOnTop -> DisplayContent.Calls(bottomDirection)
-                VerticalOrder.CallsOnTop -> DisplayContent.Trump(bottomDirection)
-            }
-            if (verticalOrder == VerticalOrder.Auto || (perpendicularMode && horizontalOrientation == HorizontalOrientation.Auto)) {
-                while (true) {
-                    delay(autoSwitchSeconds.seconds)
-                    if (showCalls) when {
-                        verticalOrder == VerticalOrder.Auto && horizontalOrientation == HorizontalOrientation.Auto -> {
-                            when (val tc = topContent) {
-                                is DisplayContent.Trump -> when (tc.direction) {
-                                    DisplayContent.Direction.Center -> {
-                                        topContent = DisplayContent.Calls(DisplayContent.Direction.Center)
-                                        bottomContent = DisplayContent.Trump(DisplayContent.Direction.Center)
-                                    }
-
-                                    DisplayContent.Direction.Left -> {
-                                        topContent = DisplayContent.Calls(DisplayContent.Direction.Right)
-                                        bottomContent = DisplayContent.Trump(DisplayContent.Direction.Left)
-                                    }
-
-                                    DisplayContent.Direction.Right -> {
-                                        topContent = DisplayContent.Calls(DisplayContent.Direction.Left)
-                                        bottomContent = DisplayContent.Trump(DisplayContent.Direction.Right)
-                                    }
-                                }
-
-                                is DisplayContent.Calls -> when (tc.direction) {
-                                    DisplayContent.Direction.Center -> {
-                                        topContent = DisplayContent.Trump(DisplayContent.Direction.Center)
-                                        bottomContent = DisplayContent.Calls(DisplayContent.Direction.Center)
-                                    }
-
-                                    DisplayContent.Direction.Left -> {
-                                        topContent = DisplayContent.Trump(DisplayContent.Direction.Left)
-                                        bottomContent = DisplayContent.Calls(DisplayContent.Direction.Right)
-                                    }
-
-                                    DisplayContent.Direction.Right -> {
-                                        topContent = DisplayContent.Trump(DisplayContent.Direction.Right)
-                                        bottomContent = DisplayContent.Calls(DisplayContent.Direction.Left)
-                                    }
-                                }
-
-                                DisplayContent.None -> error("Should've initialized topContent")
-                            }
-                        }
-
-                        verticalOrder == VerticalOrder.Auto -> {
-                            when (val tc = topContent) {
-                                is DisplayContent.Trump -> {
-                                    topContent = DisplayContent.Calls(tc.direction)
-                                    bottomContent = DisplayContent.Trump(tc.direction.opposite())
-                                }
-
-                                is DisplayContent.Calls -> {
-                                    topContent = DisplayContent.Trump(tc.direction)
-                                    bottomContent = DisplayContent.Calls(tc.direction.opposite())
-                                }
-
-                                DisplayContent.None -> error("Should've initialized topContent")
-                            }
-                        }
-
-                        horizontalOrientation == HorizontalOrientation.Auto -> {
-                            when (val tc = topContent) {
-                                is DisplayContent.Trump -> {
-                                    topContent = DisplayContent.Trump(tc.direction.opposite())
-                                    bottomContent = DisplayContent.Calls(tc.direction)
-                                }
-
-                                is DisplayContent.Calls -> {
-                                    topContent = DisplayContent.Calls(tc.direction.opposite())
-                                    bottomContent = DisplayContent.Trump(tc.direction)
-                                }
-
-                                DisplayContent.None -> error("Should've initialized topContent")
-                            }
-                        }
-                    } else {
-                        val tc = topContent as? DisplayContent.Trump ?: error("topContent should be Trump")
-                        if (horizontalOrientation == HorizontalOrientation.Auto) {
-                            topContent = DisplayContent.Trump(tc.direction.opposite())
-                            bottomContent = DisplayContent.Trump(tc.direction)
-                        } else {
-                            topContent = DisplayContent.Trump(tc.direction)
-                            bottomContent = DisplayContent.Trump(tc.direction.opposite())
-                        }
-                    }
-                }
-            }
-        }
+        displayViewModel.onPotentialUpdate(
+            DisplaySettingsState(
+                state.settings.autoHideCalls, state.settings.verticalOrder, state.settings.perpendicularMode,
+                state.settings.horizontalOrientation, state.settings.autoSwitchSeconds, showCalls
+            )
+        )
     }
     LaunchedEffect(true) {
         currentTimeMs = Clock.System.now().toEpochMilliseconds()
@@ -233,7 +145,7 @@ fun DisplayPage(navigator: DestinationsNavigator, viewModel: MainActivityViewMod
                     modifier = Modifier
                         .clip(MaterialTheme.shapes.small)
                         .clickable {
-                            viewModel.state.value = state.copy(
+                            mainActivityViewModel.state.value = state.copy(
                                 settings = state.settings.copy(clockOrientation = !state.settings.clockOrientation)
                             )
                         }
@@ -259,7 +171,7 @@ fun DisplayPage(navigator: DestinationsNavigator, viewModel: MainActivityViewMod
                     modifier = Modifier
                         .clip(MaterialTheme.shapes.small)
                         .clickable {
-                            viewModel.state.value = state.copy(
+                            mainActivityViewModel.state.value = state.copy(
                                 settings = state.settings.copy(clockOrientation = !state.settings.clockOrientation)
                             )
                         }

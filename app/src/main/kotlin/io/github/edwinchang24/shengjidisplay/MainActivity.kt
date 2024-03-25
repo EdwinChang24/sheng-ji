@@ -12,8 +12,10 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.navigation.dependency
+import dagger.hilt.android.AndroidEntryPoint
 import io.github.edwinchang24.shengjidisplay.theme.ShengJiDisplayTheme
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel: MainActivityViewModel by viewModels()
 

@@ -3,6 +3,7 @@ package io.github.edwinchang24.shengjidisplay
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.edwinchang24.shengjidisplay.model.AppState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,8 +11,10 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
+import javax.inject.Inject
 
-class MainActivityViewModel : ViewModel() {
+@HiltViewModel
+class MainActivityViewModel @Inject constructor() : ViewModel() {
     var state = MutableStateFlow(AppState())
 
     private val Context.stateFile get() = File(filesDir, "state.json")

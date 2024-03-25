@@ -8,6 +8,8 @@ core-ktx = "1.12.0"
 core-splashscreen = "1.0.1"
 espresso-core = "3.5.1"
 junit = "4.13.2"
+hilt = "2.51"
+hilt-navigation-compose = "1.2.0"
 # noinspection GradleDependency
 kotlin = "1.9.22"
 kotlinx-serialization = "1.6.3"
@@ -25,6 +27,10 @@ core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx
 core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "core-splashscreen" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt-navigation-compose" }
+hilt-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
 kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinx-datetime" }
 lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle-runtime" }
@@ -39,6 +45,7 @@ ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
