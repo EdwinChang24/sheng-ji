@@ -3,6 +3,7 @@ package io.github.edwinchang24.shengjidisplay.pages
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -56,6 +57,7 @@ import io.github.edwinchang24.shengjidisplay.BuildConfig
 import io.github.edwinchang24.shengjidisplay.MainActivityViewModel
 import io.github.edwinchang24.shengjidisplay.MainNavGraph
 import io.github.edwinchang24.shengjidisplay.R
+import io.github.edwinchang24.shengjidisplay.appDestination
 import io.github.edwinchang24.shengjidisplay.components.PlayingCard
 import io.github.edwinchang24.shengjidisplay.destinations.DisplayPageDestination
 import io.github.edwinchang24.shengjidisplay.destinations.EditCallDialogDestination
@@ -239,8 +241,27 @@ fun HomePage(
 }
 
 object HomePageTransitions : DestinationStyle.Animated {
-    override fun AnimatedContentTransitionScope<NavBackStackEntry>.enterTransition() = fadeIn()
-    override fun AnimatedContentTransitionScope<NavBackStackEntry>.exitTransition() = fadeOut()
-    override fun AnimatedContentTransitionScope<NavBackStackEntry>.popEnterTransition() = fadeIn()
-    override fun AnimatedContentTransitionScope<NavBackStackEntry>.popExitTransition() = fadeOut()
+    override fun AnimatedContentTransitionScope<NavBackStackEntry>.enterTransition() =
+        when (initialState.appDestination()) {
+            DisplayPageDestination -> fadeIn(tween(delayMillis = 250))
+            else -> fadeIn()
+        }
+
+    override fun AnimatedContentTransitionScope<NavBackStackEntry>.exitTransition() =
+        when (targetState.appDestination()) {
+            DisplayPageDestination -> fadeOut(tween(durationMillis = 250))
+            else -> fadeOut()
+        }
+
+    override fun AnimatedContentTransitionScope<NavBackStackEntry>.popEnterTransition() =
+        when (initialState.appDestination()) {
+            DisplayPageDestination -> fadeIn(tween(delayMillis = 250))
+            else -> fadeIn()
+        }
+
+    override fun AnimatedContentTransitionScope<NavBackStackEntry>.popExitTransition() =
+        when (targetState.appDestination()) {
+            DisplayPageDestination -> fadeOut(tween(durationMillis = 250))
+            else -> fadeOut()
+        }
 }

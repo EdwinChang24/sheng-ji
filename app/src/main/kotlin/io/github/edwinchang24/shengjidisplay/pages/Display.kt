@@ -8,6 +8,9 @@ import android.content.pm.ActivityInfo
 import android.view.WindowManager
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -24,6 +27,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -41,6 +45,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
@@ -50,6 +55,10 @@ import com.ramcosta.composedestinations.spec.DestinationStyle
 import io.github.edwinchang24.shengjidisplay.MainActivityViewModel
 import io.github.edwinchang24.shengjidisplay.MainNavGraph
 import io.github.edwinchang24.shengjidisplay.R
+import io.github.edwinchang24.shengjidisplay.appDestination
+import io.github.edwinchang24.shengjidisplay.components.CallsDisplay
+import io.github.edwinchang24.shengjidisplay.components.PlayingCard
+import io.github.edwinchang24.shengjidisplay.destinations.HomePageDestination
 import io.github.edwinchang24.shengjidisplay.destinations.SettingsPageDestination
 import io.github.edwinchang24.shengjidisplay.model.HorizontalOrientation
 import io.github.edwinchang24.shengjidisplay.model.VerticalOrder
@@ -145,7 +154,98 @@ fun DisplayPage(
                 .weight(1f)
                 .fillMaxWidth()
             ) {
-                Text(topContent.toString())
+                AnimatedContent(
+                    topContent, transitionSpec = {
+                    (fadeIn(tween(durationMillis = 1000)) + slideIntoContainer(towards = when (val ts = targetState) {
+                        is DisplayContent.Trump -> when (ts.direction) {
+                            DisplayContent.Direction.Center -> SlideDirection.Down
+                            DisplayContent.Direction.Left -> SlideDirection.Right
+                            DisplayContent.Direction.Right -> SlideDirection.Left
+                        }
+
+                        is DisplayContent.Calls -> when (ts.direction) {
+                            DisplayContent.Direction.Center -> SlideDirection.Down
+                            DisplayContent.Direction.Left -> SlideDirection.Right
+                            DisplayContent.Direction.Right -> SlideDirection.Left
+                        }
+
+                        DisplayContent.None -> SlideDirection.Down
+                    }, animationSpec = tween(durationMillis = 1000), initialOffset = { it / 3 }) togetherWith fadeOut(
+                        tween(durationMillis = 1000)
+                    ) + slideOutOfContainer(towards = when (val ins = initialState) {
+                        is DisplayContent.Trump -> when (ins.direction) {
+                            DisplayContent.Direction.Center -> SlideDirection.Up
+                            DisplayContent.Direction.Left -> SlideDirection.Left
+                            DisplayContent.Direction.Right -> SlideDirection.Right
+                        }
+
+                        is DisplayContent.Calls -> when (ins.direction) {
+                            DisplayContent.Direction.Center -> SlideDirection.Up
+                            DisplayContent.Direction.Left -> SlideDirection.Left
+                            DisplayContent.Direction.Right -> SlideDirection.Right
+                        }
+
+                        DisplayContent.None -> SlideDirection.Up
+                    }, animationSpec = tween(durationMillis = 1000), targetOffset = { it / 3 })).using(
+                        SizeTransform(clip = false)
+                    )
+                }, label = "", modifier = Modifier.fillMaxSize()
+                ) { tc ->
+                    when (tc) {
+                        is DisplayContent.Trump -> Box(
+                            contentAlignment = Alignment.Center, modifier = Modifier
+                            .fillMaxSize()
+                            .rotate(
+                                when (tc.direction) {
+                                    DisplayContent.Direction.Center -> 180f
+                                    DisplayContent.Direction.Left -> 90f
+                                    DisplayContent.Direction.Right -> -90f
+                                }
+                            )
+                        ) {
+                            state.trump?.let {
+                                PlayingCard(card = it, textStyle = LocalTextStyle.current.copy(fontSize = 84.sp))
+                            } ?: Text("No trump selected")
+                        }
+
+                        is DisplayContent.Calls -> Box(
+                            contentAlignment = Alignment.Center, modifier = Modifier
+                            .fillMaxSize()
+                            .rotate(
+                                when (tc.direction) {
+                                    DisplayContent.Direction.Center -> 180f
+                                    DisplayContent.Direction.Left -> 90f
+                                    DisplayContent.Direction.Right -> -90f
+                                }
+                            )
+                        ) {
+                            state.calls.takeIf { it.isNotEmpty() }?.let {
+                                CallsDisplay(calls = state.calls, setFound = { index, found ->
+                                    mainActivityViewModel.state.value = state.copy(calls = state.calls.toMutableList()
+                                        .also { it[index] = it[index].copy(found = found) })
+                                })
+                            } ?: Text("No calls added")
+                        }
+
+                        DisplayContent.None -> Box(modifier = Modifier.fillMaxSize())
+                    }
+                }
+            }
+            AnimatedContent(
+                when (topContent) {
+                    is DisplayContent.Trump -> "Trump card"
+                    is DisplayContent.Calls -> "Calls"
+                    DisplayContent.None -> ""
+                }, label = ""
+            ) { label ->
+                Box(
+                    contentAlignment = Alignment.Center, modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp)
+                    .rotate(180f)
+                ) {
+                    Text(label, style = MaterialTheme.typography.labelLarge)
+                }
             }
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically,
@@ -209,20 +309,128 @@ fun DisplayPage(
                     )
                 }
             }
+            AnimatedContent(
+                when (bottomContent) {
+                    is DisplayContent.Trump -> "Trump card"
+                    is DisplayContent.Calls -> "Calls"
+                    DisplayContent.None -> ""
+                }, label = ""
+            ) { label ->
+                Box(
+                    contentAlignment = Alignment.Center, modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp)
+                ) {
+                    Text(label, style = MaterialTheme.typography.labelLarge)
+                }
+            }
             Box(
                 contentAlignment = Alignment.Center, modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
             ) {
-                Text(bottomContent.toString())
+                AnimatedContent(
+                    bottomContent, transitionSpec = {
+                    (fadeIn(tween(durationMillis = 1000)) + slideIntoContainer(towards = when (val ts = targetState) {
+                        is DisplayContent.Trump -> when (ts.direction) {
+                            DisplayContent.Direction.Center -> SlideDirection.Up
+                            DisplayContent.Direction.Left -> SlideDirection.Right
+                            DisplayContent.Direction.Right -> SlideDirection.Left
+                        }
+
+                        is DisplayContent.Calls -> when (ts.direction) {
+                            DisplayContent.Direction.Center -> SlideDirection.Up
+                            DisplayContent.Direction.Left -> SlideDirection.Right
+                            DisplayContent.Direction.Right -> SlideDirection.Left
+                        }
+
+                        DisplayContent.None -> SlideDirection.Up
+                    }, animationSpec = tween(durationMillis = 1000), initialOffset = { it / 3 }) togetherWith fadeOut(
+                        tween(durationMillis = 1000)
+                    ) + slideOutOfContainer(towards = when (val ins = initialState) {
+                        is DisplayContent.Trump -> when (ins.direction) {
+                            DisplayContent.Direction.Center -> SlideDirection.Down
+                            DisplayContent.Direction.Left -> SlideDirection.Left
+                            DisplayContent.Direction.Right -> SlideDirection.Right
+                        }
+
+                        is DisplayContent.Calls -> when (ins.direction) {
+                            DisplayContent.Direction.Center -> SlideDirection.Down
+                            DisplayContent.Direction.Left -> SlideDirection.Left
+                            DisplayContent.Direction.Right -> SlideDirection.Right
+                        }
+
+                        DisplayContent.None -> SlideDirection.Down
+                    }, animationSpec = tween(durationMillis = 1000), targetOffset = { it / 3 })).using(
+                        SizeTransform(clip = false)
+                    )
+                }, label = "", modifier = Modifier.fillMaxSize()
+                ) { tc ->
+                    when (tc) {
+                        is DisplayContent.Trump -> Box(
+                            contentAlignment = Alignment.Center, modifier = Modifier
+                            .fillMaxSize()
+                            .rotate(
+                                when (tc.direction) {
+                                    DisplayContent.Direction.Center -> 0f
+                                    DisplayContent.Direction.Left -> 90f
+                                    DisplayContent.Direction.Right -> -90f
+                                }
+                            )
+                        ) {
+                            state.trump?.let {
+                                PlayingCard(card = it, textStyle = LocalTextStyle.current.copy(fontSize = 84.sp))
+                            } ?: Text("No trump selected")
+                        }
+
+                        is DisplayContent.Calls -> Box(
+                            contentAlignment = Alignment.Center, modifier = Modifier
+                            .fillMaxSize()
+                            .rotate(
+                                when (tc.direction) {
+                                    DisplayContent.Direction.Center -> 0f
+                                    DisplayContent.Direction.Left -> 90f
+                                    DisplayContent.Direction.Right -> -90f
+                                }
+                            )
+                        ) {
+                            state.calls.takeIf { it.isNotEmpty() }?.let {
+                                CallsDisplay(calls = state.calls, setFound = { index, found ->
+                                    mainActivityViewModel.state.value = state.copy(calls = state.calls.toMutableList()
+                                        .also { it[index] = it[index].copy(found = found) })
+                                })
+                            } ?: Text("No calls added")
+                        }
+
+                        DisplayContent.None -> Box(modifier = Modifier.fillMaxSize())
+                    }
+                }
             }
         }
     }
 }
 
 object DisplayPageTransitions : DestinationStyle.Animated {
-    override fun AnimatedContentTransitionScope<NavBackStackEntry>.enterTransition() = fadeIn()
-    override fun AnimatedContentTransitionScope<NavBackStackEntry>.exitTransition() = fadeOut()
-    override fun AnimatedContentTransitionScope<NavBackStackEntry>.popEnterTransition() = fadeIn()
-    override fun AnimatedContentTransitionScope<NavBackStackEntry>.popExitTransition() = fadeOut()
+    override fun AnimatedContentTransitionScope<NavBackStackEntry>.enterTransition() =
+        when (initialState.appDestination()) {
+            HomePageDestination -> fadeIn(tween(delayMillis = 250))
+            else -> fadeIn()
+        }
+
+    override fun AnimatedContentTransitionScope<NavBackStackEntry>.exitTransition() =
+        when (targetState.appDestination()) {
+            HomePageDestination -> fadeOut(tween(durationMillis = 250))
+            else -> fadeOut()
+        }
+    override fun AnimatedContentTransitionScope<NavBackStackEntry>.popEnterTransition() =
+        when (initialState.appDestination()) {
+            HomePageDestination -> fadeIn(tween(delayMillis = 250))
+            else -> fadeIn()
+        }
+
+    override fun AnimatedContentTransitionScope<NavBackStackEntry>.popExitTransition() =
+        when (targetState.appDestination()) {
+            HomePageDestination -> fadeOut(tween(durationMillis = 250))
+            else -> fadeOut()
+        }
 }

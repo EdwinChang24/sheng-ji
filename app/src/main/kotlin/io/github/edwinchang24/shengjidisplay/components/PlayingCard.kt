@@ -1,6 +1,7 @@
 package io.github.edwinchang24.shengjidisplay.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.LocalTextStyle
@@ -25,7 +26,8 @@ fun PlayingCard(card: PlayingCard, modifier: Modifier = Modifier, textStyle: Tex
     Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
         Text(
             card.rank, style = textStyle, fontWeight = FontWeight.Bold,
-            color = if (card.suit in setOf(Suit.HEARTS, Suit.DIAMONDS)) Color.Red else Color.White
+            color = if (card.suit in setOf(Suit.HEARTS, Suit.DIAMONDS)) Color.Red
+            else if (isSystemInDarkTheme()) Color.White else Color.Black
         )
         Image(
             painterResource(card.suit.icon), null,
