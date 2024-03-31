@@ -160,7 +160,7 @@ fun HomePage(
                     if (it is NavResult.Value) coroutineScope.launch { listState.animateScrollToItem(it.value) }
                 }
                 LazyRow(
-                    state = listState, contentPadding = PaddingValues(horizontal = 24.dp),
+                    state = listState, contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically
                 ) {
                     itemsIndexed(state.calls) { index, call ->
