@@ -9,6 +9,7 @@ import android.view.WindowManager
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -282,11 +283,23 @@ fun DisplayPage(
                         modifier = Modifier.rotate(if (targetOrientation) 0f else 180f)
                     )
                 }
-                IconButton(onClick = { navigator.navigate(SettingsPageDestination) }) {
-                    Icon(painterResource(R.drawable.ic_settings), null)
-                }
-                IconButton(onClick = { navigator.navigateUp() }) {
-                    Icon(painterResource(R.drawable.ic_close), null)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    val autoPlay by displayViewModel.autoPlay.collectAsStateWithLifecycle()
+                    AnimatedVisibility(
+                        visible = state.settings.verticalOrder == VerticalOrder.Auto || (state.settings.perpendicularMode && state.settings.horizontalOrientation == HorizontalOrientation.Auto),
+                        enter = fadeIn() + scaleIn(), exit = fadeOut() + scaleOut()
+                    ) {
+                        IconButton(onClick = { displayViewModel.autoPlay.value = !autoPlay }) {
+                            if (autoPlay) Icon(painterResource(R.drawable.ic_pause), null)
+                            else Icon(painterResource(R.drawable.ic_play_arrow), null)
+                        }
+                    }
+                    IconButton(onClick = { navigator.navigate(SettingsPageDestination) }) {
+                        Icon(painterResource(R.drawable.ic_settings), null)
+                    }
+                    IconButton(onClick = { navigator.navigateUp() }) {
+                        Icon(painterResource(R.drawable.ic_close), null)
+                    }
                 }
                 if (state.settings.showClock) AnimatedContent(
                     // @formatter:off
@@ -422,6 +435,7 @@ object DisplayPageTransitions : DestinationStyle.Animated {
             HomePageDestination -> fadeOut(tween(durationMillis = 250))
             else -> fadeOut()
         }
+
     override fun AnimatedContentTransitionScope<NavBackStackEntry>.popEnterTransition() =
         when (initialState.appDestination()) {
             HomePageDestination -> fadeIn(tween(delayMillis = 250))

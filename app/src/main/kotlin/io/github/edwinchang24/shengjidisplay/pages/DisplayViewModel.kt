@@ -10,6 +10,7 @@ import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
@@ -17,6 +18,7 @@ import kotlin.time.Duration.Companion.seconds
 class DisplayViewModel @Inject constructor() : ViewModel() {
     private var job: Job? = null
     private var displaySettingsState: DisplaySettingsState? = null
+    val autoPlay = MutableStateFlow(true)
 
     val topContent = MutableStateFlow<DisplayContent>(DisplayContent.None)
     val bottomContent = MutableStateFlow<DisplayContent>(DisplayContent.None)
@@ -50,6 +52,7 @@ class DisplayViewModel @Inject constructor() : ViewModel() {
             if (verticalOrder == VerticalOrder.Auto || (perpendicularMode && horizontalOrientation == HorizontalOrientation.Auto)) {
                 while (true) {
                     delay(autoSwitchSeconds.seconds)
+                    while (!autoPlay.value) yield()
                     if (showCalls) when {
                         verticalOrder == VerticalOrder.Auto && horizontalOrientation == HorizontalOrientation.Auto -> {
                             when (val tc = topContent.value) {
