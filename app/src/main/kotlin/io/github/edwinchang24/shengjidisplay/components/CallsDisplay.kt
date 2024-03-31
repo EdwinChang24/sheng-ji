@@ -46,14 +46,14 @@ import io.github.edwinchang24.shengjidisplay.util.formatCallNumber
 fun CallsDisplay(calls: List<Call>, setFound: (index: Int, found: Boolean) -> Unit, modifier: Modifier = Modifier) {
     FlowRow(
         maxItemsInEachRow = 2, horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
-        verticalArrangement = Arrangement.spacedBy(16.dp), modifier = modifier
+        verticalArrangement = Arrangement.spacedBy(16.dp), modifier = modifier.width(IntrinsicSize.Max)
     ) {
         calls.forEachIndexed { index, call ->
             val interactionSource = remember { MutableInteractionSource() }
             OutlinedCard(
                 onClick = { setFound(index, !call.found) }, interactionSource = interactionSource,
                 modifier = Modifier
-                    .width(IntrinsicSize.Max)
+                    .weight(1f)
                     .height(IntrinsicSize.Max)
             ) {
                 Box(modifier = Modifier.fillMaxSize()) {
@@ -67,7 +67,6 @@ fun CallsDisplay(calls: List<Call>, setFound: (index: Int, found: Boolean) -> Un
                             }
                         }
                     }
-
                     Column(
                         verticalArrangement = Arrangement.spacedBy(4.dp),
                         horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
