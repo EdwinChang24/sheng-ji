@@ -62,6 +62,25 @@ fun EditCallDialog(
     var number by rememberSaveable {
         mutableIntStateOf(viewModel.state.value.calls.getOrNull(index)?.number ?: 1)
     }
+    fun onDone() {
+        rank?.let { r ->
+            suit?.let { s ->
+                viewModel.state.value =
+                    viewModel.state.value.copy(
+                        calls =
+                            viewModel.state.value.calls.toMutableList().apply {
+                                if (index in indices) {
+                                    this[index] =
+                                        this[index].copy(card = PlayingCard(r, s), number = number)
+                                } else {
+                                    add(Call(PlayingCard(r, s), number, found = false))
+                                }
+                            }
+                    )
+                resultBackNavigator.navigateBack(index)
+            }
+        }
+    }
     Card(
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
@@ -110,37 +129,7 @@ fun EditCallDialog(
                     Spacer(modifier = Modifier.width(8.dp))
                     Text("Cancel")
                 }
-                Button(
-                    onClick = {
-                        rank?.let { r ->
-                            suit?.let { s ->
-                                viewModel.state.value =
-                                    viewModel.state.value.copy(
-                                        calls =
-                                            viewModel.state.value.calls.toMutableList().apply {
-                                                if (index in indices) {
-                                                    this[index] =
-                                                        this[index].copy(
-                                                            card = PlayingCard(r, s),
-                                                            number = number
-                                                        )
-                                                } else {
-                                                    add(
-                                                        Call(
-                                                            PlayingCard(r, s),
-                                                            number,
-                                                            found = false
-                                                        )
-                                                    )
-                                                }
-                                            }
-                                    )
-                                resultBackNavigator.navigateBack(index)
-                            }
-                        }
-                    },
-                    enabled = rank != null && suit != null
-                ) {
+                Button(onClick = { onDone() }, enabled = rank != null && suit != null) {
                     Icon(painterResource(R.drawable.ic_done), null)
                     Spacer(modifier = Modifier.width(8.dp))
                     Text("Done")

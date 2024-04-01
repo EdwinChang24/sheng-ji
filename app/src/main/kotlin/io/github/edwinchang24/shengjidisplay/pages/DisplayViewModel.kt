@@ -5,6 +5,10 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.edwinchang24.shengjidisplay.model.HorizontalOrientation
 import io.github.edwinchang24.shengjidisplay.model.VerticalOrder
+import io.github.edwinchang24.shengjidisplay.pages.DisplayContent.Calls
+import io.github.edwinchang24.shengjidisplay.pages.DisplayContent.Direction
+import io.github.edwinchang24.shengjidisplay.pages.DisplayContent.None
+import io.github.edwinchang24.shengjidisplay.pages.DisplayContent.Trump
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Job
@@ -20,8 +24,8 @@ class DisplayViewModel @Inject constructor() : ViewModel() {
     private var displaySettingsState: DisplaySettingsState? = null
     val autoPlay = MutableStateFlow(true)
 
-    val topContent = MutableStateFlow<DisplayContent>(DisplayContent.None)
-    val bottomContent = MutableStateFlow<DisplayContent>(DisplayContent.None)
+    val topContent = MutableStateFlow<DisplayContent>(None)
+    val bottomContent = MutableStateFlow<DisplayContent>(None)
 
     suspend fun onPotentialUpdate(settingsState: DisplaySettingsState) {
         if (displaySettingsState != settingsState) {
@@ -34,37 +38,39 @@ class DisplayViewModel @Inject constructor() : ViewModel() {
     private suspend fun update() {
         displaySettingsState?.run {
             val topDirection =
-                if (perpendicularMode)
+                if (perpendicularMode) {
                     when (horizontalOrientation) {
                         HorizontalOrientation.Auto,
-                        HorizontalOrientation.TopTowardsRight -> DisplayContent.Direction.Right
-                        HorizontalOrientation.BottomTowardsRight -> DisplayContent.Direction.Left
+                        HorizontalOrientation.TopTowardsRight -> Direction.Right
+                        HorizontalOrientation.BottomTowardsRight -> Direction.Left
                     }
-                else DisplayContent.Direction.Center
+                } else Direction.Center
             topContent.value =
-                if (!showCalls) DisplayContent.Trump(topDirection)
-                else
+                if (!showCalls) Trump(topDirection)
+                else {
                     when (verticalOrder) {
                         VerticalOrder.Auto,
-                        VerticalOrder.TrumpOnTop -> DisplayContent.Trump(topDirection)
-                        VerticalOrder.CallsOnTop -> DisplayContent.Calls(topDirection)
+                        VerticalOrder.TrumpOnTop -> Trump(topDirection)
+                        VerticalOrder.CallsOnTop -> Calls(topDirection)
                     }
+                }
             val bottomDirection =
-                if (perpendicularMode)
+                if (perpendicularMode) {
                     when (horizontalOrientation) {
                         HorizontalOrientation.Auto,
-                        HorizontalOrientation.TopTowardsRight -> DisplayContent.Direction.Left
-                        HorizontalOrientation.BottomTowardsRight -> DisplayContent.Direction.Right
+                        HorizontalOrientation.TopTowardsRight -> Direction.Left
+                        HorizontalOrientation.BottomTowardsRight -> Direction.Right
                     }
-                else DisplayContent.Direction.Center
+                } else Direction.Center
             bottomContent.value =
-                if (!showCalls) DisplayContent.Trump(bottomDirection)
-                else
+                if (!showCalls) Trump(bottomDirection)
+                else {
                     when (verticalOrder) {
                         VerticalOrder.Auto,
-                        VerticalOrder.TrumpOnTop -> DisplayContent.Calls(bottomDirection)
-                        VerticalOrder.CallsOnTop -> DisplayContent.Trump(bottomDirection)
+                        VerticalOrder.TrumpOnTop -> Calls(bottomDirection)
+                        VerticalOrder.CallsOnTop -> Trump(bottomDirection)
                     }
+                }
             if (
                 verticalOrder == VerticalOrder.Auto ||
                     (perpendicularMode && horizontalOrientation == HorizontalOrientation.Auto)
@@ -72,124 +78,80 @@ class DisplayViewModel @Inject constructor() : ViewModel() {
                 while (true) {
                     delay(autoSwitchSeconds.seconds)
                     while (!autoPlay.value) yield()
-                    if (showCalls)
+                    if (showCalls) {
                         when {
                             verticalOrder == VerticalOrder.Auto &&
                                 horizontalOrientation == HorizontalOrientation.Auto -> {
                                 when (val tc = topContent.value) {
-                                    is DisplayContent.Trump ->
+                                    is Trump ->
                                         when (tc.direction) {
-                                            DisplayContent.Direction.Center -> {
-                                                topContent.value =
-                                                    DisplayContent.Calls(
-                                                        DisplayContent.Direction.Center
-                                                    )
-                                                bottomContent.value =
-                                                    DisplayContent.Trump(
-                                                        DisplayContent.Direction.Center
-                                                    )
+                                            Direction.Center -> {
+                                                topContent.value = Calls(Direction.Center)
+                                                bottomContent.value = Trump(Direction.Center)
                                             }
-                                            DisplayContent.Direction.Left -> {
-                                                topContent.value =
-                                                    DisplayContent.Calls(
-                                                        DisplayContent.Direction.Right
-                                                    )
-                                                bottomContent.value =
-                                                    DisplayContent.Trump(
-                                                        DisplayContent.Direction.Left
-                                                    )
+                                            Direction.Left -> {
+                                                topContent.value = Calls(Direction.Right)
+                                                bottomContent.value = Trump(Direction.Left)
                                             }
-                                            DisplayContent.Direction.Right -> {
-                                                topContent.value =
-                                                    DisplayContent.Calls(
-                                                        DisplayContent.Direction.Left
-                                                    )
-                                                bottomContent.value =
-                                                    DisplayContent.Trump(
-                                                        DisplayContent.Direction.Right
-                                                    )
+                                            Direction.Right -> {
+                                                topContent.value = Calls(Direction.Left)
+                                                bottomContent.value = Trump(Direction.Right)
                                             }
                                         }
-                                    is DisplayContent.Calls ->
+                                    is Calls ->
                                         when (tc.direction) {
-                                            DisplayContent.Direction.Center -> {
-                                                topContent.value =
-                                                    DisplayContent.Trump(
-                                                        DisplayContent.Direction.Center
-                                                    )
-                                                bottomContent.value =
-                                                    DisplayContent.Calls(
-                                                        DisplayContent.Direction.Center
-                                                    )
+                                            Direction.Center -> {
+                                                topContent.value = Trump(Direction.Center)
+                                                bottomContent.value = Calls(Direction.Center)
                                             }
-                                            DisplayContent.Direction.Left -> {
-                                                topContent.value =
-                                                    DisplayContent.Trump(
-                                                        DisplayContent.Direction.Left
-                                                    )
-                                                bottomContent.value =
-                                                    DisplayContent.Calls(
-                                                        DisplayContent.Direction.Right
-                                                    )
+                                            Direction.Left -> {
+                                                topContent.value = Trump(Direction.Left)
+                                                bottomContent.value = Calls(Direction.Right)
                                             }
-                                            DisplayContent.Direction.Right -> {
-                                                topContent.value =
-                                                    DisplayContent.Trump(
-                                                        DisplayContent.Direction.Right
-                                                    )
-                                                bottomContent.value =
-                                                    DisplayContent.Calls(
-                                                        DisplayContent.Direction.Left
-                                                    )
+                                            Direction.Right -> {
+                                                topContent.value = Trump(Direction.Right)
+                                                bottomContent.value = Calls(Direction.Left)
                                             }
                                         }
-                                    DisplayContent.None ->
-                                        error("Should've initialized topContent.value")
+                                    None -> error("Should've initialized topContent.value")
                                 }
                             }
                             verticalOrder == VerticalOrder.Auto -> {
                                 when (val tc = topContent.value) {
-                                    is DisplayContent.Trump -> {
-                                        topContent.value = DisplayContent.Calls(tc.direction)
-                                        bottomContent.value =
-                                            DisplayContent.Trump(tc.direction.opposite())
+                                    is Trump -> {
+                                        topContent.value = Calls(tc.direction)
+                                        bottomContent.value = Trump(tc.direction.opposite())
                                     }
-                                    is DisplayContent.Calls -> {
-                                        topContent.value = DisplayContent.Trump(tc.direction)
-                                        bottomContent.value =
-                                            DisplayContent.Calls(tc.direction.opposite())
+                                    is Calls -> {
+                                        topContent.value = Trump(tc.direction)
+                                        bottomContent.value = Calls(tc.direction.opposite())
                                     }
-                                    DisplayContent.None ->
-                                        error("Should've initialized topContent.value")
+                                    None -> error("Should've initialized topContent.value")
                                 }
                             }
                             horizontalOrientation == HorizontalOrientation.Auto -> {
                                 when (val tc = topContent.value) {
-                                    is DisplayContent.Trump -> {
-                                        topContent.value =
-                                            DisplayContent.Trump(tc.direction.opposite())
-                                        bottomContent.value = DisplayContent.Calls(tc.direction)
+                                    is Trump -> {
+                                        topContent.value = Trump(tc.direction.opposite())
+                                        bottomContent.value = Calls(tc.direction)
                                     }
-                                    is DisplayContent.Calls -> {
-                                        topContent.value =
-                                            DisplayContent.Calls(tc.direction.opposite())
-                                        bottomContent.value = DisplayContent.Trump(tc.direction)
+                                    is Calls -> {
+                                        topContent.value = Calls(tc.direction.opposite())
+                                        bottomContent.value = Trump(tc.direction)
                                     }
-                                    DisplayContent.None ->
-                                        error("Should've initialized topContent.value")
+                                    None -> error("Should've initialized topContent.value")
                                 }
                             }
                         }
-                    else {
+                    } else {
                         val tc =
-                            topContent.value as? DisplayContent.Trump
-                                ?: error("topContent.value should be Trump")
+                            topContent.value as? Trump ?: error("topContent.value should be Trump")
                         if (horizontalOrientation == HorizontalOrientation.Auto) {
-                            topContent.value = DisplayContent.Trump(tc.direction.opposite())
-                            bottomContent.value = DisplayContent.Trump(tc.direction)
+                            topContent.value = Trump(tc.direction.opposite())
+                            bottomContent.value = Trump(tc.direction)
                         } else {
-                            topContent.value = DisplayContent.Trump(tc.direction)
-                            bottomContent.value = DisplayContent.Trump(tc.direction.opposite())
+                            topContent.value = Trump(tc.direction)
+                            bottomContent.value = Trump(tc.direction.opposite())
                         }
                     }
                 }

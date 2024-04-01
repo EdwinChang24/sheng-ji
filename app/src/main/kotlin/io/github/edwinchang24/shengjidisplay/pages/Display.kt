@@ -66,6 +66,7 @@ import io.github.edwinchang24.shengjidisplay.destinations.EditCallDialogDestinat
 import io.github.edwinchang24.shengjidisplay.destinations.EditTrumpDialogDestination
 import io.github.edwinchang24.shengjidisplay.destinations.HomePageDestination
 import io.github.edwinchang24.shengjidisplay.destinations.SettingsPageDestination
+import io.github.edwinchang24.shengjidisplay.model.AppState
 import io.github.edwinchang24.shengjidisplay.model.HorizontalOrientation
 import io.github.edwinchang24.shengjidisplay.model.VerticalOrder
 import kotlinx.coroutines.delay
@@ -170,198 +171,24 @@ fun DisplayPage(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.weight(1f).fillMaxWidth()
             ) {
-                AnimatedContent(
-                    topContent,
-                    transitionSpec = {
-                        (fadeIn(tween(durationMillis = 1000)) +
-                                slideIntoContainer(
-                                    towards =
-                                        when (val ts = targetState) {
-                                            is DisplayContent.Trump ->
-                                                when (ts.direction) {
-                                                    DisplayContent.Direction.Center ->
-                                                        SlideDirection.Down
-                                                    DisplayContent.Direction.Left ->
-                                                        SlideDirection.Right
-                                                    DisplayContent.Direction.Right ->
-                                                        SlideDirection.Left
-                                                }
-                                            is DisplayContent.Calls ->
-                                                when (ts.direction) {
-                                                    DisplayContent.Direction.Center ->
-                                                        SlideDirection.Down
-                                                    DisplayContent.Direction.Left ->
-                                                        SlideDirection.Right
-                                                    DisplayContent.Direction.Right ->
-                                                        SlideDirection.Left
-                                                }
-                                            DisplayContent.None -> SlideDirection.Down
-                                        },
-                                    animationSpec = tween(durationMillis = 1000),
-                                    initialOffset = { it / 3 }
-                                ) togetherWith
-                                fadeOut(tween(durationMillis = 1000)) +
-                                    slideOutOfContainer(
-                                        towards =
-                                            when (val ins = initialState) {
-                                                is DisplayContent.Trump ->
-                                                    when (ins.direction) {
-                                                        DisplayContent.Direction.Center ->
-                                                            SlideDirection.Up
-                                                        DisplayContent.Direction.Left ->
-                                                            SlideDirection.Left
-                                                        DisplayContent.Direction.Right ->
-                                                            SlideDirection.Right
-                                                    }
-                                                is DisplayContent.Calls ->
-                                                    when (ins.direction) {
-                                                        DisplayContent.Direction.Center ->
-                                                            SlideDirection.Up
-                                                        DisplayContent.Direction.Left ->
-                                                            SlideDirection.Left
-                                                        DisplayContent.Direction.Right ->
-                                                            SlideDirection.Right
-                                                    }
-                                                DisplayContent.None -> SlideDirection.Up
-                                            },
-                                        animationSpec = tween(durationMillis = 1000),
-                                        targetOffset = { it / 3 }
-                                    ))
-                            .using(SizeTransform(clip = false))
-                    },
-                    label = "",
-                    modifier = Modifier.fillMaxSize()
-                ) { tc ->
-                    when (tc) {
-                        is DisplayContent.Trump ->
-                            Box(
-                                modifier =
-                                    Modifier.fillMaxSize()
-                                        .rotate(
-                                            when (tc.direction) {
-                                                DisplayContent.Direction.Center -> 180f
-                                                DisplayContent.Direction.Left -> 90f
-                                                DisplayContent.Direction.Right -> -90f
-                                            }
-                                        )
-                            ) {
-                                AnimatedContent(targetState = state.trump, label = "") { targetTrump
-                                    ->
-                                    targetTrump?.let {
-                                        Box(
-                                            contentAlignment = Alignment.Center,
-                                            modifier = Modifier.fillMaxSize()
-                                        ) {
-                                            PlayingCard(
-                                                card = it,
-                                                textStyle =
-                                                    LocalTextStyle.current.copy(fontSize = 84.sp)
-                                            )
-                                        }
+                DisplayContent(
+                    content = topContent,
+                    top = true,
+                    state = state,
+                    onEditTrump = { navigator.navigate(EditTrumpDialogDestination) },
+                    onEditCallFound = { index, found ->
+                        mainActivityViewModel.state.value =
+                            state.copy(
+                                calls =
+                                    state.calls.toMutableList().also {
+                                        it[index] = it[index].copy(found = found)
                                     }
-                                        ?: Column(
-                                            verticalArrangement =
-                                                Arrangement.spacedBy(
-                                                    16.dp,
-                                                    Alignment.CenterVertically
-                                                ),
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            modifier = Modifier.fillMaxSize()
-                                        ) {
-                                            Text("No trump card selected")
-                                            OutlinedButton(
-                                                onClick = {
-                                                    navigator.navigate(EditTrumpDialogDestination)
-                                                }
-                                            ) {
-                                                Icon(painterResource(R.drawable.ic_add), null)
-                                                Spacer(modifier = Modifier.width(8.dp))
-                                                Text("Add")
-                                            }
-                                        }
-                                }
-                            }
-                        is DisplayContent.Calls ->
-                            Box(
-                                modifier =
-                                    Modifier.fillMaxSize()
-                                        .rotate(
-                                            when (tc.direction) {
-                                                DisplayContent.Direction.Center -> 180f
-                                                DisplayContent.Direction.Left -> 90f
-                                                DisplayContent.Direction.Right -> -90f
-                                            }
-                                        )
-                            ) {
-                                AnimatedContent(targetState = state.calls, label = "") { targetCalls
-                                    ->
-                                    targetCalls
-                                        .takeIf { it.isNotEmpty() }
-                                        ?.let {
-                                            Box(
-                                                contentAlignment = Alignment.Center,
-                                                modifier = Modifier.fillMaxSize()
-                                            ) {
-                                                CallsDisplay(
-                                                    calls = state.calls,
-                                                    setFound = { index, found ->
-                                                        mainActivityViewModel.state.value =
-                                                            state.copy(
-                                                                calls =
-                                                                    state.calls
-                                                                        .toMutableList()
-                                                                        .also {
-                                                                            it[index] =
-                                                                                it[index].copy(
-                                                                                    found = found
-                                                                                )
-                                                                        }
-                                                            )
-                                                    }
-                                                )
-                                            }
-                                        }
-                                        ?: Column(
-                                            verticalArrangement =
-                                                Arrangement.spacedBy(
-                                                    16.dp,
-                                                    Alignment.CenterVertically
-                                                ),
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            modifier = Modifier.fillMaxSize()
-                                        ) {
-                                            Text("No calls added")
-                                            OutlinedButton(
-                                                onClick = {
-                                                    navigator.navigate(EditCallDialogDestination(0))
-                                                }
-                                            ) {
-                                                Icon(painterResource(R.drawable.ic_add), null)
-                                                Spacer(modifier = Modifier.width(8.dp))
-                                                Text("Add")
-                                            }
-                                        }
-                                }
-                            }
-                        DisplayContent.None -> Box(modifier = Modifier.fillMaxSize())
-                    }
-                }
+                            )
+                    },
+                    onNewCall = { navigator.navigate(EditCallDialogDestination(0)) }
+                )
             }
-            AnimatedContent(
-                when (topContent) {
-                    is DisplayContent.Trump -> "Trump card"
-                    is DisplayContent.Calls -> "Calls"
-                    DisplayContent.None -> ""
-                },
-                label = ""
-            ) { label ->
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.fillMaxWidth().padding(12.dp).rotate(180f)
-                ) {
-                    Text(label, style = MaterialTheme.typography.labelLarge)
-                }
-            }
+            DisplayLabel(content = topContent, modifier = Modifier.rotate(180f))
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
@@ -380,33 +207,17 @@ fun DisplayPage(
                     Instant.fromEpochMilliseconds(currentTimeMs)
                         .toLocalDateTime(TimeZone.currentSystemDefault())
                         .format(timeFormat)
-                if (state.settings.showClock)
-                    AnimatedContent(
-                        targetState = state.settings.clockOrientation,
-                        label = "",
-                        transitionSpec = {
-                            fadeIn() + scaleIn() togetherWith fadeOut() + scaleOut()
+                if (state.settings.showClock) {
+                    Clock(
+                        text = clockText,
+                        orientation = state.settings.clockOrientation,
+                        setOrientation = {
+                            mainActivityViewModel.state.value =
+                                state.copy(settings = state.settings.copy(clockOrientation = it))
                         },
-                        modifier =
-                            Modifier.clip(MaterialTheme.shapes.small)
-                                .clickable {
-                                    mainActivityViewModel.state.value =
-                                        state.copy(
-                                            settings =
-                                                state.settings.copy(
-                                                    clockOrientation =
-                                                        !state.settings.clockOrientation
-                                                )
-                                        )
-                                }
-                                .padding(8.dp)
-                    ) { targetOrientation ->
-                        Text(
-                            clockText,
-                            style = MaterialTheme.typography.headlineSmall,
-                            modifier = Modifier.rotate(if (targetOrientation) 0f else 180f)
-                        )
-                    }
+                        leftSide = true
+                    )
+                }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     val autoPlay by displayViewModel.autoPlay.collectAsStateWithLifecycle()
                     AnimatedVisibility(
@@ -430,230 +241,232 @@ fun DisplayPage(
                         Icon(painterResource(R.drawable.ic_close), null)
                     }
                 }
-                if (state.settings.showClock)
-                    AnimatedContent(
-                        targetState = state.settings.clockOrientation,
-                        label = "",
-                        transitionSpec = {
-                            fadeIn() + scaleIn() togetherWith fadeOut() + scaleOut()
+                if (state.settings.showClock) {
+                    Clock(
+                        text = clockText,
+                        orientation = state.settings.clockOrientation,
+                        setOrientation = {
+                            mainActivityViewModel.state.value =
+                                state.copy(settings = state.settings.copy(clockOrientation = it))
                         },
-                        modifier =
-                            Modifier.clip(MaterialTheme.shapes.small)
-                                .clickable {
-                                    mainActivityViewModel.state.value =
-                                        state.copy(
-                                            settings =
-                                                state.settings.copy(
-                                                    clockOrientation =
-                                                        !state.settings.clockOrientation
-                                                )
-                                        )
-                                }
-                                .padding(8.dp)
-                    ) { targetOrientation ->
-                        Text(
-                            clockText,
-                            style = MaterialTheme.typography.headlineSmall,
-                            modifier = Modifier.rotate(if (targetOrientation) 180f else 0f)
-                        )
-                    }
-            }
-            AnimatedContent(
-                when (bottomContent) {
-                    is DisplayContent.Trump -> "Trump card"
-                    is DisplayContent.Calls -> "Calls"
-                    DisplayContent.None -> ""
-                },
-                label = ""
-            ) { label ->
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.fillMaxWidth().padding(12.dp)
-                ) {
-                    Text(label, style = MaterialTheme.typography.labelLarge)
+                        leftSide = false
+                    )
                 }
             }
+            DisplayLabel(content = bottomContent)
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.weight(1f).fillMaxWidth()
             ) {
-                AnimatedContent(
-                    bottomContent,
-                    transitionSpec = {
-                        (fadeIn(tween(durationMillis = 1000)) +
-                                slideIntoContainer(
-                                    towards =
-                                        when (val ts = targetState) {
-                                            is DisplayContent.Trump ->
-                                                when (ts.direction) {
-                                                    DisplayContent.Direction.Center ->
-                                                        SlideDirection.Up
-                                                    DisplayContent.Direction.Left ->
-                                                        SlideDirection.Right
-                                                    DisplayContent.Direction.Right ->
-                                                        SlideDirection.Left
-                                                }
-                                            is DisplayContent.Calls ->
-                                                when (ts.direction) {
-                                                    DisplayContent.Direction.Center ->
-                                                        SlideDirection.Up
-                                                    DisplayContent.Direction.Left ->
-                                                        SlideDirection.Right
-                                                    DisplayContent.Direction.Right ->
-                                                        SlideDirection.Left
-                                                }
-                                            DisplayContent.None -> SlideDirection.Up
-                                        },
-                                    animationSpec = tween(durationMillis = 1000),
-                                    initialOffset = { it / 3 }
-                                ) togetherWith
-                                fadeOut(tween(durationMillis = 1000)) +
-                                    slideOutOfContainer(
-                                        towards =
-                                            when (val ins = initialState) {
-                                                is DisplayContent.Trump ->
-                                                    when (ins.direction) {
-                                                        DisplayContent.Direction.Center ->
-                                                            SlideDirection.Down
-                                                        DisplayContent.Direction.Left ->
-                                                            SlideDirection.Left
-                                                        DisplayContent.Direction.Right ->
-                                                            SlideDirection.Right
-                                                    }
-                                                is DisplayContent.Calls ->
-                                                    when (ins.direction) {
-                                                        DisplayContent.Direction.Center ->
-                                                            SlideDirection.Down
-                                                        DisplayContent.Direction.Left ->
-                                                            SlideDirection.Left
-                                                        DisplayContent.Direction.Right ->
-                                                            SlideDirection.Right
-                                                    }
-                                                DisplayContent.None -> SlideDirection.Down
-                                            },
-                                        animationSpec = tween(durationMillis = 1000),
-                                        targetOffset = { it / 3 }
-                                    ))
-                            .using(SizeTransform(clip = false))
-                    },
-                    label = "",
-                    modifier = Modifier.fillMaxSize()
-                ) { tc ->
-                    when (tc) {
-                        is DisplayContent.Trump ->
-                            Box(
-                                modifier =
-                                    Modifier.fillMaxSize()
-                                        .rotate(
-                                            when (tc.direction) {
-                                                DisplayContent.Direction.Center -> 0f
-                                                DisplayContent.Direction.Left -> 90f
-                                                DisplayContent.Direction.Right -> -90f
-                                            }
-                                        )
-                            ) {
-                                AnimatedContent(targetState = state.trump, label = "") { targetTrump
-                                    ->
-                                    targetTrump?.let {
-                                        Box(
-                                            contentAlignment = Alignment.Center,
-                                            modifier = Modifier.fillMaxSize()
-                                        ) {
-                                            PlayingCard(
-                                                card = it,
-                                                textStyle =
-                                                    LocalTextStyle.current.copy(fontSize = 84.sp)
-                                            )
-                                        }
+                DisplayContent(
+                    content = bottomContent,
+                    top = false,
+                    state = state,
+                    onEditTrump = { navigator.navigate(EditTrumpDialogDestination) },
+                    onEditCallFound = { index, found ->
+                        mainActivityViewModel.state.value =
+                            state.copy(
+                                calls =
+                                    state.calls.toMutableList().also {
+                                        it[index] = it[index].copy(found = found)
                                     }
-                                        ?: Column(
-                                            verticalArrangement =
-                                                Arrangement.spacedBy(
-                                                    16.dp,
-                                                    Alignment.CenterVertically
-                                                ),
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            modifier = Modifier.fillMaxSize()
-                                        ) {
-                                            Text("No trump card selected")
-                                            OutlinedButton(
-                                                onClick = {
-                                                    navigator.navigate(EditTrumpDialogDestination)
-                                                }
-                                            ) {
-                                                Icon(painterResource(R.drawable.ic_add), null)
-                                                Spacer(modifier = Modifier.width(8.dp))
-                                                Text("Add")
-                                            }
+                            )
+                    },
+                    onNewCall = { navigator.navigate(EditCallDialogDestination(0)) }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun DisplayLabel(content: DisplayContent, modifier: Modifier = Modifier) {
+    AnimatedContent(
+        when (content) {
+            is DisplayContent.Trump -> "Trump card"
+            is DisplayContent.Calls -> "Calls"
+            DisplayContent.None -> ""
+        },
+        label = ""
+    ) { label ->
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = modifier.fillMaxWidth().padding(12.dp)
+        ) {
+            Text(label, style = MaterialTheme.typography.labelLarge)
+        }
+    }
+}
+
+@Composable
+private fun Clock(
+    text: String,
+    orientation: Boolean,
+    setOrientation: (Boolean) -> Unit,
+    leftSide: Boolean,
+    modifier: Modifier = Modifier
+) {
+    AnimatedContent(
+        targetState = orientation,
+        label = "",
+        transitionSpec = { fadeIn() + scaleIn() togetherWith fadeOut() + scaleOut() },
+        modifier =
+            modifier
+                .clip(MaterialTheme.shapes.small)
+                .clickable { setOrientation(!orientation) }
+                .padding(8.dp)
+    ) { targetOrientation ->
+        Text(
+            text,
+            style = MaterialTheme.typography.headlineSmall,
+            modifier = Modifier.rotate(if (targetOrientation xor leftSide) 0f else 180f)
+        )
+    }
+}
+
+@Composable
+private fun DisplayContent(
+    content: DisplayContent,
+    top: Boolean,
+    state: AppState,
+    onEditTrump: () -> Unit,
+    onEditCallFound: (index: Int, found: Boolean) -> Unit,
+    onNewCall: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    AnimatedContent(
+        content,
+        transitionSpec = {
+            (fadeIn(tween(durationMillis = 1000)) +
+                    slideIntoContainer(
+                        towards =
+                            when (val ts = targetState) {
+                                is DisplayContent.Trump ->
+                                    when (ts.direction) {
+                                        DisplayContent.Direction.Center ->
+                                            if (top) SlideDirection.Down else SlideDirection.Up
+                                        DisplayContent.Direction.Left -> SlideDirection.Right
+                                        DisplayContent.Direction.Right -> SlideDirection.Left
+                                    }
+                                is DisplayContent.Calls ->
+                                    when (ts.direction) {
+                                        DisplayContent.Direction.Center ->
+                                            if (top) SlideDirection.Down else SlideDirection.Up
+                                        DisplayContent.Direction.Left -> SlideDirection.Right
+                                        DisplayContent.Direction.Right -> SlideDirection.Left
+                                    }
+                                DisplayContent.None -> SlideDirection.Down
+                            },
+                        animationSpec = tween(durationMillis = 1000),
+                        initialOffset = { it / 3 }
+                    ) togetherWith
+                    fadeOut(tween(durationMillis = 1000)) +
+                        slideOutOfContainer(
+                            towards =
+                                when (val ins = initialState) {
+                                    is DisplayContent.Trump ->
+                                        when (ins.direction) {
+                                            DisplayContent.Direction.Center ->
+                                                if (top) SlideDirection.Up else SlideDirection.Down
+                                            DisplayContent.Direction.Left -> SlideDirection.Left
+                                            DisplayContent.Direction.Right -> SlideDirection.Right
                                         }
+                                    is DisplayContent.Calls ->
+                                        when (ins.direction) {
+                                            DisplayContent.Direction.Center ->
+                                                if (top) SlideDirection.Up else SlideDirection.Down
+                                            DisplayContent.Direction.Left -> SlideDirection.Left
+                                            DisplayContent.Direction.Right -> SlideDirection.Right
+                                        }
+                                    DisplayContent.None -> SlideDirection.Up
+                                },
+                            animationSpec = tween(durationMillis = 1000),
+                            targetOffset = { it / 3 }
+                        ))
+                .using(SizeTransform(clip = false))
+        },
+        label = "",
+        modifier = modifier.fillMaxSize()
+    ) { c ->
+        when (c) {
+            is DisplayContent.Trump ->
+                Box(
+                    modifier =
+                        Modifier.fillMaxSize()
+                            .rotate(
+                                when (c.direction) {
+                                    DisplayContent.Direction.Center -> if (top) 180f else 0f
+                                    DisplayContent.Direction.Left -> 90f
+                                    DisplayContent.Direction.Right -> -90f
                                 }
-                            }
-                        is DisplayContent.Calls ->
+                            )
+                ) {
+                    AnimatedContent(targetState = state.trump, label = "") { targetTrump ->
+                        targetTrump?.let {
                             Box(
-                                modifier =
-                                    Modifier.fillMaxSize()
-                                        .rotate(
-                                            when (tc.direction) {
-                                                DisplayContent.Direction.Center -> 0f
-                                                DisplayContent.Direction.Left -> 90f
-                                                DisplayContent.Direction.Right -> -90f
-                                            }
-                                        )
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier.fillMaxSize()
                             ) {
-                                AnimatedContent(targetState = state.calls, label = "") { targetCalls
-                                    ->
-                                    targetCalls
-                                        .takeIf { it.isNotEmpty() }
-                                        ?.let {
-                                            Box(
-                                                contentAlignment = Alignment.Center,
-                                                modifier = Modifier.fillMaxSize()
-                                            ) {
-                                                CallsDisplay(
-                                                    calls = state.calls,
-                                                    setFound = { index, found ->
-                                                        mainActivityViewModel.state.value =
-                                                            state.copy(
-                                                                calls =
-                                                                    state.calls
-                                                                        .toMutableList()
-                                                                        .also {
-                                                                            it[index] =
-                                                                                it[index].copy(
-                                                                                    found = found
-                                                                                )
-                                                                        }
-                                                            )
-                                                    }
-                                                )
-                                            }
-                                        }
-                                        ?: Column(
-                                            verticalArrangement =
-                                                Arrangement.spacedBy(
-                                                    16.dp,
-                                                    Alignment.CenterVertically
-                                                ),
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            modifier = Modifier.fillMaxSize()
-                                        ) {
-                                            Text("No calls added")
-                                            OutlinedButton(
-                                                onClick = {
-                                                    navigator.navigate(EditCallDialogDestination(0))
-                                                }
-                                            ) {
-                                                Icon(painterResource(R.drawable.ic_add), null)
-                                                Spacer(modifier = Modifier.width(8.dp))
-                                                Text("Add")
-                                            }
-                                        }
+                                PlayingCard(
+                                    card = it,
+                                    textStyle = LocalTextStyle.current.copy(fontSize = 84.sp)
+                                )
+                            }
+                        }
+                            ?: Column(
+                                verticalArrangement =
+                                    Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                Text("No trump card selected")
+                                OutlinedButton(onClick = onEditTrump) {
+                                    Icon(painterResource(R.drawable.ic_add), null)
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text("Add")
                                 }
                             }
-                        DisplayContent.None -> Box(modifier = Modifier.fillMaxSize())
                     }
                 }
-            }
+            is DisplayContent.Calls ->
+                Box(
+                    modifier =
+                        Modifier.fillMaxSize()
+                            .rotate(
+                                when (c.direction) {
+                                    DisplayContent.Direction.Center -> if (top) 180f else 0f
+                                    DisplayContent.Direction.Left -> 90f
+                                    DisplayContent.Direction.Right -> -90f
+                                }
+                            )
+                ) {
+                    AnimatedContent(targetState = state.calls, label = "") { targetCalls ->
+                        targetCalls
+                            .takeIf { it.isNotEmpty() }
+                            ?.let {
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier.fillMaxSize()
+                                ) {
+                                    CallsDisplay(calls = state.calls, setFound = onEditCallFound)
+                                }
+                            }
+                            ?: Column(
+                                verticalArrangement =
+                                    Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                Text("No calls added")
+                                OutlinedButton(onClick = onNewCall) {
+                                    Icon(painterResource(R.drawable.ic_add), null)
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text("Add")
+                                }
+                            }
+                    }
+                }
+            DisplayContent.None -> Box(modifier = Modifier.fillMaxSize())
         }
     }
 }
