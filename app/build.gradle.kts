@@ -1,4 +1,5 @@
-@Suppress("DSL_SCOPE_VIOLATION") plugins {
+@Suppress("DSL_SCOPE_VIOLATION")
+plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlinAndroid)
@@ -9,7 +10,6 @@
 android {
     namespace = "io.github.edwinchang24.shengjidisplay"
     compileSdk = 34
-
     defaultConfig {
         applicationId = "io.github.edwinchang24.shengjidisplay"
         minSdk = 24
@@ -18,11 +18,8 @@ android {
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
+        vectorDrawables { useSupportLibrary = true }
     }
-
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -35,21 +32,13 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
+    kotlinOptions { jvmTarget = "1.8" }
     buildFeatures {
         compose = true
         buildConfig = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.10"
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
+    composeOptions { kotlinCompilerExtensionVersion = "1.5.10" }
+    packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
 }
 
 dependencies {
