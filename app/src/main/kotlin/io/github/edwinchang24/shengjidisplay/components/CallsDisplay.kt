@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -137,7 +138,8 @@ private fun CallsDisplayPreview() {
                 calls,
                 { index, found ->
                     calls = calls.toMutableList().also { it[index] = it[index].copy(found = found) }
-                }
+                },
+                modifier = Modifier.wrapContentSize()
             )
         }
     }
