@@ -20,27 +20,41 @@ import io.github.edwinchang24.shengjidisplay.theme.ShengJiDisplayTheme
 fun RankPicker(rank: String?, setRank: (String) -> Unit, modifier: Modifier = Modifier) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier) {
         Row {
-            (2..6).map { it.toString() }.forEach {
-                IconButton(
-                    onClick = { setRank(it) },
-                    colors = if (rank == it) IconButtonDefaults.filledIconButtonColors() else IconButtonDefaults.iconButtonColors()
-                ) { Text(it) }
-            }
+            (2..6)
+                .map { it.toString() }
+                .forEach {
+                    IconButton(
+                        onClick = { setRank(it) },
+                        colors =
+                            if (rank == it) IconButtonDefaults.filledIconButtonColors()
+                            else IconButtonDefaults.iconButtonColors()
+                    ) {
+                        Text(it)
+                    }
+                }
         }
         Row {
             ((7..10).map { it.toString() } + "J").forEach {
                 IconButton(
                     onClick = { setRank(it) },
-                    colors = if (rank == it) IconButtonDefaults.filledIconButtonColors() else IconButtonDefaults.iconButtonColors()
-                ) { Text(it) }
+                    colors =
+                        if (rank == it) IconButtonDefaults.filledIconButtonColors()
+                        else IconButtonDefaults.iconButtonColors()
+                ) {
+                    Text(it)
+                }
             }
         }
         Row {
             listOf("Q", "K", "A").forEach {
                 IconButton(
                     onClick = { setRank(it) },
-                    colors = if (rank == it) IconButtonDefaults.filledIconButtonColors() else IconButtonDefaults.iconButtonColors()
-                ) { Text(it) }
+                    colors =
+                        if (rank == it) IconButtonDefaults.filledIconButtonColors()
+                        else IconButtonDefaults.iconButtonColors()
+                ) {
+                    Text(it)
+                }
             }
         }
     }

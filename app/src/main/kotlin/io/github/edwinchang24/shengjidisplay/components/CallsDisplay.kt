@@ -43,18 +43,23 @@ import io.github.edwinchang24.shengjidisplay.util.formatCallNumber
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun CallsDisplay(calls: List<Call>, setFound: (index: Int, found: Boolean) -> Unit, modifier: Modifier = Modifier) {
+fun CallsDisplay(
+    calls: List<Call>,
+    setFound: (index: Int, found: Boolean) -> Unit,
+    modifier: Modifier = Modifier
+) {
     FlowRow(
-        maxItemsInEachRow = 2, horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
-        verticalArrangement = Arrangement.spacedBy(16.dp), modifier = modifier.width(IntrinsicSize.Max)
+        maxItemsInEachRow = 2,
+        horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = modifier.width(IntrinsicSize.Max)
     ) {
         calls.forEachIndexed { index, call ->
             val interactionSource = remember { MutableInteractionSource() }
             OutlinedCard(
-                onClick = { setFound(index, !call.found) }, interactionSource = interactionSource,
-                modifier = Modifier
-                    .weight(1f)
-                    .height(IntrinsicSize.Max)
+                onClick = { setFound(index, !call.found) },
+                interactionSource = interactionSource,
+                modifier = Modifier.weight(1f).height(IntrinsicSize.Max)
             ) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     val scale = remember { Animatable(1f) }
@@ -62,30 +67,50 @@ fun CallsDisplay(calls: List<Call>, setFound: (index: Int, found: Boolean) -> Un
                         interactionSource.interactions.collect {
                             if (it is PressInteraction.Press) {
                                 scale.snapTo(0.75f)
-                            } else if (it is PressInteraction.Cancel || it is PressInteraction.Release) {
+                            } else if (
+                                it is PressInteraction.Cancel || it is PressInteraction.Release
+                            ) {
                                 scale.animateTo(1f)
                             }
                         }
                     }
                     Column(
                         verticalArrangement = Arrangement.spacedBy(4.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
-                        .padding(16.dp)
-                        .alpha(animateFloatAsState(if (call.found) 0.5f else 1f, label = "").value)
-                        .scale(scale.value)
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier =
+                            Modifier.padding(16.dp)
+                                .alpha(
+                                    animateFloatAsState(if (call.found) 0.5f else 1f, label = "")
+                                        .value
+                                )
+                                .scale(scale.value)
                     ) {
-                        PlayingCard(call.card, textStyle = LocalTextStyle.current.copy(fontSize = 40.sp))
+                        PlayingCard(
+                            call.card,
+                            textStyle = LocalTextStyle.current.copy(fontSize = 40.sp)
+                        )
                         Text(formatCallNumber(call.number), fontSize = 32.sp)
                     }
                     val primaryColor = MaterialTheme.colorScheme.primary
-                    val lineScale by animateFloatAsState(
-                        if (call.found) 0.5f else 0f, animationSpec = tween(durationMillis = 100), label = ""
-                    )
+                    val lineScale by
+                        animateFloatAsState(
+                            if (call.found) 0.5f else 0f,
+                            animationSpec = tween(durationMillis = 100),
+                            label = ""
+                        )
                     Canvas(modifier = Modifier.fillMaxSize()) {
                         drawLine(
                             primaryColor,
-                            start = Offset(size.width * (0.5f - lineScale), size.height * (0.5f + lineScale)),
-                            end = Offset(size.width * (0.5f + lineScale), size.height * (0.5f - lineScale)),
+                            start =
+                                Offset(
+                                    size.width * (0.5f - lineScale),
+                                    size.height * (0.5f + lineScale)
+                                ),
+                            end =
+                                Offset(
+                                    size.width * (0.5f + lineScale),
+                                    size.height * (0.5f - lineScale)
+                                ),
                             strokeWidth = 16f
                         )
                     }
@@ -108,9 +133,12 @@ private fun CallsDisplayPreview() {
                     )
                 )
             }
-            CallsDisplay(calls, { index, found ->
-                calls = calls.toMutableList().also { it[index] = it[index].copy(found = found) }
-            })
+            CallsDisplay(
+                calls,
+                { index, found ->
+                    calls = calls.toMutableList().also { it[index] = it[index].copy(found = found) }
+                }
+            )
         }
     }
 }

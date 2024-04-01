@@ -18,20 +18,18 @@ import androidx.core.view.WindowCompat
 fun ShengJiDisplayTheme(content: @Composable () -> Unit) {
     val useDarkTheme = isSystemInDarkTheme()
     val useDynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-    val colorScheme = if (useDynamicColor) {
-        if (useDarkTheme) {
-            dynamicDarkColorScheme(LocalContext.current)
+    val colorScheme =
+        if (useDynamicColor) {
+            if (useDarkTheme) dynamicDarkColorScheme(LocalContext.current)
+            else dynamicLightColorScheme(LocalContext.current)
         } else {
-            dynamicLightColorScheme(LocalContext.current)
+            if (useDarkTheme) darkColorScheme() else lightColorScheme()
         }
-    } else {
-        if (useDarkTheme) darkColorScheme() else lightColorScheme()
-    }
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
-            WindowCompat.getInsetsController((view.context as Activity).window, view).isAppearanceLightStatusBars =
-                !useDarkTheme
+            WindowCompat.getInsetsController((view.context as Activity).window, view)
+                .isAppearanceLightStatusBars = !useDarkTheme
         }
     }
     MaterialTheme(colorScheme = colorScheme, typography = Typography, content = content)

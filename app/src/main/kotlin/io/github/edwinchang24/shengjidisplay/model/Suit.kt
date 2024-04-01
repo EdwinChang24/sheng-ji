@@ -12,19 +12,20 @@ import kotlinx.serialization.encoding.Encoder
 
 @Serializable(SuitSerializer::class)
 enum class Suit(val asString: String, @DrawableRes val icon: Int) {
-    // @formatter:off
     CLUBS("clubs", R.drawable.clubs),
     DIAMONDS("diamonds", R.drawable.diamonds),
     HEARTS("hearts", R.drawable.hearts),
     SPADES("spades", R.drawable.spades)
-    // @formatter:on
 }
 
 class SuitSerializer : KSerializer<Suit> {
-    override val descriptor: SerialDescriptor get() = PrimitiveSerialDescriptor("Suit", PrimitiveKind.STRING)
+    override val descriptor: SerialDescriptor
+        get() = PrimitiveSerialDescriptor("Suit", PrimitiveKind.STRING)
 
     override fun serialize(encoder: Encoder, value: Suit) = encoder.encodeString(value.asString)
 
     override fun deserialize(decoder: Decoder) =
-        decoder.decodeString().let { str -> Suit.entries.firstOrNull { it.asString == str } ?: Suit.CLUBS }
+        decoder.decodeString().let { str ->
+            Suit.entries.firstOrNull { it.asString == str } ?: Suit.CLUBS
+        }
 }

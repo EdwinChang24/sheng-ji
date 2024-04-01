@@ -29,25 +29,33 @@ fun SuitPicker(suit: Suit?, setSuit: (Suit) -> Unit, modifier: Modifier = Modifi
     Row(horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = modifier) {
         Suit.entries.forEach {
             OutlinedCard(
-                onClick = { setSuit(it) }, border = BorderStroke(
-                width = animateDpAsState(
-                    if (suit == it) 4.dp else CardDefaults.outlinedCardBorder().width, label = ""
-                ).value,
-                color = if (suit == it) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
-            ), modifier = Modifier.weight(1f)
+                onClick = { setSuit(it) },
+                border =
+                    BorderStroke(
+                        width =
+                            animateDpAsState(
+                                    targetValue =
+                                        if (suit == it) 4.dp
+                                        else CardDefaults.outlinedCardBorder().width,
+                                    label = ""
+                                )
+                                .value,
+                        color =
+                            if (suit == it) MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.outlineVariant
+                    ),
+                modifier = Modifier.weight(1f)
             ) {
                 Image(
-                    painterResource(it.icon), null,
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .size(32.dp)
-                        .align(Alignment.CenterHorizontally)
+                    painterResource(it.icon),
+                    null,
+                    modifier =
+                        Modifier.padding(16.dp).size(32.dp).align(Alignment.CenterHorizontally)
                 )
             }
         }
     }
 }
-
 
 @Preview
 @Composable

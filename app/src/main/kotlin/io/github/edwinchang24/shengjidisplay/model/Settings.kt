@@ -18,24 +18,16 @@ data class Settings(
 
 @Serializable
 sealed interface VerticalOrder {
-    @Serializable
-    @SerialName("auto")
-    data object Auto : VerticalOrder
+    @Serializable @SerialName("auto") data object Auto : VerticalOrder
 
-    @Serializable
-    @SerialName("trumpOnTop")
-    data object TrumpOnTop : VerticalOrder
+    @Serializable @SerialName("trumpOnTop") data object TrumpOnTop : VerticalOrder
 
-    @Serializable
-    @SerialName("callsOnTop")
-    data object CallsOnTop : VerticalOrder
+    @Serializable @SerialName("callsOnTop") data object CallsOnTop : VerticalOrder
 }
 
 @Serializable
 sealed interface HorizontalOrientation {
-    @Serializable
-    @SerialName("auto")
-    data object Auto : HorizontalOrientation
+    @Serializable @SerialName("auto") data object Auto : HorizontalOrientation
 
     @Serializable
     @SerialName("topTowardsRight")

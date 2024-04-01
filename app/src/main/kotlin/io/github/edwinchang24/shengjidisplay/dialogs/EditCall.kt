@@ -43,9 +43,7 @@ import io.github.edwinchang24.shengjidisplay.components.SuitPicker
 import io.github.edwinchang24.shengjidisplay.model.Call
 import io.github.edwinchang24.shengjidisplay.model.PlayingCard
 
-/**
- * @param index index of call to edit; will create a new call if index is out of bounds
- */
+/** @param index index of call to edit; will create a new call if index is out of bounds */
 @Destination(style = DestinationStyle.Dialog::class)
 @MainNavGraph
 @Composable
@@ -55,57 +53,94 @@ fun EditCallDialog(
     resultBackNavigator: ResultBackNavigator<Int>,
     viewModel: MainActivityViewModel
 ) {
-    var rank by rememberSaveable { mutableStateOf(viewModel.state.value.calls.getOrNull(index)?.card?.rank) }
-    var suit by rememberSaveable { mutableStateOf(viewModel.state.value.calls.getOrNull(index)?.card?.suit) }
-    var number by rememberSaveable { mutableIntStateOf(viewModel.state.value.calls.getOrNull(index)?.number ?: 1) }
+    var rank by rememberSaveable {
+        mutableStateOf(viewModel.state.value.calls.getOrNull(index)?.card?.rank)
+    }
+    var suit by rememberSaveable {
+        mutableStateOf(viewModel.state.value.calls.getOrNull(index)?.card?.suit)
+    }
+    var number by rememberSaveable {
+        mutableIntStateOf(viewModel.state.value.calls.getOrNull(index)?.number ?: 1)
+    }
     Card(
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        modifier = Modifier
-            .width(IntrinsicSize.Max)
-            .windowInsetsPadding(WindowInsets.systemBars)
+        modifier = Modifier.width(IntrinsicSize.Max).windowInsetsPadding(WindowInsets.systemBars)
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp)
-                .verticalScroll(rememberScrollState())
+            modifier = Modifier.fillMaxWidth().padding(24.dp).verticalScroll(rememberScrollState())
         ) {
             Text("Edit call", style = MaterialTheme.typography.headlineMedium)
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Text("Rank", style = MaterialTheme.typography.labelMedium)
-                RankPicker(rank, { rank = it }, modifier = Modifier.align(Alignment.CenterHorizontally))
+                RankPicker(
+                    rank,
+                    { rank = it },
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
             }
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Text("Suit", style = MaterialTheme.typography.labelMedium)
-                SuitPicker(suit, { suit = it }, modifier = Modifier.align(Alignment.CenterHorizontally))
+                SuitPicker(
+                    suit,
+                    { suit = it },
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
             }
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Text("Number", style = MaterialTheme.typography.labelMedium)
                 NumberPicker(number, { number = it })
             }
             Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.End), modifier = Modifier.fillMaxWidth()
+                horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.End),
+                modifier = Modifier.fillMaxWidth()
             ) {
                 OutlinedButton(onClick = navigator::navigateUp) {
                     Icon(painterResource(R.drawable.ic_close), null)
                     Spacer(modifier = Modifier.width(8.dp))
                     Text("Cancel")
                 }
-                Button(onClick = {
-                    rank?.let { r ->
-                        suit?.let { s ->
-                            viewModel.state.value =
-                                viewModel.state.value.copy(calls = viewModel.state.value.calls.toMutableList().apply {
-                                    if (index in indices) this[index] =
-                                        this[index].copy(card = PlayingCard(r, s), number = number)
-                                    else add(Call(PlayingCard(r, s), number, found = false))
-                                })
-                            resultBackNavigator.navigateBack(index)
+                Button(
+                    onClick = {
+                        rank?.let { r ->
+                            suit?.let { s ->
+                                viewModel.state.value =
+                                    viewModel.state.value.copy(
+                                        calls =
+                                            viewModel.state.value.calls.toMutableList().apply {
+                                                if (index in indices) {
+                                                    this[index] =
+                                                        this[index].copy(
+                                                            card = PlayingCard(r, s),
+                                                            number = number
+                                                        )
+                                                } else {
+                                                    add(
+                                                        Call(
+                                                            PlayingCard(r, s),
+                                                            number,
+                                                            found = false
+                                                        )
+                                                    )
+                                                }
+                                            }
+                                    )
+                                resultBackNavigator.navigateBack(index)
+                            }
                         }
-                    }
-                }, enabled = rank != null && suit != null) {
+                    },
+                    enabled = rank != null && suit != null
+                ) {
                     Icon(painterResource(R.drawable.ic_done), null)
                     Spacer(modifier = Modifier.width(8.dp))
                     Text("Done")

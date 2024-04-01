@@ -5,29 +5,31 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.edwinchang24.shengjidisplay.model.AppState
+import java.io.File
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import java.io.File
-import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor() : ViewModel() {
     var state = MutableStateFlow(AppState())
 
-    private val Context.stateFile get() = File(filesDir, "state.json")
+    private val Context.stateFile
+        get() = File(filesDir, "state.json")
 
     fun load(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
-            state.value = if (context.stateFile.exists()) {
-                try {
-                    Json.decodeFromString(context.stateFile.readText())
-                } catch (e: IllegalArgumentException) {
-                    AppState()
-                }
-            } else AppState()
+            state.value =
+                if (context.stateFile.exists()) {
+                    try {
+                        Json.decodeFromString(context.stateFile.readText())
+                    } catch (e: IllegalArgumentException) {
+                        AppState()
+                    }
+                } else AppState()
             state.collect { state -> context.stateFile.writeText(Json.encodeToString(state)) }
         }
     }

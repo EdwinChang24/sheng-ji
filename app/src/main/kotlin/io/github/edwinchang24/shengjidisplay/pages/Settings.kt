@@ -73,78 +73,124 @@ import io.github.edwinchang24.shengjidisplay.model.VerticalOrder
 @Composable
 fun SettingsPage(navigator: DestinationsNavigator, viewModel: MainActivityViewModel) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    Scaffold(topBar = {
-        TopAppBar(title = { Text("Display settings") }, navigationIcon = {
-            IconButton(onClick = { navigator.navigateUp() }) {
-                Icon(painterResource(R.drawable.ic_arrow_back), null)
-            }
-        })
-    }) { padding ->
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Display settings") },
+                navigationIcon = {
+                    IconButton(onClick = { navigator.navigateUp() }) {
+                        Icon(painterResource(R.drawable.ic_arrow_back), null)
+                    }
+                }
+            )
+        }
+    ) { padding ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
+            modifier = Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState())
         ) {
-            BooleanPicker(value = state.settings.keepScreenOn, setValue = {
-                viewModel.state.value = state.copy(settings = state.settings.copy(keepScreenOn = it))
-            }) { Text("Keep screen on") }
-            BooleanPicker(value = state.settings.lockScreenOrientation, setValue = {
-                viewModel.state.value = state.copy(settings = state.settings.copy(lockScreenOrientation = it))
-            }) { Text("Lock screen orientation to portrait") }
-            BooleanPicker(value = state.settings.autoHideCalls, setValue = {
-                viewModel.state.value = state.copy(settings = state.settings.copy(autoHideCalls = it))
-            }) { Text("Hide calls when all are found") }
-            VerticalOrderPicker(verticalOrder = state.settings.verticalOrder, setVerticalOrder = {
-                viewModel.state.value = state.copy(settings = state.settings.copy(verticalOrder = it))
-            })
-            BooleanPicker(value = state.settings.perpendicularMode, setValue = {
-                viewModel.state.value = state.copy(settings = state.settings.copy(perpendicularMode = it))
-            }) { Text("Perpendicular mode") }
+            BooleanPicker(
+                value = state.settings.keepScreenOn,
+                setValue = {
+                    viewModel.state.value =
+                        state.copy(settings = state.settings.copy(keepScreenOn = it))
+                }
+            ) {
+                Text("Keep screen on")
+            }
+            BooleanPicker(
+                value = state.settings.lockScreenOrientation,
+                setValue = {
+                    viewModel.state.value =
+                        state.copy(settings = state.settings.copy(lockScreenOrientation = it))
+                }
+            ) {
+                Text("Lock screen orientation to portrait")
+            }
+            BooleanPicker(
+                value = state.settings.autoHideCalls,
+                setValue = {
+                    viewModel.state.value =
+                        state.copy(settings = state.settings.copy(autoHideCalls = it))
+                }
+            ) {
+                Text("Hide calls when all are found")
+            }
+            VerticalOrderPicker(
+                verticalOrder = state.settings.verticalOrder,
+                setVerticalOrder = {
+                    viewModel.state.value =
+                        state.copy(settings = state.settings.copy(verticalOrder = it))
+                }
+            )
+            BooleanPicker(
+                value = state.settings.perpendicularMode,
+                setValue = {
+                    viewModel.state.value =
+                        state.copy(settings = state.settings.copy(perpendicularMode = it))
+                }
+            ) {
+                Text("Perpendicular mode")
+            }
             AnimatedVisibility(
                 visible = state.settings.perpendicularMode,
                 enter = fadeIn() + expandVertically(expandFrom = Alignment.Top, clip = false),
                 exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Top, clip = false)
             ) {
-                // @formatter:off
                 HorizontalOrientationPicker(
                     horizontalOrientation = state.settings.horizontalOrientation,
                     setHorizontalOrientation = {
-                        viewModel.state.value = state.copy(settings = state.settings.copy(horizontalOrientation = it))
+                        viewModel.state.value =
+                            state.copy(settings = state.settings.copy(horizontalOrientation = it))
                     }
                 )
-                // @formatter:on
             }
             AnimatedVisibility(
-                visible = state.settings.verticalOrder == VerticalOrder.Auto || (state.settings.perpendicularMode && state.settings.horizontalOrientation == HorizontalOrientation.Auto),
+                visible =
+                    state.settings.verticalOrder == VerticalOrder.Auto ||
+                        (state.settings.perpendicularMode &&
+                            state.settings.horizontalOrientation == HorizontalOrientation.Auto),
                 enter = fadeIn() + expandVertically(expandFrom = Alignment.Top, clip = false),
                 exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Top, clip = false)
             ) {
-                AutoSwitchSecondsPicker(autoSwitchSeconds = state.settings.autoSwitchSeconds, setAutoSwitchSeconds = {
-                    viewModel.state.value = state.copy(settings = state.settings.copy(autoSwitchSeconds = it))
-                })
+                AutoSwitchSecondsPicker(
+                    autoSwitchSeconds = state.settings.autoSwitchSeconds,
+                    setAutoSwitchSeconds = {
+                        viewModel.state.value =
+                            state.copy(settings = state.settings.copy(autoSwitchSeconds = it))
+                    }
+                )
             }
-            BooleanPicker(value = state.settings.showClock, setValue = {
-                viewModel.state.value = state.copy(settings = state.settings.copy(showClock = it))
-            }) { Text("Show clock") }
+            BooleanPicker(
+                value = state.settings.showClock,
+                setValue = {
+                    viewModel.state.value =
+                        state.copy(settings = state.settings.copy(showClock = it))
+                }
+            ) {
+                Text("Show clock")
+            }
             Text(
                 "${stringResource(R.string.app_name)} ${BuildConfig.VERSION_NAME}",
                 style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(vertical = 16.dp)
+                modifier = Modifier.align(Alignment.CenterHorizontally).padding(vertical = 16.dp)
             )
         }
     }
 }
 
 @Composable
-private fun BooleanPicker(value: Boolean, setValue: (Boolean) -> Unit, label: @Composable () -> Unit) {
-    Row(verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { setValue(!value) }
-            .padding(horizontal = 24.dp, vertical = 8.dp)) {
+private fun BooleanPicker(
+    value: Boolean,
+    setValue: (Boolean) -> Unit,
+    label: @Composable () -> Unit
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier =
+            Modifier.fillMaxWidth()
+                .clickable { setValue(!value) }
+                .padding(horizontal = 24.dp, vertical = 8.dp)
+    ) {
         label()
         Spacer(modifier = Modifier.weight(1f))
         Checkbox(checked = value, onCheckedChange = { setValue(it) })
@@ -152,24 +198,35 @@ private fun BooleanPicker(value: Boolean, setValue: (Boolean) -> Unit, label: @C
 }
 
 @Composable
-private fun RowScope.PickerCard(onClick: () -> Unit, selected: Boolean, content: @Composable ColumnScope.() -> Unit) {
+private fun RowScope.PickerCard(
+    onClick: () -> Unit,
+    selected: Boolean,
+    content: @Composable ColumnScope.() -> Unit
+) {
     OutlinedCard(
-        // @formatter:off
         onClick = onClick,
-        border = BorderStroke(
-            width = animateDpAsState(if (selected) 4.dp else CardDefaults.outlinedCardBorder().width, label = "").value,
-            color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
-        ),
-        modifier = Modifier
-            .weight(1f)
-            .fillMaxHeight(),
+        border =
+            BorderStroke(
+                width =
+                    animateDpAsState(
+                            if (selected) 4.dp else CardDefaults.outlinedCardBorder().width,
+                            label = ""
+                        )
+                        .value,
+                color =
+                    if (selected) MaterialTheme.colorScheme.primary
+                    else MaterialTheme.colorScheme.outlineVariant
+            ),
+        modifier = Modifier.weight(1f).fillMaxHeight(),
         content = content
-        // @formatter:on
     )
 }
 
 @Composable
-private fun VerticalOrderPicker(verticalOrder: VerticalOrder, setVerticalOrder: (VerticalOrder) -> Unit) {
+private fun VerticalOrderPicker(
+    verticalOrder: VerticalOrder,
+    setVerticalOrder: (VerticalOrder) -> Unit
+) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
@@ -177,15 +234,18 @@ private fun VerticalOrderPicker(verticalOrder: VerticalOrder, setVerticalOrder: 
         Text("Vertical ordering")
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(IntrinsicSize.Max)
+            modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Max)
         ) {
             PickerCard(
-                onClick = { setVerticalOrder(VerticalOrder.Auto) }, selected = verticalOrder == VerticalOrder.Auto
+                onClick = { setVerticalOrder(VerticalOrder.Auto) },
+                selected = verticalOrder == VerticalOrder.Auto
             ) {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                    Text("Auto switch", textAlign = TextAlign.Center, modifier = Modifier.padding(8.dp))
+                    Text(
+                        "Auto switch",
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(8.dp)
+                    )
                 }
             }
             PickerCard(
@@ -194,9 +254,8 @@ private fun VerticalOrderPicker(verticalOrder: VerticalOrder, setVerticalOrder: 
             ) {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxSize().padding(16.dp)
                 ) {
                     Text("Trump", textAlign = TextAlign.Center, modifier = Modifier.rotate(180f))
                     HorizontalDivider()
@@ -209,9 +268,8 @@ private fun VerticalOrderPicker(verticalOrder: VerticalOrder, setVerticalOrder: 
             ) {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxSize().padding(16.dp)
                 ) {
                     Text("Calls", textAlign = TextAlign.Center, modifier = Modifier.rotate(180f))
                     HorizontalDivider()
@@ -224,7 +282,8 @@ private fun VerticalOrderPicker(verticalOrder: VerticalOrder, setVerticalOrder: 
 
 @Composable
 private fun HorizontalOrientationPicker(
-    horizontalOrientation: HorizontalOrientation, setHorizontalOrientation: (HorizontalOrientation) -> Unit
+    horizontalOrientation: HorizontalOrientation,
+    setHorizontalOrientation: (HorizontalOrientation) -> Unit
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -233,16 +292,18 @@ private fun HorizontalOrientationPicker(
         Text("Horizontal orientation")
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(IntrinsicSize.Max)
+            modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Max)
         ) {
             PickerCard(
                 onClick = { setHorizontalOrientation(HorizontalOrientation.Auto) },
                 selected = horizontalOrientation == HorizontalOrientation.Auto
             ) {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                    Text("Auto switch", textAlign = TextAlign.Center, modifier = Modifier.padding(8.dp))
+                    Text(
+                        "Auto switch",
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(8.dp)
+                    )
                 }
             }
             PickerCard(
@@ -251,9 +312,8 @@ private fun HorizontalOrientationPicker(
             ) {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxSize().padding(16.dp)
                 ) {
                     Text("Aa", textAlign = TextAlign.Center, modifier = Modifier.rotate(-90f))
                     HorizontalDivider()
@@ -266,9 +326,8 @@ private fun HorizontalOrientationPicker(
             ) {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxSize().padding(16.dp)
                 ) {
                     Text("Aa", textAlign = TextAlign.Center, modifier = Modifier.rotate(90f))
                     HorizontalDivider()
@@ -279,9 +338,15 @@ private fun HorizontalOrientationPicker(
     }
 }
 
-private val autoSwitchIntervals = mapOf(
-    3 to "3 seconds", 5 to "5 seconds", 10 to "10 seconds", 20 to "20 seconds", 60 to "1 minute", 300 to "5 minutes"
-)
+private val autoSwitchIntervals =
+    mapOf(
+        3 to "3 seconds",
+        5 to "5 seconds",
+        10 to "10 seconds",
+        20 to "20 seconds",
+        60 to "1 minute",
+        300 to "5 minutes"
+    )
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -294,7 +359,6 @@ private fun AutoSwitchSecondsPicker(autoSwitchSeconds: Int, setAutoSwitchSeconds
         Text("Auto switch interval")
         var expanded by rememberSaveable { mutableStateOf(false) }
         ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
-            // @formatter:off
             OutlinedTextField(
                 value = autoSwitchIntervals[autoSwitchSeconds] ?: "$autoSwitchSeconds seconds",
                 onValueChange = {},
@@ -304,17 +368,22 @@ private fun AutoSwitchSecondsPicker(autoSwitchSeconds: Int, setAutoSwitchSeconds
                 colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
                 modifier = Modifier.menuAnchor()
             )
-            // @formatter:on
-            DropdownMenu(expanded = expanded, onDismissRequest = {
-                expanded = false
-                focusManager.clearFocus()
-            }) {
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = {
+                    expanded = false
+                    focusManager.clearFocus()
+                }
+            ) {
                 autoSwitchIntervals.forEach { (seconds, name) ->
-                    DropdownMenuItem(text = { Text(name) }, onClick = {
-                        setAutoSwitchSeconds(seconds)
-                        expanded = false
-                        focusManager.clearFocus()
-                    })
+                    DropdownMenuItem(
+                        text = { Text(name) },
+                        onClick = {
+                            setAutoSwitchSeconds(seconds)
+                            expanded = false
+                            focusManager.clearFocus()
+                        }
+                    )
                 }
             }
         }
@@ -323,14 +392,22 @@ private fun AutoSwitchSecondsPicker(autoSwitchSeconds: Int, setAutoSwitchSeconds
 
 object SettingsPageTransitions : DestinationStyle.Animated {
     override fun AnimatedContentTransitionScope<NavBackStackEntry>.enterTransition() =
-        slideInHorizontally { fullWidth -> fullWidth }
+        slideInHorizontally { fullWidth ->
+            fullWidth
+        }
 
     override fun AnimatedContentTransitionScope<NavBackStackEntry>.exitTransition() =
-        slideOutHorizontally { fullWidth -> fullWidth }
+        slideOutHorizontally { fullWidth ->
+            fullWidth
+        }
 
     override fun AnimatedContentTransitionScope<NavBackStackEntry>.popEnterTransition() =
-        slideInHorizontally { fullWidth -> fullWidth }
+        slideInHorizontally { fullWidth ->
+            fullWidth
+        }
 
     override fun AnimatedContentTransitionScope<NavBackStackEntry>.popExitTransition() =
-        slideOutHorizontally { fullWidth -> fullWidth }
+        slideOutHorizontally { fullWidth ->
+            fullWidth
+        }
 }

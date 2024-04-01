@@ -40,18 +40,24 @@ import io.github.edwinchang24.shengjidisplay.theme.ShengJiDisplayTheme
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun NumberPicker(value: Int, setValue: (Int) -> Unit, modifier: Modifier = Modifier, range: IntRange = 1..10) {
+fun NumberPicker(
+    value: Int,
+    setValue: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+    range: IntRange = 1..10
+) {
     LaunchedEffect(value) { if (value !in range) setValue(value.coerceIn(range)) }
     Row(
-        horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
         modifier = modifier.height(IntrinsicSize.Max)
     ) {
         val decreaseIS = remember { MutableInteractionSource() }
         OutlinedCard(
-            enabled = value - 1 in range, onClick = { if (value - 1 in range) setValue(value - 1) },
-            interactionSource = decreaseIS, modifier = Modifier
-            .fillMaxHeight()
-            .weight(2f)
+            enabled = value - 1 in range,
+            onClick = { if (value - 1 in range) setValue(value - 1) },
+            interactionSource = decreaseIS,
+            modifier = Modifier.fillMaxHeight().weight(2f)
         ) {
             val scale = remember { Animatable(1f) }
             LaunchedEffect(true) {
@@ -65,33 +71,36 @@ fun NumberPicker(value: Int, setValue: (Int) -> Unit, modifier: Modifier = Modif
             }
             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                 Icon(
-                    painterResource(R.drawable.ic_remove), null, modifier = Modifier.scale(
-                    animateFloatAsState(scale.value, label = "").value
-                )
+                    painterResource(R.drawable.ic_remove),
+                    null,
+                    modifier = Modifier.scale(animateFloatAsState(scale.value, label = "").value)
                 )
             }
         }
-        Box(
-            contentAlignment = Alignment.Center, modifier = Modifier
-            .fillMaxHeight()
-            .weight(1f)
-        ) {
-            AnimatedContent(targetState = value, transitionSpec = {
-                if (targetState > initialState) {
-                    fadeIn() + slideInVertically { -it } togetherWith fadeOut() + slideOutVertically { it }
-                } else {
-                    fadeIn() + slideInVertically { it } togetherWith fadeOut() + slideOutVertically { -it }
-                }.using(SizeTransform(clip = false))
-            }, label = "") { target ->
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxHeight().weight(1f)) {
+            AnimatedContent(
+                targetState = value,
+                transitionSpec = {
+                    if (targetState > initialState) {
+                            fadeIn() + slideInVertically { -it } togetherWith
+                                fadeOut() + slideOutVertically { it }
+                        } else {
+                            fadeIn() + slideInVertically { it } togetherWith
+                                fadeOut() + slideOutVertically { -it }
+                        }
+                        .using(SizeTransform(clip = false))
+                },
+                label = ""
+            ) { target ->
                 Text(target.toString())
             }
         }
         val increaseIS = remember { MutableInteractionSource() }
         OutlinedCard(
-            enabled = value + 1 in range, onClick = { if (value + 1 in range) setValue(value + 1) },
-            interactionSource = increaseIS, modifier = Modifier
-            .fillMaxHeight()
-            .weight(2f)
+            enabled = value + 1 in range,
+            onClick = { if (value + 1 in range) setValue(value + 1) },
+            interactionSource = increaseIS,
+            modifier = Modifier.fillMaxHeight().weight(2f)
         ) {
             val scale = remember { Animatable(1f) }
             LaunchedEffect(true) {
@@ -104,7 +113,11 @@ fun NumberPicker(value: Int, setValue: (Int) -> Unit, modifier: Modifier = Modif
                 }
             }
             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                Icon(painterResource(R.drawable.ic_add), null, modifier = Modifier.scale(scale.value))
+                Icon(
+                    painterResource(R.drawable.ic_add),
+                    null,
+                    modifier = Modifier.scale(scale.value)
+                )
             }
         }
     }

@@ -28,7 +28,8 @@ class MainActivity : ComponentActivity() {
             ShengJiDisplayTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
                     DestinationsNavHost(
-                        navGraph = NavGraphs.main, dependenciesContainerBuilder = { dependency(viewModel) },
+                        navGraph = NavGraphs.main,
+                        dependenciesContainerBuilder = { dependency(viewModel) },
                         modifier = Modifier.fillMaxSize()
                     )
                 }

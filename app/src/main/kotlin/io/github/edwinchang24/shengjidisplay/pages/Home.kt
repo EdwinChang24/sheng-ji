@@ -77,53 +77,69 @@ fun HomePage(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val state by viewModel.state.collectAsStateWithLifecycle()
-    Scaffold(topBar = {
-        TopAppBar(title = { Text(stringResource(R.string.app_name)) }, actions = {
-            IconButton(onClick = { navigator.navigate(SettingsPageDestination) }) {
-                Icon(painterResource(R.drawable.ic_settings), null)
-            }
-        })
-    }) { padding ->
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(R.string.app_name)) },
+                actions = {
+                    IconButton(onClick = { navigator.navigate(SettingsPageDestination) }) {
+                        Icon(painterResource(R.drawable.ic_settings), null)
+                    }
+                }
+            )
+        }
+    ) { padding ->
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(top = 16.dp)
-                .verticalScroll(rememberScrollState())
+            modifier =
+                Modifier.fillMaxSize()
+                    .padding(padding)
+                    .padding(top = 16.dp)
+                    .verticalScroll(rememberScrollState())
         ) {
             Text(
-                "Trump card", style = MaterialTheme.typography.titleLarge,
+                "Trump card",
+                style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(horizontal = 24.dp)
             )
             AnimatedContent(targetState = state.trump, label = "") { targetTrump ->
                 if (targetTrump != null) {
-                    Box(contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { navigator.navigate(EditTrumpDialogDestination) }
-                            .padding(horizontal = 24.dp, vertical = 16.dp)) {
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .clip(MaterialTheme.shapes.medium)
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier =
+                            Modifier.fillMaxWidth()
                                 .clickable { navigator.navigate(EditTrumpDialogDestination) }
-                                .padding(8.dp)) {
+                                .padding(horizontal = 24.dp, vertical = 16.dp)
+                    ) {
+                        Row(
+                            horizontalArrangement =
+                                Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier =
+                                Modifier.clip(MaterialTheme.shapes.medium)
+                                    .clickable { navigator.navigate(EditTrumpDialogDestination) }
+                                    .padding(8.dp)
+                        ) {
                             PlayingCard(
-                                targetTrump, textStyle = LocalTextStyle.current.copy(fontSize = 32.sp),
+                                targetTrump,
+                                textStyle = LocalTextStyle.current.copy(fontSize = 32.sp),
                                 modifier = Modifier.padding(8.dp)
                             )
-                            IconButton(onClick = { viewModel.state.value = state.copy(trump = null) }) {
+                            IconButton(
+                                onClick = { viewModel.state.value = state.copy(trump = null) }
+                            ) {
                                 Icon(painterResource(R.drawable.ic_close), null)
                             }
                         }
                     }
                 } else {
-                    Row(verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { navigator.navigate(EditTrumpDialogDestination) }
-                            .padding(horizontal = 24.dp, vertical = 8.dp)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier =
+                            Modifier.fillMaxWidth()
+                                .clickable { navigator.navigate(EditTrumpDialogDestination) }
+                                .padding(horizontal = 24.dp, vertical = 8.dp)
+                    ) {
                         Text("No trump card selected")
                         Spacer(modifier = Modifier.weight(1f))
                         Button(onClick = { navigator.navigate(EditTrumpDialogDestination) }) {
@@ -136,18 +152,25 @@ fun HomePage(
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp)
             ) {
                 Text("Calls", style = MaterialTheme.typography.titleLarge)
                 Spacer(modifier = Modifier.weight(1f))
                 AnimatedVisibility(
                     visible = state.calls.isNotEmpty(),
-                    enter = fadeIn() + expandVertically(expandFrom = Alignment.CenterVertically, clip = false),
-                    exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.CenterVertically, clip = false)
+                    enter =
+                        fadeIn() +
+                            expandVertically(expandFrom = Alignment.CenterVertically, clip = false),
+                    exit =
+                        fadeOut() +
+                            shrinkVertically(
+                                shrinkTowards = Alignment.CenterVertically,
+                                clip = false
+                            )
                 ) {
-                    OutlinedButton(onClick = { viewModel.state.value = state.copy(calls = emptyList()) }) {
+                    OutlinedButton(
+                        onClick = { viewModel.state.value = state.copy(calls = emptyList()) }
+                    ) {
                         Icon(painterResource(R.drawable.ic_clear_all), null)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text("Clear all")
@@ -157,47 +180,85 @@ fun HomePage(
             if (state.calls.isNotEmpty()) {
                 val listState = rememberLazyListState()
                 editCallResultRecipient.onNavResult {
-                    if (it is NavResult.Value) coroutineScope.launch { listState.animateScrollToItem(it.value) }
+                    if (it is NavResult.Value)
+                        coroutineScope.launch { listState.animateScrollToItem(it.value) }
                 }
                 LazyRow(
-                    state = listState, contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically
+                    state = listState,
+                    contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     itemsIndexed(state.calls) { index, call ->
-                        OutlinedCard(onClick = { navigator.navigate(EditCallDialogDestination(index)) }) {
+                        OutlinedCard(
+                            onClick = { navigator.navigate(EditCallDialogDestination(index)) }
+                        ) {
                             Column(
                                 verticalArrangement = Arrangement.spacedBy(4.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(8.dp)
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.padding(8.dp)
                             ) {
-                                PlayingCard(call.card, textStyle = LocalTextStyle.current.copy(fontSize = 32.sp))
+                                PlayingCard(
+                                    call.card,
+                                    textStyle = LocalTextStyle.current.copy(fontSize = 32.sp)
+                                )
                                 Text(formatCallNumber(call.number))
-                                Row(horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp),
                                     verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier
-                                        .clip(MaterialTheme.shapes.small)
-                                        .clickable {
-                                            viewModel.state.value = state.copy(calls = state.calls
-                                                .toMutableList()
-                                                .apply { this[index] = this[index].copy(found = !call.found) })
-                                        }
-                                        .padding(horizontal = 8.dp)) {
+                                    modifier =
+                                        Modifier.clip(MaterialTheme.shapes.small)
+                                            .clickable {
+                                                viewModel.state.value =
+                                                    state.copy(
+                                                        calls =
+                                                            state.calls.toMutableList().apply {
+                                                                this[index] =
+                                                                    this[index].copy(
+                                                                        found = !call.found
+                                                                    )
+                                                            }
+                                                    )
+                                            }
+                                            .padding(horizontal = 8.dp)
+                                ) {
                                     Text("Found?")
-                                    Checkbox(checked = call.found, onCheckedChange = {
-                                        viewModel.state.value = state.copy(calls = state.calls.toMutableList()
-                                            .apply { this[index] = this[index].copy(found = it) })
-                                    })
+                                    Checkbox(
+                                        checked = call.found,
+                                        onCheckedChange = {
+                                            viewModel.state.value =
+                                                state.copy(
+                                                    calls =
+                                                        state.calls.toMutableList().apply {
+                                                            this[index] =
+                                                                this[index].copy(found = it)
+                                                        }
+                                                )
+                                        }
+                                    )
                                 }
-                                IconButton(onClick = {
-                                    viewModel.state.value =
-                                        state.copy(calls = state.calls.toMutableList().apply { removeAt(index) })
-                                }) {
+                                IconButton(
+                                    onClick = {
+                                        viewModel.state.value =
+                                            state.copy(
+                                                calls =
+                                                    state.calls.toMutableList().apply {
+                                                        removeAt(index)
+                                                    }
+                                            )
+                                    }
+                                ) {
                                     Icon(painterResource(R.drawable.ic_close), null)
                                 }
                             }
                         }
                     }
                     item {
-                        OutlinedButton(onClick = { navigator.navigate(EditCallDialogDestination(state.calls.size)) }) {
+                        OutlinedButton(
+                            onClick = {
+                                navigator.navigate(EditCallDialogDestination(state.calls.size))
+                            }
+                        ) {
                             Icon(painterResource(R.drawable.ic_add), null)
                             Spacer(modifier = Modifier.width(8.dp))
                             Text("Add call")
@@ -205,11 +266,13 @@ fun HomePage(
                     }
                 }
             } else {
-                Row(verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { navigator.navigate(EditCallDialogDestination(0)) }
-                        .padding(horizontal = 24.dp, vertical = 8.dp)) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier =
+                        Modifier.fillMaxWidth()
+                            .clickable { navigator.navigate(EditCallDialogDestination(0)) }
+                            .padding(horizontal = 24.dp, vertical = 8.dp)
+                ) {
                     Text("No calls added")
                     Spacer(modifier = Modifier.weight(1f))
                     Button(onClick = { navigator.navigate(EditCallDialogDestination(0)) }) {
@@ -222,19 +285,16 @@ fun HomePage(
             Spacer(modifier = Modifier.weight(1f))
             Button(
                 onClick = { navigator.navigate(DisplayPageDestination) },
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(horizontal = 24.dp)
+                modifier = Modifier.align(Alignment.CenterHorizontally).padding(horizontal = 24.dp)
             ) {
                 Icon(painterResource(R.drawable.ic_smart_display), null)
                 Spacer(modifier = Modifier.width(8.dp))
                 Text("Start display")
             }
             Text(
-                "Version ${BuildConfig.VERSION_NAME}", style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(bottom = 16.dp)
+                "Version ${BuildConfig.VERSION_NAME}",
+                style = MaterialTheme.typography.labelSmall,
+                modifier = Modifier.align(Alignment.CenterHorizontally).padding(bottom = 16.dp)
             )
         }
     }
