@@ -23,13 +23,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -59,6 +62,8 @@ import io.github.edwinchang24.shengjidisplay.R
 import io.github.edwinchang24.shengjidisplay.appDestination
 import io.github.edwinchang24.shengjidisplay.components.CallsDisplay
 import io.github.edwinchang24.shengjidisplay.components.PlayingCard
+import io.github.edwinchang24.shengjidisplay.destinations.EditCallDialogDestination
+import io.github.edwinchang24.shengjidisplay.destinations.EditTrumpDialogDestination
 import io.github.edwinchang24.shengjidisplay.destinations.HomePageDestination
 import io.github.edwinchang24.shengjidisplay.destinations.SettingsPageDestination
 import io.github.edwinchang24.shengjidisplay.model.HorizontalOrientation
@@ -152,8 +157,8 @@ fun DisplayPage(
         ) {
             Box(
                 contentAlignment = Alignment.Center, modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
+                    .weight(1f)
+                    .fillMaxWidth()
             ) {
                 AnimatedContent(
                     topContent, transitionSpec = {
@@ -194,38 +199,71 @@ fun DisplayPage(
                 ) { tc ->
                     when (tc) {
                         is DisplayContent.Trump -> Box(
-                            contentAlignment = Alignment.Center, modifier = Modifier
-                            .fillMaxSize()
-                            .rotate(
-                                when (tc.direction) {
-                                    DisplayContent.Direction.Center -> 180f
-                                    DisplayContent.Direction.Left -> 90f
-                                    DisplayContent.Direction.Right -> -90f
-                                }
-                            )
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .rotate(
+                                    when (tc.direction) {
+                                        DisplayContent.Direction.Center -> 180f
+                                        DisplayContent.Direction.Left -> 90f
+                                        DisplayContent.Direction.Right -> -90f
+                                    }
+                                )
                         ) {
-                            state.trump?.let {
-                                PlayingCard(card = it, textStyle = LocalTextStyle.current.copy(fontSize = 84.sp))
-                            } ?: Text("No trump selected")
+                            AnimatedContent(targetState = state.trump, label = "") { targetTrump ->
+                                targetTrump?.let {
+                                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                                        PlayingCard(
+                                            card = it, textStyle = LocalTextStyle.current.copy(fontSize = 84.sp)
+                                        )
+                                    }
+                                } ?: Column(
+                                    verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier.fillMaxSize()
+                                ) {
+                                    Text("No trump card selected")
+                                    OutlinedButton(onClick = { navigator.navigate(EditTrumpDialogDestination) }) {
+                                        Icon(painterResource(R.drawable.ic_add), null)
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text("Add")
+                                    }
+                                }
+                            }
                         }
 
                         is DisplayContent.Calls -> Box(
-                            contentAlignment = Alignment.Center, modifier = Modifier
-                            .fillMaxSize()
-                            .rotate(
-                                when (tc.direction) {
-                                    DisplayContent.Direction.Center -> 180f
-                                    DisplayContent.Direction.Left -> 90f
-                                    DisplayContent.Direction.Right -> -90f
-                                }
-                            )
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .rotate(
+                                    when (tc.direction) {
+                                        DisplayContent.Direction.Center -> 180f
+                                        DisplayContent.Direction.Left -> 90f
+                                        DisplayContent.Direction.Right -> -90f
+                                    }
+                                )
                         ) {
-                            state.calls.takeIf { it.isNotEmpty() }?.let {
-                                CallsDisplay(calls = state.calls, setFound = { index, found ->
-                                    mainActivityViewModel.state.value = state.copy(calls = state.calls.toMutableList()
-                                        .also { it[index] = it[index].copy(found = found) })
-                                })
-                            } ?: Text("No calls added")
+                            AnimatedContent(targetState = state.calls, label = "") { targetCalls ->
+                                targetCalls.takeIf { it.isNotEmpty() }?.let {
+                                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                                        CallsDisplay(calls = state.calls, setFound = { index, found ->
+                                            mainActivityViewModel.state.value = state.copy(
+                                                calls = state.calls.toMutableList()
+                                                    .also { it[index] = it[index].copy(found = found) })
+                                        })
+                                    }
+                                } ?: Column(
+                                    verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier.fillMaxSize()
+                                ) {
+                                    Text("No calls added")
+                                    OutlinedButton(onClick = { navigator.navigate(EditCallDialogDestination(0)) }) {
+                                        Icon(painterResource(R.drawable.ic_add), null)
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text("Add")
+                                    }
+                                }
+                            }
                         }
 
                         DisplayContent.None -> Box(modifier = Modifier.fillMaxSize())
@@ -241,9 +279,9 @@ fun DisplayPage(
             ) { label ->
                 Box(
                     contentAlignment = Alignment.Center, modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(12.dp)
-                    .rotate(180f)
+                        .fillMaxWidth()
+                        .padding(12.dp)
+                        .rotate(180f)
                 ) {
                     Text(label, style = MaterialTheme.typography.labelLarge)
                 }
@@ -331,16 +369,16 @@ fun DisplayPage(
             ) { label ->
                 Box(
                     contentAlignment = Alignment.Center, modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(12.dp)
+                        .fillMaxWidth()
+                        .padding(12.dp)
                 ) {
                     Text(label, style = MaterialTheme.typography.labelLarge)
                 }
             }
             Box(
                 contentAlignment = Alignment.Center, modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
+                    .weight(1f)
+                    .fillMaxWidth()
             ) {
                 AnimatedContent(
                     bottomContent, transitionSpec = {
@@ -381,38 +419,71 @@ fun DisplayPage(
                 ) { tc ->
                     when (tc) {
                         is DisplayContent.Trump -> Box(
-                            contentAlignment = Alignment.Center, modifier = Modifier
-                            .fillMaxSize()
-                            .rotate(
-                                when (tc.direction) {
-                                    DisplayContent.Direction.Center -> 0f
-                                    DisplayContent.Direction.Left -> 90f
-                                    DisplayContent.Direction.Right -> -90f
-                                }
-                            )
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .rotate(
+                                    when (tc.direction) {
+                                        DisplayContent.Direction.Center -> 0f
+                                        DisplayContent.Direction.Left -> 90f
+                                        DisplayContent.Direction.Right -> -90f
+                                    }
+                                )
                         ) {
-                            state.trump?.let {
-                                PlayingCard(card = it, textStyle = LocalTextStyle.current.copy(fontSize = 84.sp))
-                            } ?: Text("No trump selected")
+                            AnimatedContent(targetState = state.trump, label = "") { targetTrump ->
+                                targetTrump?.let {
+                                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                                        PlayingCard(
+                                            card = it, textStyle = LocalTextStyle.current.copy(fontSize = 84.sp)
+                                        )
+                                    }
+                                } ?: Column(
+                                    verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier.fillMaxSize()
+                                ) {
+                                    Text("No trump card selected")
+                                    OutlinedButton(onClick = { navigator.navigate(EditTrumpDialogDestination) }) {
+                                        Icon(painterResource(R.drawable.ic_add), null)
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text("Add")
+                                    }
+                                }
+                            }
                         }
 
                         is DisplayContent.Calls -> Box(
-                            contentAlignment = Alignment.Center, modifier = Modifier
-                            .fillMaxSize()
-                            .rotate(
-                                when (tc.direction) {
-                                    DisplayContent.Direction.Center -> 0f
-                                    DisplayContent.Direction.Left -> 90f
-                                    DisplayContent.Direction.Right -> -90f
-                                }
-                            )
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .rotate(
+                                    when (tc.direction) {
+                                        DisplayContent.Direction.Center -> 0f
+                                        DisplayContent.Direction.Left -> 90f
+                                        DisplayContent.Direction.Right -> -90f
+                                    }
+                                )
                         ) {
-                            state.calls.takeIf { it.isNotEmpty() }?.let {
-                                CallsDisplay(calls = state.calls, setFound = { index, found ->
-                                    mainActivityViewModel.state.value = state.copy(calls = state.calls.toMutableList()
-                                        .also { it[index] = it[index].copy(found = found) })
-                                })
-                            } ?: Text("No calls added")
+                            AnimatedContent(targetState = state.calls, label = "") { targetCalls ->
+                                targetCalls.takeIf { it.isNotEmpty() }?.let {
+                                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                                        CallsDisplay(calls = state.calls, setFound = { index, found ->
+                                            mainActivityViewModel.state.value = state.copy(
+                                                calls = state.calls.toMutableList()
+                                                    .also { it[index] = it[index].copy(found = found) })
+                                        })
+                                    }
+                                } ?: Column(
+                                    verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier.fillMaxSize()
+                                ) {
+                                    Text("No calls added")
+                                    OutlinedButton(onClick = { navigator.navigate(EditCallDialogDestination(0)) }) {
+                                        Icon(painterResource(R.drawable.ic_add), null)
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text("Add")
+                                    }
+                                }
+                            }
                         }
 
                         DisplayContent.None -> Box(modifier = Modifier.fillMaxSize())
