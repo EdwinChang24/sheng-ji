@@ -407,7 +407,7 @@ private fun DisplayContent(
                             ) {
                                 PlayingCard(
                                     card = it,
-                                    textStyle = LocalTextStyle.current.copy(fontSize = 84.sp),
+                                    textStyle = LocalTextStyle.current.copy(fontSize = 112.sp),
                                     modifier =
                                         Modifier.clip(MaterialTheme.shapes.large)
                                             .clickable(onClick = onEditTrump)
