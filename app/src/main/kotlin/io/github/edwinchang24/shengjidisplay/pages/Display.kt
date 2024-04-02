@@ -75,6 +75,7 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format
+import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 
@@ -197,19 +198,9 @@ fun DisplayPage(
                         .background(MaterialTheme.colorScheme.surfaceContainer)
                         .padding(16.dp)
             ) {
-                val timeFormat =
-                    LocalDateTime.Format {
-                        amPmHour()
-                        char(':')
-                        minute()
-                    }
-                val clockText =
-                    Instant.fromEpochMilliseconds(currentTimeMs)
-                        .toLocalDateTime(TimeZone.currentSystemDefault())
-                        .format(timeFormat)
                 if (state.settings.showClock) {
                     Clock(
-                        text = clockText,
+                        currentTimeMs,
                         orientation = state.settings.clockOrientation,
                         setOrientation = {
                             mainActivityViewModel.state.value =
@@ -243,7 +234,7 @@ fun DisplayPage(
                 }
                 if (state.settings.showClock) {
                     Clock(
-                        text = clockText,
+                        currentTimeMs,
                         orientation = state.settings.clockOrientation,
                         setOrientation = {
                             mainActivityViewModel.state.value =
@@ -297,12 +288,22 @@ private fun DisplayLabel(content: DisplayContent, modifier: Modifier = Modifier)
 
 @Composable
 private fun Clock(
-    text: String,
+    currentTimeMs: Long,
     orientation: Boolean,
     setOrientation: (Boolean) -> Unit,
     leftSide: Boolean,
     modifier: Modifier = Modifier
 ) {
+    val timeFormat =
+        LocalDateTime.Format {
+            amPmHour(Padding.NONE)
+            char(':')
+            minute()
+        }
+    val clockText =
+        Instant.fromEpochMilliseconds(currentTimeMs)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+            .format(timeFormat)
     AnimatedContent(
         targetState = orientation,
         label = "",
@@ -314,7 +315,7 @@ private fun Clock(
                 .padding(8.dp)
     ) { targetOrientation ->
         Text(
-            text,
+            clockText,
             style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.rotate(if (targetOrientation xor leftSide) 0f else 180f)
         )
