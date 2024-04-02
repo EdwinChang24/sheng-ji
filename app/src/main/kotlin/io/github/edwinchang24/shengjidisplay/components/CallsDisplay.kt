@@ -88,9 +88,9 @@ fun CallsDisplay(
                     ) {
                         PlayingCard(
                             call.card,
-                            textStyle = LocalTextStyle.current.copy(fontSize = 40.sp)
+                            textStyle = LocalTextStyle.current.copy(fontSize = 48.sp)
                         )
-                        Text(formatCallNumber(call.number), fontSize = 32.sp)
+                        Text(formatCallNumber(call.number), fontSize = 28.sp)
                     }
                     val primaryColor = MaterialTheme.colorScheme.primary
                     val lineScale by

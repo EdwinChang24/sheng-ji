@@ -289,10 +289,7 @@ private fun DisplayLabel(content: DisplayContent, modifier: Modifier = Modifier)
         },
         label = ""
     ) { label ->
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = modifier.fillMaxWidth().padding(12.dp)
-        ) {
+        Box(contentAlignment = Alignment.Center, modifier = modifier.fillMaxWidth().padding(8.dp)) {
             Text(label, style = MaterialTheme.typography.labelLarge)
         }
     }
@@ -409,21 +406,33 @@ private fun DisplayContent(
                             ) {
                                 PlayingCard(
                                     card = it,
-                                    textStyle = LocalTextStyle.current.copy(fontSize = 84.sp)
+                                    textStyle = LocalTextStyle.current.copy(fontSize = 84.sp),
+                                    modifier =
+                                        Modifier.clip(MaterialTheme.shapes.large)
+                                            .clickable(onClick = onEditTrump)
+                                            .padding(24.dp)
                                 )
                             }
                         }
-                            ?: Column(
-                                verticalArrangement =
-                                    Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
-                                horizontalAlignment = Alignment.CenterHorizontally,
+                            ?: Box(
+                                contentAlignment = Alignment.Center,
                                 modifier = Modifier.fillMaxSize()
                             ) {
-                                Text("No trump card selected")
-                                OutlinedButton(onClick = onEditTrump) {
-                                    Icon(painterResource(R.drawable.ic_add), null)
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text("Add")
+                                Column(
+                                    verticalArrangement =
+                                        Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier =
+                                        Modifier.clip(MaterialTheme.shapes.large)
+                                            .clickable(onClick = onEditTrump)
+                                            .padding(24.dp)
+                                ) {
+                                    Text("No trump card selected")
+                                    OutlinedButton(onClick = onEditTrump) {
+                                        Icon(painterResource(R.drawable.ic_add), null)
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text("Add")
+                                    }
                                 }
                             }
                     }
@@ -440,7 +449,11 @@ private fun DisplayContent(
                                 }
                             )
                 ) {
-                    AnimatedContent(targetState = state.calls, label = "") { targetCalls ->
+                    AnimatedContent(
+                        targetState = state.calls,
+                        contentKey = { it.isEmpty() },
+                        label = ""
+                    ) { targetCalls ->
                         targetCalls
                             .takeIf { it.isNotEmpty() }
                             ?.let {
@@ -451,17 +464,25 @@ private fun DisplayContent(
                                     CallsDisplay(calls = state.calls, setFound = onEditCallFound)
                                 }
                             }
-                            ?: Column(
-                                verticalArrangement =
-                                    Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
-                                horizontalAlignment = Alignment.CenterHorizontally,
+                            ?: Box(
+                                contentAlignment = Alignment.Center,
                                 modifier = Modifier.fillMaxSize()
                             ) {
-                                Text("No calls added")
-                                OutlinedButton(onClick = onNewCall) {
-                                    Icon(painterResource(R.drawable.ic_add), null)
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text("Add")
+                                Column(
+                                    verticalArrangement =
+                                        Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier =
+                                        Modifier.clip(MaterialTheme.shapes.large)
+                                            .clickable(onClick = onNewCall)
+                                            .padding(24.dp)
+                                ) {
+                                    Text("No calls added")
+                                    OutlinedButton(onClick = onNewCall) {
+                                        Icon(painterResource(R.drawable.ic_add), null)
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text("Add")
+                                    }
                                 }
                             }
                     }
