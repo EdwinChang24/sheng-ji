@@ -35,6 +35,8 @@ import com.ramcosta.composedestinations.spec.DestinationStyle
 import io.github.edwinchang24.shengjidisplay.MainActivityViewModel
 import io.github.edwinchang24.shengjidisplay.MainNavGraph
 import io.github.edwinchang24.shengjidisplay.R
+import io.github.edwinchang24.shengjidisplay.components.ButtonWithEmphasis
+import io.github.edwinchang24.shengjidisplay.components.OutlinedButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.components.RankPicker
 import io.github.edwinchang24.shengjidisplay.components.SuitPicker
 import io.github.edwinchang24.shengjidisplay.model.PlayingCard
@@ -81,12 +83,11 @@ fun EditTrumpDialog(navigator: DestinationsNavigator, viewModel: MainActivityVie
                 horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.End),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                OutlinedButton(onClick = navigator::navigateUp) {
+                OutlinedButtonWithEmphasis(onClick = navigator::navigateUp) {
                     Icon(painterResource(R.drawable.ic_close), null)
-                    Spacer(modifier = Modifier.width(8.dp))
                     Text("Cancel")
                 }
-                Button(
+                ButtonWithEmphasis(
                     onClick = {
                         rank?.let { r ->
                             suit?.let { s ->
@@ -99,7 +100,6 @@ fun EditTrumpDialog(navigator: DestinationsNavigator, viewModel: MainActivityVie
                     enabled = rank != null && suit != null
                 ) {
                     Icon(painterResource(R.drawable.ic_done), null)
-                    Spacer(modifier = Modifier.width(8.dp))
                     Text("Done")
                 }
             }

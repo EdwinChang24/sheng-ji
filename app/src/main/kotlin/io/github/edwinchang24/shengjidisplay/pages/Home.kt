@@ -12,6 +12,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,14 +25,11 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -58,11 +56,15 @@ import io.github.edwinchang24.shengjidisplay.MainActivityViewModel
 import io.github.edwinchang24.shengjidisplay.MainNavGraph
 import io.github.edwinchang24.shengjidisplay.R
 import io.github.edwinchang24.shengjidisplay.appDestination
+import io.github.edwinchang24.shengjidisplay.components.ButtonWithEmphasis
+import io.github.edwinchang24.shengjidisplay.components.IconButtonWithEmphasis
+import io.github.edwinchang24.shengjidisplay.components.OutlinedButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.components.PlayingCard
 import io.github.edwinchang24.shengjidisplay.destinations.DisplayPageDestination
 import io.github.edwinchang24.shengjidisplay.destinations.EditCallDialogDestination
 import io.github.edwinchang24.shengjidisplay.destinations.EditTrumpDialogDestination
 import io.github.edwinchang24.shengjidisplay.destinations.SettingsPageDestination
+import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
 import io.github.edwinchang24.shengjidisplay.util.formatCallNumber
 import kotlinx.coroutines.launch
 
@@ -82,7 +84,9 @@ fun HomePage(
             TopAppBar(
                 title = { Text(stringResource(R.string.app_name)) },
                 actions = {
-                    IconButton(onClick = { navigator.navigate(SettingsPageDestination) }) {
+                    IconButtonWithEmphasis(
+                        onClick = { navigator.navigate(SettingsPageDestination) }
+                    ) {
                         Icon(painterResource(R.drawable.ic_settings), null)
                     }
                 }
@@ -111,24 +115,28 @@ fun HomePage(
                                 .clickable { navigator.navigate(EditTrumpDialogDestination) }
                                 .padding(horizontal = 24.dp, vertical = 16.dp)
                     ) {
-                        Row(
-                            horizontalArrangement =
-                                Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier =
-                                Modifier.clip(MaterialTheme.shapes.medium)
-                                    .clickable { navigator.navigate(EditTrumpDialogDestination) }
-                                    .padding(8.dp)
-                        ) {
-                            PlayingCard(
-                                targetTrump,
-                                textStyle = LocalTextStyle.current.copy(fontSize = 32.sp),
-                                modifier = Modifier.padding(8.dp)
-                            )
-                            IconButton(
-                                onClick = { viewModel.state.value = state.copy(trump = null) }
+                        PressableWithEmphasis {
+                            Row(
+                                horizontalArrangement =
+                                    Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier =
+                                    Modifier.clip(MaterialTheme.shapes.medium)
+                                        .clickableForEmphasis {
+                                            navigator.navigate(EditTrumpDialogDestination)
+                                        }
+                                        .padding(8.dp)
                             ) {
-                                Icon(painterResource(R.drawable.ic_close), null)
+                                PlayingCard(
+                                    targetTrump,
+                                    textStyle = LocalTextStyle.current.copy(fontSize = 32.sp),
+                                    modifier = Modifier.padding(8.dp).pressEmphasis()
+                                )
+                                IconButtonWithEmphasis(
+                                    onClick = { viewModel.state.value = state.copy(trump = null) }
+                                ) {
+                                    Icon(painterResource(R.drawable.ic_close), null)
+                                }
                             }
                         }
                     }
@@ -142,9 +150,10 @@ fun HomePage(
                     ) {
                         Text("No trump card selected")
                         Spacer(modifier = Modifier.weight(1f))
-                        Button(onClick = { navigator.navigate(EditTrumpDialogDestination) }) {
+                        ButtonWithEmphasis(
+                            onClick = { navigator.navigate(EditTrumpDialogDestination) }
+                        ) {
                             Icon(painterResource(R.drawable.ic_add), null)
-                            Spacer(modifier = Modifier.width(8.dp))
                             Text("Add")
                         }
                     }
@@ -168,11 +177,10 @@ fun HomePage(
                                 clip = false
                             )
                 ) {
-                    OutlinedButton(
+                    OutlinedButtonWithEmphasis(
                         onClick = { viewModel.state.value = state.copy(calls = emptyList()) }
                     ) {
                         Icon(painterResource(R.drawable.ic_clear_all), null)
-                        Spacer(modifier = Modifier.width(8.dp))
                         Text("Clear all")
                     }
                 }
@@ -190,77 +198,78 @@ fun HomePage(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     itemsIndexed(state.calls) { index, call ->
-                        OutlinedCard(
-                            onClick = { navigator.navigate(EditCallDialogDestination(index)) }
-                        ) {
-                            Column(
-                                verticalArrangement = Arrangement.spacedBy(4.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier.padding(8.dp)
-                            ) {
-                                PlayingCard(
-                                    call.card,
-                                    textStyle = LocalTextStyle.current.copy(fontSize = 32.sp)
+                        fun setFound(found: Boolean) {
+                            viewModel.state.value =
+                                state.copy(
+                                    calls =
+                                        state.calls.toMutableList().apply {
+                                            this[index] = this[index].copy(found = found)
+                                        }
                                 )
-                                Text(formatCallNumber(call.number))
-                                Row(
-                                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier =
-                                        Modifier.clip(MaterialTheme.shapes.small)
-                                            .clickable {
-                                                viewModel.state.value =
-                                                    state.copy(
-                                                        calls =
-                                                            state.calls.toMutableList().apply {
-                                                                this[index] =
-                                                                    this[index].copy(
-                                                                        found = !call.found
-                                                                    )
-                                                            }
-                                                    )
-                                            }
-                                            .padding(horizontal = 8.dp)
+                        }
+                        PressableWithEmphasis {
+                            OutlinedCard(
+                                onClick = { navigator.navigate(EditCallDialogDestination(index)) },
+                                interactionSource = interactionSource
+                            ) {
+                                Column(
+                                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier.width(IntrinsicSize.Max).padding(8.dp)
                                 ) {
-                                    Text("Found?")
-                                    Checkbox(
-                                        checked = call.found,
-                                        onCheckedChange = {
+                                    Column(
+                                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        modifier = Modifier.fillMaxWidth().pressEmphasis()
+                                    ) {
+                                        PlayingCard(
+                                            call.card,
+                                            textStyle =
+                                                LocalTextStyle.current.copy(fontSize = 32.sp)
+                                        )
+                                        Text(formatCallNumber(call.number))
+                                    }
+                                    PressableWithEmphasis {
+                                        Row(
+                                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            modifier =
+                                                Modifier.clip(MaterialTheme.shapes.small)
+                                                    .clickableForEmphasis { setFound(!call.found) }
+                                                    .padding(start = 8.dp)
+                                                    .pressEmphasis()
+                                        ) {
+                                            Text("Found?")
+                                            Checkbox(
+                                                checked = call.found,
+                                                onCheckedChange = { setFound(it) }
+                                            )
+                                        }
+                                    }
+                                    IconButtonWithEmphasis(
+                                        onClick = {
                                             viewModel.state.value =
                                                 state.copy(
                                                     calls =
                                                         state.calls.toMutableList().apply {
-                                                            this[index] =
-                                                                this[index].copy(found = it)
+                                                            removeAt(index)
                                                         }
                                                 )
                                         }
-                                    )
-                                }
-                                IconButton(
-                                    onClick = {
-                                        viewModel.state.value =
-                                            state.copy(
-                                                calls =
-                                                    state.calls.toMutableList().apply {
-                                                        removeAt(index)
-                                                    }
-                                            )
+                                    ) {
+                                        Icon(painterResource(R.drawable.ic_close), null)
                                     }
-                                ) {
-                                    Icon(painterResource(R.drawable.ic_close), null)
                                 }
                             }
                         }
                     }
                     item {
-                        OutlinedButton(
+                        OutlinedButtonWithEmphasis(
                             onClick = {
                                 navigator.navigate(EditCallDialogDestination(state.calls.size))
                             }
                         ) {
                             Icon(painterResource(R.drawable.ic_add), null)
-                            Spacer(modifier = Modifier.width(8.dp))
                             Text("Add call")
                         }
                     }
@@ -275,20 +284,20 @@ fun HomePage(
                 ) {
                     Text("No calls added")
                     Spacer(modifier = Modifier.weight(1f))
-                    Button(onClick = { navigator.navigate(EditCallDialogDestination(0)) }) {
+                    ButtonWithEmphasis(
+                        onClick = { navigator.navigate(EditCallDialogDestination(0)) }
+                    ) {
                         Icon(painterResource(R.drawable.ic_add), null)
-                        Spacer(modifier = Modifier.width(8.dp))
                         Text("Add")
                     }
                 }
             }
             Spacer(modifier = Modifier.weight(1f))
-            Button(
+            ButtonWithEmphasis(
                 onClick = { navigator.navigate(DisplayPageDestination) },
                 modifier = Modifier.align(Alignment.CenterHorizontally).padding(horizontal = 24.dp)
             ) {
                 Icon(painterResource(R.drawable.ic_smart_display), null)
-                Spacer(modifier = Modifier.width(8.dp))
                 Text("Start display")
             }
             Text(

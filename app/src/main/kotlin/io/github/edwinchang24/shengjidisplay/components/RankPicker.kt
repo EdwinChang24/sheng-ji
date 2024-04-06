@@ -14,48 +14,31 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
 import io.github.edwinchang24.shengjidisplay.theme.ShengJiDisplayTheme
 
 @Composable
 fun RankPicker(rank: String?, setRank: (String) -> Unit, modifier: Modifier = Modifier) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier) {
+        Row { (2..6).map { it.toString() }.forEach { RankButton(it, setRank, rank == it) } }
         Row {
-            (2..6)
-                .map { it.toString() }
-                .forEach {
-                    IconButton(
-                        onClick = { setRank(it) },
-                        colors =
-                            if (rank == it) IconButtonDefaults.filledIconButtonColors()
-                            else IconButtonDefaults.iconButtonColors()
-                    ) {
-                        Text(it)
-                    }
-                }
+            ((7..10).map { it.toString() } + "J").forEach { RankButton(it, setRank, rank == it) }
         }
-        Row {
-            ((7..10).map { it.toString() } + "J").forEach {
-                IconButton(
-                    onClick = { setRank(it) },
-                    colors =
-                        if (rank == it) IconButtonDefaults.filledIconButtonColors()
-                        else IconButtonDefaults.iconButtonColors()
-                ) {
-                    Text(it)
-                }
-            }
-        }
-        Row {
-            listOf("Q", "K", "A").forEach {
-                IconButton(
-                    onClick = { setRank(it) },
-                    colors =
-                        if (rank == it) IconButtonDefaults.filledIconButtonColors()
-                        else IconButtonDefaults.iconButtonColors()
-                ) {
-                    Text(it)
-                }
-            }
+        Row { listOf("Q", "K", "A").forEach { RankButton(it, setRank, rank == it) } }
+    }
+}
+
+@Composable
+private fun RankButton(it: String, setRank: (String) -> Unit, selected: Boolean) {
+    PressableWithEmphasis {
+        IconButton(
+            onClick = { setRank(it) },
+            colors =
+                if (selected) IconButtonDefaults.filledIconButtonColors()
+                else IconButtonDefaults.iconButtonColors(),
+            interactionSource = interactionSource
+        ) {
+            Text(it, modifier = Modifier.pressEmphasis())
         }
     }
 }

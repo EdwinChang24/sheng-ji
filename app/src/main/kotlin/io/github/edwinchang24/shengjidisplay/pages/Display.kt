@@ -29,7 +29,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -61,11 +60,14 @@ import io.github.edwinchang24.shengjidisplay.MainNavGraph
 import io.github.edwinchang24.shengjidisplay.R
 import io.github.edwinchang24.shengjidisplay.appDestination
 import io.github.edwinchang24.shengjidisplay.components.CallsDisplay
+import io.github.edwinchang24.shengjidisplay.components.IconButtonWithEmphasis
+import io.github.edwinchang24.shengjidisplay.components.OutlinedButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.components.PlayingCard
 import io.github.edwinchang24.shengjidisplay.destinations.EditCallDialogDestination
 import io.github.edwinchang24.shengjidisplay.destinations.EditTrumpDialogDestination
 import io.github.edwinchang24.shengjidisplay.destinations.HomePageDestination
 import io.github.edwinchang24.shengjidisplay.destinations.SettingsPageDestination
+import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
 import io.github.edwinchang24.shengjidisplay.model.AppState
 import io.github.edwinchang24.shengjidisplay.model.HorizontalOrientation
 import io.github.edwinchang24.shengjidisplay.model.VerticalOrder
@@ -220,15 +222,19 @@ fun DisplayPage(
                         enter = fadeIn() + scaleIn(),
                         exit = fadeOut() + scaleOut()
                     ) {
-                        IconButton(onClick = { displayViewModel.autoPlay.value = !autoPlay }) {
+                        IconButtonWithEmphasis(
+                            onClick = { displayViewModel.autoPlay.value = !autoPlay }
+                        ) {
                             if (autoPlay) Icon(painterResource(R.drawable.ic_pause), null)
                             else Icon(painterResource(R.drawable.ic_play_arrow), null)
                         }
                     }
-                    IconButton(onClick = { navigator.navigate(SettingsPageDestination) }) {
+                    IconButtonWithEmphasis(
+                        onClick = { navigator.navigate(SettingsPageDestination) }
+                    ) {
                         Icon(painterResource(R.drawable.ic_settings), null)
                     }
-                    IconButton(onClick = { navigator.navigateUp() }) {
+                    IconButtonWithEmphasis(onClick = { navigator.navigateUp() }) {
                         Icon(painterResource(R.drawable.ic_close), null)
                     }
                 }
@@ -405,34 +411,39 @@ private fun DisplayContent(
                                 contentAlignment = Alignment.Center,
                                 modifier = Modifier.fillMaxSize()
                             ) {
-                                PlayingCard(
-                                    card = it,
-                                    textStyle = LocalTextStyle.current.copy(fontSize = 112.sp),
-                                    modifier =
-                                        Modifier.clip(MaterialTheme.shapes.large)
-                                            .clickable(onClick = onEditTrump)
-                                            .padding(24.dp)
-                                )
+                                PressableWithEmphasis {
+                                    PlayingCard(
+                                        card = it,
+                                        textStyle = LocalTextStyle.current.copy(fontSize = 112.sp),
+                                        modifier =
+                                            Modifier.clip(MaterialTheme.shapes.large)
+                                                .clickableForEmphasis(onClick = onEditTrump)
+                                                .padding(24.dp)
+                                                .pressEmphasis()
+                                    )
+                                }
                             }
                         }
                             ?: Box(
                                 contentAlignment = Alignment.Center,
                                 modifier = Modifier.fillMaxSize()
                             ) {
-                                Column(
-                                    verticalArrangement =
-                                        Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    modifier =
-                                        Modifier.clip(MaterialTheme.shapes.large)
-                                            .clickable(onClick = onEditTrump)
-                                            .padding(24.dp)
-                                ) {
-                                    Text("No trump card selected")
-                                    OutlinedButton(onClick = onEditTrump) {
-                                        Icon(painterResource(R.drawable.ic_add), null)
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                        Text("Add")
+                                PressableWithEmphasis {
+                                    Column(
+                                        verticalArrangement =
+                                            Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        modifier =
+                                            Modifier.clip(MaterialTheme.shapes.large)
+                                                .clickableForEmphasis(onClick = onEditTrump)
+                                                .padding(24.dp)
+                                                .pressEmphasis()
+                                    ) {
+                                        Text("No trump card selected")
+                                        OutlinedButtonWithEmphasis(onClick = onEditTrump) {
+                                            Icon(painterResource(R.drawable.ic_add), null)
+                                            Text("Add")
+                                        }
                                     }
                                 }
                             }
@@ -469,20 +480,23 @@ private fun DisplayContent(
                                 contentAlignment = Alignment.Center,
                                 modifier = Modifier.fillMaxSize()
                             ) {
-                                Column(
-                                    verticalArrangement =
-                                        Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    modifier =
-                                        Modifier.clip(MaterialTheme.shapes.large)
-                                            .clickable(onClick = onNewCall)
-                                            .padding(24.dp)
-                                ) {
-                                    Text("No calls added")
-                                    OutlinedButton(onClick = onNewCall) {
-                                        Icon(painterResource(R.drawable.ic_add), null)
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                        Text("Add")
+                                PressableWithEmphasis {
+                                    Column(
+                                        verticalArrangement =
+                                            Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        modifier =
+                                            Modifier.clip(MaterialTheme.shapes.large)
+                                                .clickableForEmphasis(onClick = onNewCall)
+                                                .padding(24.dp)
+                                                .pressEmphasis()
+                                    ) {
+                                        Text("No calls added")
+                                        OutlinedButton(onClick = onNewCall) {
+                                            Icon(painterResource(R.drawable.ic_add), null)
+                                            Spacer(modifier = Modifier.width(8.dp))
+                                            Text("Add")
+                                        }
                                     }
                                 }
                             }

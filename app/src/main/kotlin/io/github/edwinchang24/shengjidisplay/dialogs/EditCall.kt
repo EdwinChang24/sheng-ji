@@ -13,12 +13,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,7 +35,9 @@ import com.ramcosta.composedestinations.spec.DestinationStyle
 import io.github.edwinchang24.shengjidisplay.MainActivityViewModel
 import io.github.edwinchang24.shengjidisplay.MainNavGraph
 import io.github.edwinchang24.shengjidisplay.R
+import io.github.edwinchang24.shengjidisplay.components.ButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.components.NumberPicker
+import io.github.edwinchang24.shengjidisplay.components.OutlinedButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.components.RankPicker
 import io.github.edwinchang24.shengjidisplay.components.SuitPicker
 import io.github.edwinchang24.shengjidisplay.model.Call
@@ -124,14 +124,12 @@ fun EditCallDialog(
                 horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.End),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                OutlinedButton(onClick = navigator::navigateUp) {
+                OutlinedButtonWithEmphasis(onClick = navigator::navigateUp) {
                     Icon(painterResource(R.drawable.ic_close), null)
-                    Spacer(modifier = Modifier.width(8.dp))
                     Text("Cancel")
                 }
-                Button(onClick = { onDone() }, enabled = rank != null && suit != null) {
+                ButtonWithEmphasis(onClick = { onDone() }, enabled = rank != null && suit != null) {
                     Icon(painterResource(R.drawable.ic_done), null)
-                    Spacer(modifier = Modifier.width(8.dp))
                     Text("Done")
                 }
             }

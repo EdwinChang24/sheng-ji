@@ -11,6 +11,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,7 +36,6 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
@@ -45,6 +45,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -64,6 +65,8 @@ import io.github.edwinchang24.shengjidisplay.BuildConfig
 import io.github.edwinchang24.shengjidisplay.MainActivityViewModel
 import io.github.edwinchang24.shengjidisplay.MainNavGraph
 import io.github.edwinchang24.shengjidisplay.R
+import io.github.edwinchang24.shengjidisplay.components.IconButtonWithEmphasis
+import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
 import io.github.edwinchang24.shengjidisplay.model.HorizontalOrientation
 import io.github.edwinchang24.shengjidisplay.model.VerticalOrder
 
@@ -78,7 +81,7 @@ fun SettingsPage(navigator: DestinationsNavigator, viewModel: MainActivityViewMo
             TopAppBar(
                 title = { Text("Display settings") },
                 navigationIcon = {
-                    IconButton(onClick = { navigator.navigateUp() }) {
+                    IconButtonWithEmphasis(onClick = { navigator.navigateUp() }) {
                         Icon(painterResource(R.drawable.ic_arrow_back), null)
                     }
                 }
@@ -201,6 +204,7 @@ private fun BooleanPicker(
 private fun RowScope.PickerCard(
     onClick: () -> Unit,
     selected: Boolean,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     content: @Composable ColumnScope.() -> Unit
 ) {
     OutlinedCard(
@@ -217,6 +221,7 @@ private fun RowScope.PickerCard(
                     if (selected) MaterialTheme.colorScheme.primary
                     else MaterialTheme.colorScheme.outlineVariant
             ),
+        interactionSource = interactionSource,
         modifier = Modifier.weight(1f).fillMaxHeight(),
         content = content
     )
@@ -236,44 +241,61 @@ private fun VerticalOrderPicker(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Max)
         ) {
-            PickerCard(
-                onClick = { setVerticalOrder(VerticalOrder.Auto) },
-                selected = verticalOrder == VerticalOrder.Auto
-            ) {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                    Text(
-                        "Auto switch",
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(8.dp)
-                    )
+            PressableWithEmphasis {
+                PickerCard(
+                    onClick = { setVerticalOrder(VerticalOrder.Auto) },
+                    selected = verticalOrder == VerticalOrder.Auto,
+                    interactionSource = interactionSource
+                ) {
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                        Text(
+                            "Auto switch",
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(8.dp).pressEmphasis()
+                        )
+                    }
                 }
             }
-            PickerCard(
-                onClick = { setVerticalOrder(VerticalOrder.TrumpOnTop) },
-                selected = verticalOrder == VerticalOrder.TrumpOnTop
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxSize().padding(16.dp)
+            PressableWithEmphasis {
+                PickerCard(
+                    onClick = { setVerticalOrder(VerticalOrder.TrumpOnTop) },
+                    selected = verticalOrder == VerticalOrder.TrumpOnTop,
+                    interactionSource = interactionSource
                 ) {
-                    Text("Trump", textAlign = TextAlign.Center, modifier = Modifier.rotate(180f))
-                    HorizontalDivider()
-                    Text("Calls", textAlign = TextAlign.Center)
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxSize().padding(16.dp).pressEmphasis()
+                    ) {
+                        Text(
+                            "Trump",
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.rotate(180f)
+                        )
+                        HorizontalDivider()
+                        Text("Calls", textAlign = TextAlign.Center)
+                    }
                 }
             }
-            PickerCard(
-                onClick = { setVerticalOrder(VerticalOrder.CallsOnTop) },
-                selected = verticalOrder == VerticalOrder.CallsOnTop
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxSize().padding(16.dp)
+            PressableWithEmphasis {
+                PickerCard(
+                    onClick = { setVerticalOrder(VerticalOrder.CallsOnTop) },
+                    selected = verticalOrder == VerticalOrder.CallsOnTop,
+                    interactionSource = interactionSource
                 ) {
-                    Text("Calls", textAlign = TextAlign.Center, modifier = Modifier.rotate(180f))
-                    HorizontalDivider()
-                    Text("Trump", textAlign = TextAlign.Center)
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxSize().padding(16.dp).pressEmphasis()
+                    ) {
+                        Text(
+                            "Calls",
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.rotate(180f)
+                        )
+                        HorizontalDivider()
+                        Text("Trump", textAlign = TextAlign.Center)
+                    }
                 }
             }
         }
@@ -294,44 +316,55 @@ private fun HorizontalOrientationPicker(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Max)
         ) {
-            PickerCard(
-                onClick = { setHorizontalOrientation(HorizontalOrientation.Auto) },
-                selected = horizontalOrientation == HorizontalOrientation.Auto
-            ) {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                    Text(
-                        "Auto switch",
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(8.dp)
-                    )
+            PressableWithEmphasis {
+                PickerCard(
+                    onClick = { setHorizontalOrientation(HorizontalOrientation.Auto) },
+                    selected = horizontalOrientation == HorizontalOrientation.Auto,
+                    interactionSource = interactionSource
+                ) {
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                        Text(
+                            "Auto switch",
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(8.dp).pressEmphasis()
+                        )
+                    }
                 }
             }
-            PickerCard(
-                onClick = { setHorizontalOrientation(HorizontalOrientation.TopTowardsRight) },
-                selected = horizontalOrientation == HorizontalOrientation.TopTowardsRight
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxSize().padding(16.dp)
+            PressableWithEmphasis {
+                PickerCard(
+                    onClick = { setHorizontalOrientation(HorizontalOrientation.TopTowardsRight) },
+                    selected = horizontalOrientation == HorizontalOrientation.TopTowardsRight,
+                    interactionSource = interactionSource
                 ) {
-                    Text("Aa", textAlign = TextAlign.Center, modifier = Modifier.rotate(-90f))
-                    HorizontalDivider()
-                    Text("Aa", textAlign = TextAlign.Center, modifier = Modifier.rotate(90f))
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxSize().padding(16.dp).pressEmphasis()
+                    ) {
+                        Text("Aa", textAlign = TextAlign.Center, modifier = Modifier.rotate(-90f))
+                        HorizontalDivider()
+                        Text("Aa", textAlign = TextAlign.Center, modifier = Modifier.rotate(90f))
+                    }
                 }
             }
-            PickerCard(
-                onClick = { setHorizontalOrientation(HorizontalOrientation.BottomTowardsRight) },
-                selected = horizontalOrientation == HorizontalOrientation.BottomTowardsRight
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxSize().padding(16.dp)
+            PressableWithEmphasis {
+                PickerCard(
+                    onClick = {
+                        setHorizontalOrientation(HorizontalOrientation.BottomTowardsRight)
+                    },
+                    selected = horizontalOrientation == HorizontalOrientation.BottomTowardsRight,
+                    interactionSource = interactionSource
                 ) {
-                    Text("Aa", textAlign = TextAlign.Center, modifier = Modifier.rotate(90f))
-                    HorizontalDivider()
-                    Text("Aa", textAlign = TextAlign.Center, modifier = Modifier.rotate(-90f))
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxSize().padding(16.dp).pressEmphasis()
+                    ) {
+                        Text("Aa", textAlign = TextAlign.Center, modifier = Modifier.rotate(90f))
+                        HorizontalDivider()
+                        Text("Aa", textAlign = TextAlign.Center, modifier = Modifier.rotate(-90f))
+                    }
                 }
             }
         }
