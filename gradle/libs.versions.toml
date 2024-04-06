@@ -1,20 +1,19 @@
 [versions]
 activity-compose = "1.8.2"
-agp = "8.3.1"
+agp = "8.4.0-rc01"
 androidx-test-ext-junit = "1.1.5"
-compose-bom = "2024.03.00"
+compose-bom = "2024.04.00"
 compose-destinations = "1.10.2"
 core-ktx = "1.12.0"
 core-splashscreen = "1.0.1"
 espresso-core = "3.5.1"
 junit = "4.13.2"
-hilt = "2.51"
+hilt = "2.51.1"
 hilt-navigation-compose = "1.2.0"
-# noinspection GradleDependency
-kotlin = "1.9.22"
+kotlin = "1.9.23"
 kotlinx-serialization = "1.6.3"
 kotlinx-datetime = "0.6.0-RC.2"
-ksp = "1.9.22-1.0.17"
+ksp = "1.9.23-1.0.20"
 lifecycle-runtime = "2.7.0"
 
 [libraries]
