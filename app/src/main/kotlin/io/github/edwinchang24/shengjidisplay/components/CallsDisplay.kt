@@ -3,17 +3,18 @@ package io.github.edwinchang24.shengjidisplay.components
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -38,7 +39,7 @@ import io.github.edwinchang24.shengjidisplay.model.Suit
 import io.github.edwinchang24.shengjidisplay.theme.ShengJiDisplayTheme
 import io.github.edwinchang24.shengjidisplay.util.formatCallNumber
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun CallsDisplay(
     calls: List<Call>,
@@ -47,26 +48,28 @@ fun CallsDisplay(
 ) {
     FlowRow(
         maxItemsInEachRow = 2,
-        horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = modifier.width(IntrinsicSize.Max)
+        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier.verticalScroll(rememberScrollState())
     ) {
         calls.forEachIndexed { index, call ->
             PressableWithEmphasis {
                 OutlinedCard(
                     onClick = { setFound(index, !call.found) },
                     interactionSource = interactionSource,
-                    modifier = Modifier.weight(1f).height(IntrinsicSize.Max)
+                    modifier = Modifier.size(128.dp)
                 ) {
                     Box(modifier = Modifier.fillMaxSize()) {
                         Column(
-                            verticalArrangement = Arrangement.spacedBy(4.dp),
+                            verticalArrangement =
+                                Arrangement.spacedBy(4.dp, Alignment.CenterVertically),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier =
-                                Modifier.padding(16.dp)
+                                Modifier.fillMaxSize()
+                                    .padding(16.dp)
                                     .alpha(
                                         animateFloatAsState(
-                                                if (call.found) 0.5f else 1f,
+                                                targetValue = if (call.found) 0.5f else 1f,
                                                 label = ""
                                             )
                                             .value
