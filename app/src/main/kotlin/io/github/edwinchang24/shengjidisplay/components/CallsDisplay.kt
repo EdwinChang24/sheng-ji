@@ -39,7 +39,7 @@ import io.github.edwinchang24.shengjidisplay.model.Suit
 import io.github.edwinchang24.shengjidisplay.theme.ShengJiDisplayTheme
 import io.github.edwinchang24.shengjidisplay.util.formatCallNumber
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CallsDisplay(
     calls: List<Call>,
