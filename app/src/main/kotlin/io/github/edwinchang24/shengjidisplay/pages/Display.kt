@@ -45,8 +45,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Constraints.Companion.Infinity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -198,7 +202,7 @@ fun DisplayPage(
                 modifier =
                     Modifier.fillMaxWidth()
                         .background(MaterialTheme.colorScheme.surfaceContainer)
-                        .padding(16.dp)
+                        .padding(8.dp)
             ) {
                 if (state.settings.showClock) {
                     Clock(
@@ -211,33 +215,14 @@ fun DisplayPage(
                         leftSide = true
                     )
                 }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    val autoPlay by displayViewModel.autoPlay.collectAsStateWithLifecycle()
-                    AnimatedVisibility(
-                        visible =
-                            state.settings.verticalOrder == VerticalOrder.Auto ||
-                                (state.settings.perpendicularMode &&
-                                    state.settings.horizontalOrientation ==
-                                        HorizontalOrientation.Auto),
-                        enter = fadeIn() + scaleIn(),
-                        exit = fadeOut() + scaleOut()
-                    ) {
-                        IconButtonWithEmphasis(
-                            onClick = { displayViewModel.autoPlay.value = !autoPlay }
-                        ) {
-                            if (autoPlay) Icon(painterResource(R.drawable.ic_pause), null)
-                            else Icon(painterResource(R.drawable.ic_play_arrow), null)
-                        }
-                    }
-                    IconButtonWithEmphasis(
-                        onClick = { navigator.navigate(SettingsPageDestination) }
-                    ) {
-                        Icon(painterResource(R.drawable.ic_settings), null)
-                    }
-                    IconButtonWithEmphasis(onClick = { navigator.navigateUp() }) {
-                        Icon(painterResource(R.drawable.ic_close), null)
-                    }
-                }
+                ActionButtons(
+                    state = state,
+                    autoPlay = displayViewModel.autoPlay.collectAsStateWithLifecycle().value,
+                    setAutoPlay = { displayViewModel.autoPlay.value = it },
+                    onNavigateSettings = { navigator.navigate(SettingsPageDestination) },
+                    onExit = navigator::navigateUp,
+                    modifier = Modifier.weight(1f)
+                )
                 if (state.settings.showClock) {
                     Clock(
                         currentTimeMs,
@@ -322,9 +307,69 @@ private fun Clock(
     ) { targetOrientation ->
         Text(
             clockText,
-            style = MaterialTheme.typography.headlineSmall,
+            style =
+                MaterialTheme.typography.bodyLarge.copy(
+                    fontSize = 26.sp,
+                    fontWeight = FontWeight.SemiBold
+                ),
             modifier = Modifier.rotate(if (targetOrientation xor leftSide) 0f else 180f)
         )
+    }
+}
+
+@Composable
+private fun ActionButtons(
+    state: AppState,
+    autoPlay: Boolean,
+    setAutoPlay: (Boolean) -> Unit,
+    onNavigateSettings: () -> Unit,
+    onExit: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Layout(
+        content = {
+            AnimatedVisibility(
+                visible =
+                    state.settings.verticalOrder == VerticalOrder.Auto ||
+                        (state.settings.perpendicularMode &&
+                            state.settings.horizontalOrientation == HorizontalOrientation.Auto),
+                enter = fadeIn() + scaleIn(),
+                exit = fadeOut() + scaleOut()
+            ) {
+                IconButtonWithEmphasis(onClick = { setAutoPlay(!autoPlay) }) {
+                    if (autoPlay) Icon(painterResource(R.drawable.ic_pause), null)
+                    else Icon(painterResource(R.drawable.ic_play_arrow), null)
+                }
+            }
+            IconButtonWithEmphasis(onClick = {}) {
+                Icon(painterResource(R.drawable.ic_group), null)
+            }
+            IconButtonWithEmphasis(onClick = onNavigateSettings) {
+                Icon(painterResource(R.drawable.ic_settings), null)
+            }
+            IconButtonWithEmphasis(onClick = onExit) {
+                Icon(painterResource(R.drawable.ic_close), null)
+            }
+        },
+        modifier = modifier
+    ) { measurables, constraints ->
+        val newMaxWidth =
+            constraints.maxWidth
+                .takeIf { it != Infinity }
+                ?.let { maxWidth ->
+                    measurables.size.takeIf { it != 0 }?.let { btnCount -> maxWidth / btnCount }
+                } ?: Infinity
+        val placeables =
+            measurables.map {
+                it.measure(Constraints(maxWidth = newMaxWidth, maxHeight = newMaxWidth))
+            }
+        layout(placeables.sumOf { it.width }, placeables.maxOf { it.height }) {
+            var x = 0
+            placeables.forEach {
+                it.placeRelative(x, 0)
+                x += it.width
+            }
+        }
     }
 }
 
