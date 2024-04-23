@@ -223,6 +223,7 @@ fun DisplayPage(
                 }
                 ActionButtons(
                     state = state,
+                    showCalls = showCalls,
                     autoPlay = displayViewModel.autoPlay.collectAsStateWithLifecycle().value,
                     setAutoPlay = { displayViewModel.autoPlay.value = it },
                     onEditTeammates = { editingTeammates = true },
@@ -343,6 +344,7 @@ private fun Clock(
 @Composable
 private fun ActionButtons(
     state: AppState,
+    showCalls: Boolean,
     autoPlay: Boolean,
     setAutoPlay: (Boolean) -> Unit,
     onEditTeammates: () -> Unit,
@@ -354,7 +356,7 @@ private fun ActionButtons(
         content = {
             AnimatedVisibility(
                 visible =
-                    state.settings.verticalOrder == VerticalOrder.Auto ||
+                    (state.settings.verticalOrder == VerticalOrder.Auto && showCalls) ||
                         (state.settings.perpendicularMode &&
                             state.settings.horizontalOrientation == HorizontalOrientation.Auto),
                 enter = fadeIn() + scaleIn(),
