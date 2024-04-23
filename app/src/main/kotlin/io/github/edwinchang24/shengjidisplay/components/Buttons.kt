@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
@@ -42,12 +44,14 @@ fun OutlinedButtonWithEmphasis(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    colors: ButtonColors = ButtonDefaults.outlinedButtonColors(),
     content: @Composable () -> Unit
 ) {
     PressableWithEmphasis {
         OutlinedButton(
             onClick = onClick,
             enabled = enabled,
+            colors = colors,
             interactionSource = interactionSource,
             modifier = modifier
         ) {

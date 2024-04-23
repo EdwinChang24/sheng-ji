@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class AppState(
     val trump: PlayingCard? = null,
     val calls: List<Call> = emptyList(),
+    val teammates: Map<String, Float> = emptyMap(),
     val settings: Settings = Settings()
 )

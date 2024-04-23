@@ -11,6 +11,7 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -39,12 +40,15 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -67,6 +71,7 @@ import io.github.edwinchang24.shengjidisplay.components.CallsDisplay
 import io.github.edwinchang24.shengjidisplay.components.IconButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.components.OutlinedButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.components.PlayingCard
+import io.github.edwinchang24.shengjidisplay.components.Teammates
 import io.github.edwinchang24.shengjidisplay.destinations.EditCallDialogDestination
 import io.github.edwinchang24.shengjidisplay.destinations.EditTrumpDialogDestination
 import io.github.edwinchang24.shengjidisplay.destinations.HomePageDestination
@@ -134,6 +139,7 @@ fun DisplayPage(
     var currentTimeMs by rememberSaveable {
         mutableLongStateOf(Clock.System.now().toEpochMilliseconds())
     }
+    var editingTeammates by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(state.settings, showCalls) {
         displayViewModel.onPotentialUpdate(
             DisplaySettingsState(
@@ -219,6 +225,7 @@ fun DisplayPage(
                     state = state,
                     autoPlay = displayViewModel.autoPlay.collectAsStateWithLifecycle().value,
                     setAutoPlay = { displayViewModel.autoPlay.value = it },
+                    onEditTeammates = { editingTeammates = true },
                     onNavigateSettings = { navigator.navigate(SettingsPageDestination) },
                     onExit = navigator::navigateUp,
                     modifier = Modifier.weight(1f)
@@ -258,6 +265,22 @@ fun DisplayPage(
                 )
             }
         }
+        Box(
+            modifier =
+                Modifier.fillMaxSize()
+                    .alpha(animateFloatAsState(if (editingTeammates) 0.75f else 0f).value)
+                    .background(MaterialTheme.colorScheme.surface)
+                    .then(if (editingTeammates) Modifier.pointerInput(true) {} else Modifier)
+        )
+        Teammates(
+            editing = editingTeammates,
+            savedTeammatesRad = state.teammates,
+            setSavedTeammatesRad = {
+                mainActivityViewModel.state.value = state.copy(teammates = it)
+            },
+            onDone = { editingTeammates = false },
+            modifier = Modifier.padding(padding)
+        )
     }
 }
 
@@ -322,6 +345,7 @@ private fun ActionButtons(
     state: AppState,
     autoPlay: Boolean,
     setAutoPlay: (Boolean) -> Unit,
+    onEditTeammates: () -> Unit,
     onNavigateSettings: () -> Unit,
     onExit: () -> Unit,
     modifier: Modifier = Modifier
@@ -341,7 +365,7 @@ private fun ActionButtons(
                     else Icon(painterResource(R.drawable.ic_play_arrow), null)
                 }
             }
-            IconButtonWithEmphasis(onClick = {}) {
+            IconButtonWithEmphasis(onClick = onEditTeammates) {
                 Icon(painterResource(R.drawable.ic_group), null)
             }
             IconButtonWithEmphasis(onClick = onNavigateSettings) {

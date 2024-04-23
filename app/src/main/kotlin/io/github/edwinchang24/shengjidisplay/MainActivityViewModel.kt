@@ -8,7 +8,9 @@ import io.github.edwinchang24.shengjidisplay.model.AppState
 import java.io.File
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -30,7 +32,10 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
                         AppState()
                     }
                 } else AppState()
-            state.collect { state -> context.stateFile.writeText(Json.encodeToString(state)) }
+            state.collectLatest { state ->
+                delay(100)
+                context.stateFile.writeText(Json.encodeToString(state))
+            }
         }
     }
 }
