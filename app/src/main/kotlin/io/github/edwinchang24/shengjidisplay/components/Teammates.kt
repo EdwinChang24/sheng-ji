@@ -40,6 +40,7 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -136,6 +137,33 @@ fun Teammates(
                 )
             }
         }
+        var recentlyCleared: Map<String, Float>? by rememberSaveable { mutableStateOf(null) }
+        LaunchedEffect(
+            *if (teammateOffsets.isNotEmpty()) teammateOffsets.values.toTypedArray()
+            else arrayOf(null)
+        ) {
+            if (teammateOffsets.isNotEmpty()) recentlyCleared = null
+        }
+        val onPressClear = {
+            if (teammateOffsets.isNotEmpty()) {
+                recentlyCleared = teammateOffsets.mapValues { (_, offset) -> offset.atan2() }
+                teammateOffsets.clear()
+            } else {
+                recentlyCleared?.let {
+                    teammateOffsets.putAll(
+                        it.mapValues { (_, angleRad) ->
+                            calculateRestingOffset(
+                                angleRad,
+                                (width / 2 - mainButtonRadiusPx) / 2 + mainButtonRadiusPx,
+                                (height / 2 - mainButtonRadiusPx) / 2 + mainButtonRadiusPx,
+                            )
+                        }
+                    )
+                    recentlyCleared = null
+                }
+            }
+            Unit
+        }
         AnimatedVisibility(
             visible = editing,
             enter = fadeIn() + scaleIn(spring(stiffness = Spring.StiffnessHigh)),
@@ -143,7 +171,12 @@ fun Teammates(
             modifier = Modifier.align(Alignment.Center)
         ) {
             if (dragging.none { it.value } && !draggingNew) {
-                ActionButtons(onClearAll = { teammateOffsets.clear() }, onDone = onDone)
+                ActionButtons(
+                    hasRecentlyCleared = recentlyCleared != null,
+                    canClear = teammateOffsets.isNotEmpty(),
+                    onPressClear = onPressClear,
+                    onDone = onDone
+                )
             }
         }
     }
@@ -454,16 +487,28 @@ private fun BoxWithConstraintsScope.MainButton(
 }
 
 @Composable
-fun ActionButtons(onClearAll: () -> Unit, onDone: () -> Unit, modifier: Modifier = Modifier) {
+fun ActionButtons(
+    hasRecentlyCleared: Boolean,
+    canClear: Boolean,
+    onPressClear: () -> Unit,
+    onDone: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier) {
         OutlinedButtonWithEmphasis(
-            onClick = onClearAll,
+            onClick = onPressClear,
+            enabled = canClear || hasRecentlyCleared,
             colors =
                 ButtonDefaults.outlinedButtonColors()
                     .copy(containerColor = MaterialTheme.colorScheme.surface)
         ) {
-            Icon(painterResource(R.drawable.ic_clear_all), null)
-            Text("Clear")
+            if (!hasRecentlyCleared) {
+                Icon(painterResource(R.drawable.ic_clear_all), null)
+                Text("Clear")
+            } else {
+                Icon(painterResource(R.drawable.ic_undo), null)
+                Text("Undo")
+            }
         }
         Spacer(modifier = Modifier.height(mainButtonRadiusDp * 2 + 16.dp))
         OutlinedButtonWithEmphasis(
