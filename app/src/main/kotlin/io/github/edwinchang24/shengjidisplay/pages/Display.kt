@@ -127,6 +127,7 @@ data class DisplaySettingsState(
 @MainNavGraph
 @Composable
 fun DisplayPage(
+    editTeammates: Boolean = false,
     navigator: DestinationsNavigator,
     mainActivityViewModel: MainActivityViewModel,
     displayViewModel: DisplayViewModel = hiltViewModel()
@@ -139,7 +140,7 @@ fun DisplayPage(
     var currentTimeMs by rememberSaveable {
         mutableLongStateOf(Clock.System.now().toEpochMilliseconds())
     }
-    var editingTeammates by rememberSaveable { mutableStateOf(false) }
+    var editingTeammates by rememberSaveable { mutableStateOf(editTeammates) }
     LaunchedEffect(state.settings, showCalls) {
         displayViewModel.onPotentialUpdate(
             DisplaySettingsState(

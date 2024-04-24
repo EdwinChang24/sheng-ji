@@ -195,7 +195,8 @@ fun HomePage(
                     state = listState,
                     contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(bottom = 8.dp)
                 ) {
                     itemsIndexed(state.calls) { index, call ->
                         fun setFound(found: Boolean) {
@@ -292,9 +293,32 @@ fun HomePage(
                     }
                 }
             }
+            Text(
+                "Teammates",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(horizontal = 24.dp)
+            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier =
+                    Modifier.fillMaxWidth()
+                        .clickable {
+                            navigator.navigate(DisplayPageDestination(editTeammates = true))
+                        }
+                        .padding(horizontal = 24.dp, vertical = 8.dp)
+            ) {
+                Text("${state.teammates.size} teammates added")
+                Spacer(modifier = Modifier.weight(1f))
+                OutlinedButtonWithEmphasis(
+                    onClick = { navigator.navigate(DisplayPageDestination(editTeammates = true)) }
+                ) {
+                    Icon(painterResource(R.drawable.ic_edit), null)
+                    Text("Edit")
+                }
+            }
             Spacer(modifier = Modifier.weight(1f))
             ButtonWithEmphasis(
-                onClick = { navigator.navigate(DisplayPageDestination) },
+                onClick = { navigator.navigate(DisplayPageDestination()) },
                 modifier = Modifier.align(Alignment.CenterHorizontally).padding(horizontal = 24.dp)
             ) {
                 Icon(painterResource(R.drawable.ic_smart_display), null)
