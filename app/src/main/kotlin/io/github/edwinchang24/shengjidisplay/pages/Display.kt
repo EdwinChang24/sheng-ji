@@ -134,7 +134,7 @@ fun DisplayPage(
 ) {
     val context = LocalContext.current
     val state by mainActivityViewModel.state.collectAsStateWithLifecycle()
-    val showCalls = !(state.settings.autoHideCalls && state.calls.all { it.found })
+    val showCalls = !(state.settings.autoHideCalls && state.calls.all { it.found == it.number })
     val topContent by displayViewModel.topContent.collectAsStateWithLifecycle()
     val bottomContent by displayViewModel.bottomContent.collectAsStateWithLifecycle()
     var currentTimeMs by rememberSaveable {
@@ -406,7 +406,7 @@ private fun DisplayContent(
     top: Boolean,
     state: AppState,
     onEditTrump: () -> Unit,
-    onEditCallFound: (index: Int, found: Boolean) -> Unit,
+    onEditCallFound: (index: Int, found: Int) -> Unit,
     onNewCall: () -> Unit,
     modifier: Modifier = Modifier
 ) {

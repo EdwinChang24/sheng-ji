@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -71,9 +70,16 @@ fun EditCallDialog(
                             viewModel.state.value.calls.toMutableList().apply {
                                 if (index in indices) {
                                     this[index] =
-                                        this[index].copy(card = PlayingCard(r, s), number = number)
+                                        this[index].copy(
+                                            card = PlayingCard(r, s),
+                                            number = number,
+                                            found =
+                                                this[index].found.let {
+                                                    if (it > number) number else it
+                                                }
+                                        )
                                 } else {
-                                    add(Call(PlayingCard(r, s), number, found = false))
+                                    add(Call(PlayingCard(r, s), number, found = 0))
                                 }
                             }
                     )

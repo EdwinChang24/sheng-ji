@@ -38,7 +38,7 @@ fun NumberPicker(
     value: Int,
     setValue: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    range: IntRange = 1..10
+    range: IntRange = 1..Int.MAX_VALUE
 ) {
     LaunchedEffect(value) { if (value !in range) setValue(value.coerceIn(range)) }
     Row(

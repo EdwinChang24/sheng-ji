@@ -20,12 +20,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
@@ -57,6 +58,7 @@ import io.github.edwinchang24.shengjidisplay.MainNavGraph
 import io.github.edwinchang24.shengjidisplay.R
 import io.github.edwinchang24.shengjidisplay.appDestination
 import io.github.edwinchang24.shengjidisplay.components.ButtonWithEmphasis
+import io.github.edwinchang24.shengjidisplay.components.CallFoundText
 import io.github.edwinchang24.shengjidisplay.components.IconButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.components.OutlinedButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.components.PlayingCard
@@ -65,6 +67,7 @@ import io.github.edwinchang24.shengjidisplay.destinations.EditCallDialogDestinat
 import io.github.edwinchang24.shengjidisplay.destinations.EditTrumpDialogDestination
 import io.github.edwinchang24.shengjidisplay.destinations.SettingsPageDestination
 import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
+import io.github.edwinchang24.shengjidisplay.model.Call
 import io.github.edwinchang24.shengjidisplay.util.formatCallNumber
 import kotlinx.coroutines.launch
 
@@ -199,70 +202,26 @@ fun HomePage(
                     modifier = Modifier.padding(bottom = 8.dp)
                 ) {
                     itemsIndexed(state.calls) { index, call ->
-                        fun setFound(found: Boolean) {
-                            viewModel.state.value =
-                                state.copy(
-                                    calls =
-                                        state.calls.toMutableList().apply {
-                                            this[index] = this[index].copy(found = found)
-                                        }
-                                )
-                        }
-                        PressableWithEmphasis {
-                            OutlinedCard(
-                                onClick = { navigator.navigate(EditCallDialogDestination(index)) },
-                                interactionSource = interactionSource
-                            ) {
-                                Column(
-                                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    modifier = Modifier.width(IntrinsicSize.Max).padding(8.dp)
-                                ) {
-                                    Column(
-                                        verticalArrangement = Arrangement.spacedBy(4.dp),
-                                        horizontalAlignment = Alignment.CenterHorizontally,
-                                        modifier = Modifier.fillMaxWidth().pressEmphasis()
-                                    ) {
-                                        PlayingCard(
-                                            call.card,
-                                            textStyle =
-                                                LocalTextStyle.current.copy(fontSize = 32.sp)
-                                        )
-                                        Text(formatCallNumber(call.number))
-                                    }
-                                    PressableWithEmphasis {
-                                        Row(
-                                            horizontalArrangement = Arrangement.spacedBy(4.dp),
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            modifier =
-                                                Modifier.clip(MaterialTheme.shapes.small)
-                                                    .clickableForEmphasis { setFound(!call.found) }
-                                                    .padding(start = 8.dp)
-                                                    .pressEmphasis()
-                                        ) {
-                                            Text("Found?")
-                                            Checkbox(
-                                                checked = call.found,
-                                                onCheckedChange = { setFound(it) }
-                                            )
-                                        }
-                                    }
-                                    IconButtonWithEmphasis(
-                                        onClick = {
-                                            viewModel.state.value =
-                                                state.copy(
-                                                    calls =
-                                                        state.calls.toMutableList().apply {
-                                                            removeAt(index)
-                                                        }
-                                                )
-                                        }
-                                    ) {
-                                        Icon(painterResource(R.drawable.ic_close), null)
-                                    }
-                                }
+                        CallCard(
+                            call = call,
+                            onEdit = { navigator.navigate(EditCallDialogDestination(index)) },
+                            setFound = {
+                                viewModel.state.value =
+                                    state.copy(
+                                        calls =
+                                            state.calls.toMutableList().apply {
+                                                this[index] = this[index].copy(found = it)
+                                            }
+                                    )
+                            },
+                            onDelete = {
+                                viewModel.state.value =
+                                    state.copy(
+                                        calls =
+                                            state.calls.toMutableList().apply { removeAt(index) }
+                                    )
                             }
-                        }
+                        )
                     }
                     item {
                         OutlinedButtonWithEmphasis(
@@ -329,6 +288,59 @@ fun HomePage(
                 style = MaterialTheme.typography.labelSmall,
                 modifier = Modifier.align(Alignment.CenterHorizontally).padding(bottom = 16.dp)
             )
+        }
+    }
+}
+
+@Composable
+private fun CallCard(
+    call: Call,
+    onEdit: () -> Unit,
+    setFound: (Int) -> Unit,
+    onDelete: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    PressableWithEmphasis {
+        OutlinedCard(onClick = onEdit, interactionSource = interactionSource, modifier = modifier) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.wrapContentWidth().padding(8.dp)
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth().pressEmphasis()
+                ) {
+                    PlayingCard(
+                        call.card,
+                        textStyle = LocalTextStyle.current.copy(fontSize = 32.sp)
+                    )
+                    Text(formatCallNumber(call.number))
+                }
+                PressableWithEmphasis {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier =
+                            Modifier.clip(MaterialTheme.shapes.small)
+                                .clickableForEmphasis(
+                                    onLongClick = {
+                                        setFound((call.found + call.number) % (call.number + 1))
+                                    },
+                                    onClick = { setFound((call.found + 1) % (call.number + 1)) }
+                                )
+                                .padding(8.dp)
+                                .pressEmphasis()
+                    ) {
+                        Text("Found:")
+                        Spacer(modifier = Modifier.width(8.dp))
+                        CallFoundText(call = call)
+                    }
+                }
+                IconButtonWithEmphasis(onClick = onDelete) {
+                    Icon(painterResource(R.drawable.ic_close), null)
+                }
+            }
         }
     }
 }

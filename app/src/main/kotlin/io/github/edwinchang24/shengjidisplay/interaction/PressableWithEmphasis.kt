@@ -3,8 +3,9 @@ package io.github.edwinchang24.shengjidisplay.interaction
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.SpringSpec
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalIndication
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.runtime.Composable
@@ -60,11 +61,14 @@ class PressableWithEmphasisScope(
 ) {
     fun Modifier.pressEmphasis() = scale(scale)
 
-    fun Modifier.clickableForEmphasis(onClick: () -> Unit) = composed {
-        this@composed.clickable(
-            interactionSource = interactionSource,
-            indication = LocalIndication.current,
-            onClick = onClick
-        )
-    }
+    @OptIn(ExperimentalFoundationApi::class)
+    fun Modifier.clickableForEmphasis(onLongClick: (() -> Unit)? = null, onClick: () -> Unit) =
+        composed {
+            this@composed.combinedClickable(
+                interactionSource = interactionSource,
+                indication = LocalIndication.current,
+                onClick = onClick,
+                onLongClick = onLongClick
+            )
+        }
 }

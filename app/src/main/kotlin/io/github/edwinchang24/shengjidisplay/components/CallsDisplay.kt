@@ -18,7 +18,6 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,13 +35,12 @@ import io.github.edwinchang24.shengjidisplay.model.Call
 import io.github.edwinchang24.shengjidisplay.model.PlayingCard
 import io.github.edwinchang24.shengjidisplay.model.Suit
 import io.github.edwinchang24.shengjidisplay.theme.ShengJiDisplayTheme
-import io.github.edwinchang24.shengjidisplay.util.formatCallNumber
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CallsDisplay(
     calls: List<Call>,
-    setFound: (index: Int, found: Boolean) -> Unit,
+    setFound: (index: Int, found: Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     FlowRow(
@@ -53,38 +51,52 @@ fun CallsDisplay(
     ) {
         calls.forEachIndexed { index, call ->
             PressableWithEmphasis {
-                OutlinedCard(
-                    onClick = { setFound(index, !call.found) },
-                    interactionSource = interactionSource,
-                    modifier = Modifier.size(128.dp)
-                ) {
-                    Box(modifier = Modifier.fillMaxSize()) {
+                OutlinedCard(modifier = Modifier.size(128.dp)) {
+                    Box(
+                        modifier =
+                            Modifier.fillMaxSize()
+                                .clickableForEmphasis(
+                                    onLongClick = {
+                                        setFound(
+                                            index,
+                                            (call.found + call.number) % (call.number + 1)
+                                        )
+                                    },
+                                    onClick = {
+                                        setFound(index, (call.found + 1) % (call.number + 1))
+                                    }
+                                )
+                    ) {
                         Column(
                             verticalArrangement =
                                 Arrangement.spacedBy(4.dp, Alignment.CenterVertically),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier =
                                 Modifier.fillMaxSize()
-                                    .padding(16.dp)
                                     .alpha(
                                         animateFloatAsState(
-                                                targetValue = if (call.found) 0.5f else 1f,
-                                                label = ""
-                                            )
+                                            targetValue =
+                                            if (call.found == call.number) 0.5f else 1f,
+                                            label = ""
+                                        )
                                             .value
                                     )
+                                    .padding(16.dp)
                                     .pressEmphasis()
                         ) {
                             PlayingCard(
                                 call.card,
                                 textStyle = LocalTextStyle.current.copy(fontSize = 48.sp)
                             )
-                            Text(formatCallNumber(call.number), fontSize = 28.sp)
+                            CallFoundText(
+                                call = call,
+                                style = LocalTextStyle.current.copy(fontSize = 28.sp)
+                            )
                         }
                         val primaryColor = MaterialTheme.colorScheme.primary
                         val lineScale by
                             animateFloatAsState(
-                                if (call.found) 0.5f else 0f,
+                                if (call.found == call.number) 0.5f else 0f,
                                 animationSpec = tween(durationMillis = 100),
                                 label = ""
                             )
@@ -119,8 +131,8 @@ private fun CallsDisplayPreview() {
             var calls by remember {
                 mutableStateOf(
                     listOf(
-                        Call(PlayingCard("A", Suit.SPADES), number = 1, found = false),
-                        Call(PlayingCard("K", Suit.HEARTS), number = 2, found = true)
+                        Call(PlayingCard("A", Suit.SPADES), number = 1, found = 0),
+                        Call(PlayingCard("K", Suit.HEARTS), number = 2, found = 2)
                     )
                 )
             }
