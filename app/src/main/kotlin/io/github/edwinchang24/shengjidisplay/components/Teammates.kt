@@ -1,5 +1,6 @@
 package io.github.edwinchang24.shengjidisplay.components
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
@@ -146,6 +147,7 @@ fun Teammates(
             }
         }
     }
+    BackHandler(editing) { onDone() }
 }
 
 val mainButtonRadiusDp = 48.dp
