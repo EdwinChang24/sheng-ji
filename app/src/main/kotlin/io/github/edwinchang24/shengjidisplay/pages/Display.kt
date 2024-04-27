@@ -9,7 +9,6 @@ import android.view.WindowManager
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -355,13 +354,10 @@ private fun ActionButtons(
 ) {
     Layout(
         content = {
-            AnimatedVisibility(
-                visible =
-                    (state.settings.verticalOrder == VerticalOrder.Auto && showCalls) ||
-                        (state.settings.perpendicularMode &&
-                            state.settings.horizontalOrientation == HorizontalOrientation.Auto),
-                enter = fadeIn() + scaleIn(),
-                exit = fadeOut() + scaleOut()
+            if (
+                (state.settings.verticalOrder == VerticalOrder.Auto && showCalls) ||
+                    (state.settings.perpendicularMode &&
+                        state.settings.horizontalOrientation == HorizontalOrientation.Auto)
             ) {
                 IconButtonWithEmphasis(onClick = { setAutoPlay(!autoPlay) }) {
                     if (autoPlay) Icon(painterResource(R.drawable.ic_pause), null)
