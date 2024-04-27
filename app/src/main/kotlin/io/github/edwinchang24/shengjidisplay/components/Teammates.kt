@@ -115,6 +115,7 @@ fun Teammates(
         var draggingNew by remember { mutableStateOf(false) }
         MainButton(
             editing = editing,
+            dragging = dragging.values.any { it } || draggingNew,
             deletingTeammate =
                 teammateOffsets.any { (id, offset) ->
                     dragging.getOrElse(id) { false } &&
@@ -389,6 +390,7 @@ private fun BoxWithConstraintsScope.Teammate(
 @Composable
 private fun BoxWithConstraintsScope.MainButton(
     editing: Boolean,
+    dragging: Boolean,
     deletingTeammate: Boolean,
     setDraggingNew: (Boolean) -> Unit,
     getRestingOffest: (Offset) -> Offset,
@@ -464,7 +466,8 @@ private fun BoxWithConstraintsScope.MainButton(
     ) {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize().padding(16.dp)) {
             Text(
-                if (deleting) "Release to delete" else "Drag to add",
+                if (deleting) "Release to delete"
+                else if (dragging) "Move here to delete" else "Drag to add",
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.labelLarge
             )
