@@ -48,6 +48,8 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.input.pointer.pointerInput
@@ -285,12 +287,13 @@ private fun BoxWithConstraintsScope.Teammate(
             if (draggingOthers && !isDragging) MaterialTheme.colorScheme.inversePrimary
             else MaterialTheme.colorScheme.primary
         val alpha by animateFloatAsState(if (editing) 1f else 0.5f)
+        val fadeColor by animateColorAsState(if (editing) color else Color.Transparent)
         Canvas(
             modifier = Modifier.fillMaxSize().zIndex(if (isDragging) -1f else -2f).alpha(alpha)
         ) {
             translate(left = width / 2, top = height / 2) {
                 drawLine(
-                    color,
+                    Brush.radialGradient(0.05f to fadeColor, 0.5f to color, center = Offset.Zero),
                     start = Offset.Zero,
                     end = endpoint,
                     strokeWidth = strokeRadius * 2,
