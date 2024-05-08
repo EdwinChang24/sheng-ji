@@ -286,7 +286,7 @@ private fun BoxWithConstraintsScope.Teammate(
         val color =
             if (draggingOthers && !isDragging) MaterialTheme.colorScheme.inversePrimary
             else MaterialTheme.colorScheme.primary
-        val alpha by animateFloatAsState(if (editing) 1f else 0.5f)
+        val alpha by animateFloatAsState(if (editing) 1f else 0.75f)
         val fadeColor by animateColorAsState(if (editing) color else Color.Transparent)
         Canvas(
             modifier = Modifier.fillMaxSize().zIndex(if (isDragging) -1f else -2f).alpha(alpha)
