@@ -19,4 +19,4 @@ dependencyResolutionManagement {
 rootProject.name = "升级 Display"
 
 include(":shared")
-include(":app")
+include(":androidApp")
