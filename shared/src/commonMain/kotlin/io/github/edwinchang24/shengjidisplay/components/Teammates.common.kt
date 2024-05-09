@@ -30,7 +30,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -55,7 +54,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
@@ -65,7 +63,6 @@ import io.github.edwinchang24.shengjidisplay.resources.ic_clear_all
 import io.github.edwinchang24.shengjidisplay.resources.ic_done
 import io.github.edwinchang24.shengjidisplay.resources.ic_drag_pan
 import io.github.edwinchang24.shengjidisplay.resources.ic_undo
-import io.github.edwinchang24.shengjidisplay.theme.ShengJiDisplayTheme
 import java.util.UUID
 import kotlin.math.PI
 import kotlin.math.absoluteValue
@@ -531,32 +528,6 @@ fun ActionButtons(
         ) {
             Icon(painterResource(Res.drawable.ic_done), null)
             Text("Done")
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun TeammatesPreview() {
-    ShengJiDisplayTheme {
-        Surface {
-            Teammates(
-                editing = false,
-                savedTeammatesRad =
-                    listOf(
-                            0f,
-                            1f,
-                            (PI / 2).toFloat(),
-                            PI.toFloat(),
-                            3f * (PI / 2).toFloat(),
-                            4f,
-                            5f
-                        )
-                        .mapIndexed { index, fl -> "$index" to fl }
-                        .toMap(),
-                setSavedTeammatesRad = {},
-                onDone = {}
-            )
         }
     }
 }

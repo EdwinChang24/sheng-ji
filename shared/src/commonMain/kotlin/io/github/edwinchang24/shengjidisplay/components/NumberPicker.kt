@@ -16,24 +16,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
 import io.github.edwinchang24.shengjidisplay.resources.Res
 import io.github.edwinchang24.shengjidisplay.resources.ic_add
 import io.github.edwinchang24.shengjidisplay.resources.ic_remove
-import io.github.edwinchang24.shengjidisplay.theme.ShengJiDisplayTheme
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -98,17 +90,6 @@ fun NumberPicker(
                     )
                 }
             }
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun NumberPickerPreview() {
-    ShengJiDisplayTheme {
-        Surface {
-            var num by rememberSaveable { mutableIntStateOf(1) }
-            NumberPicker(num, { num = it })
         }
     }
 }

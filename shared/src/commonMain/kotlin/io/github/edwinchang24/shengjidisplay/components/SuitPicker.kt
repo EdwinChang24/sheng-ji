@@ -10,20 +10,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
 import io.github.edwinchang24.shengjidisplay.model.Suit
-import io.github.edwinchang24.shengjidisplay.theme.ShengJiDisplayTheme
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -61,17 +56,6 @@ fun SuitPicker(suit: Suit?, setSuit: (Suit) -> Unit, modifier: Modifier = Modifi
                     )
                 }
             }
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun SuitPickerPreview() {
-    ShengJiDisplayTheme {
-        Surface {
-            var suit: Suit? by rememberSaveable { mutableStateOf(null) }
-            SuitPicker(suit = suit, { suit = it })
         }
     }
 }
