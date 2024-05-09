@@ -1,7 +1,10 @@
 package io.github.edwinchang24.shengjidisplay.model
 
-import androidx.annotation.DrawableRes
-import io.github.edwinchang24.shengjidisplay.R
+import io.github.edwinchang24.shengjidisplay.resources.Res
+import io.github.edwinchang24.shengjidisplay.resources.clubs
+import io.github.edwinchang24.shengjidisplay.resources.diamonds
+import io.github.edwinchang24.shengjidisplay.resources.hearts
+import io.github.edwinchang24.shengjidisplay.resources.spades
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -9,13 +12,14 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import org.jetbrains.compose.resources.DrawableResource
 
 @Serializable(SuitSerializer::class)
-enum class Suit(val asString: String, @DrawableRes val icon: Int) {
-    CLUBS("clubs", R.drawable.clubs),
-    DIAMONDS("diamonds", R.drawable.diamonds),
-    HEARTS("hearts", R.drawable.hearts),
-    SPADES("spades", R.drawable.spades)
+enum class Suit(val asString: String, val icon: DrawableResource) {
+    CLUBS("clubs", Res.drawable.clubs),
+    DIAMONDS("diamonds", Res.drawable.diamonds),
+    HEARTS("hearts", Res.drawable.hearts),
+    SPADES("spades", Res.drawable.spades)
 }
 
 class SuitSerializer : KSerializer<Suit> {

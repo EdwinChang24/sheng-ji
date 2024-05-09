@@ -29,9 +29,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.github.edwinchang24.shengjidisplay.R
 import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
+import io.github.edwinchang24.shengjidisplay.resources.Res
+import io.github.edwinchang24.shengjidisplay.resources.ic_add
+import io.github.edwinchang24.shengjidisplay.resources.ic_remove
 import io.github.edwinchang24.shengjidisplay.theme.ShengJiDisplayTheme
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun NumberPicker(
@@ -55,7 +58,7 @@ fun NumberPicker(
             ) {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                     Icon(
-                        painterResource(R.drawable.ic_remove),
+                        painterResource(Res.drawable.ic_remove),
                         null,
                         modifier = Modifier.pressEmphasis()
                     )
@@ -89,7 +92,7 @@ fun NumberPicker(
             ) {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                     Icon(
-                        painterResource(R.drawable.ic_add),
+                        painterResource(Res.drawable.ic_add),
                         null,
                         modifier = Modifier.pressEmphasis()
                     )
