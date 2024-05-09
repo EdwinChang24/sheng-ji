@@ -12,7 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import io.github.edwinchang24.shengjidisplay.model.PlayingCard
 import io.github.edwinchang24.shengjidisplay.model.Suit
 import io.github.edwinchang24.shengjidisplay.theme.ShengJiDisplayTheme
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun PlayingCard(

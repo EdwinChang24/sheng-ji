@@ -1,6 +1,5 @@
 package io.github.edwinchang24.shengjidisplay.components
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
@@ -61,7 +60,11 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.zIndex
-import io.github.edwinchang24.shengjidisplay.R
+import io.github.edwinchang24.shengjidisplay.resources.Res
+import io.github.edwinchang24.shengjidisplay.resources.ic_clear_all
+import io.github.edwinchang24.shengjidisplay.resources.ic_done
+import io.github.edwinchang24.shengjidisplay.resources.ic_drag_pan
+import io.github.edwinchang24.shengjidisplay.resources.ic_undo
 import io.github.edwinchang24.shengjidisplay.theme.ShengJiDisplayTheme
 import java.util.UUID
 import kotlin.math.PI
@@ -71,6 +74,7 @@ import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun Teammates(
@@ -183,8 +187,10 @@ fun Teammates(
             }
         }
     }
-    BackHandler(editing) { onDone() }
+    TeammatesBackHandler(editing) { onDone() }
 }
+
+@Composable expect fun TeammatesBackHandler(enabled: Boolean = true, onBack: () -> Unit)
 
 val mainButtonRadiusDp = 48.dp
 
@@ -376,7 +382,7 @@ private fun BoxWithConstraintsScope.Teammate(
                     )
         ) {
             Icon(
-                painterResource(R.drawable.ic_drag_pan),
+                painterResource(Res.drawable.ic_drag_pan),
                 null,
                 modifier =
                     Modifier.scale(
@@ -509,10 +515,10 @@ fun ActionButtons(
                     .copy(containerColor = MaterialTheme.colorScheme.surface)
         ) {
             if (!hasRecentlyCleared) {
-                Icon(painterResource(R.drawable.ic_clear_all), null)
+                Icon(painterResource(Res.drawable.ic_clear_all), null)
                 Text("Clear")
             } else {
-                Icon(painterResource(R.drawable.ic_undo), null)
+                Icon(painterResource(Res.drawable.ic_undo), null)
                 Text("Undo")
             }
         }
@@ -523,7 +529,7 @@ fun ActionButtons(
                 ButtonDefaults.outlinedButtonColors()
                     .copy(containerColor = MaterialTheme.colorScheme.surface)
         ) {
-            Icon(painterResource(R.drawable.ic_done), null)
+            Icon(painterResource(Res.drawable.ic_done), null)
             Text("Done")
         }
     }

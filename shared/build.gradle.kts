@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.composeJB)
+    alias(libs.plugins.serialization)
 }
 
 kotlin {
@@ -15,14 +16,18 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.foundation)
             implementation(compose.components.resources)
+            implementation(compose.preview)
             implementation(libs.kotlinx.datetime)
+            implementation(libs.kotlinx.serialization)
+        }
+        androidMain.dependencies {
+            implementation(libs.core.ktx)
+            implementation(libs.activity.compose)
         }
     }
 }
 
-compose.resources {
-    packageOfResClass = "io.github.edwinchang24.shengjidisplay.resources"
-}
+compose.resources { packageOfResClass = "io.github.edwinchang24.shengjidisplay.resources" }
 
 android {
     compileSdk = 34

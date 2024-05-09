@@ -75,10 +75,10 @@ fun CallsDisplay(
                                 Modifier.fillMaxSize()
                                     .alpha(
                                         animateFloatAsState(
-                                            targetValue =
-                                            if (call.found == call.number) 0.5f else 1f,
-                                            label = ""
-                                        )
+                                                targetValue =
+                                                    if (call.found == call.number) 0.5f else 1f,
+                                                label = ""
+                                            )
                                             .value
                                     )
                                     .padding(16.dp)
