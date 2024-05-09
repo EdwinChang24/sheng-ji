@@ -2,14 +2,23 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.hilt)
-    alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.ksp)
     alias(libs.plugins.serialization)
+}
+
+kotlin {
+    androidTarget()
+    sourceSets {
+        val androidMain by getting { dependencies { implementation(project(":shared")) } }
+    }
 }
 
 android {
     namespace = "io.github.edwinchang24.shengjidisplay"
     compileSdk = 34
+    sourceSets["main"].manifest.srcFile("src/main/AndroidManifest.xml")
+    sourceSets["main"].res.srcDir("src/main/res")
     defaultConfig {
         applicationId = "io.github.edwinchang24.shengjidisplay"
         minSdk = 24
@@ -29,10 +38,10 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions { jvmTarget = "1.8" }
+    kotlin { jvmToolchain(17) }
     buildFeatures {
         compose = true
         buildConfig = true
@@ -61,13 +70,11 @@ dependencies {
     implementation(libs.hilt.navigation.compose)
     testImplementation(libs.junit)
     testImplementation(libs.hilt.testing)
-    kspTest(libs.hilt.compiler)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.ui.test.junit4)
     androidTestImplementation(libs.hilt.testing)
-    kspAndroidTest(libs.hilt.compiler)
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
 }
