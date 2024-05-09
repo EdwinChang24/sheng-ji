@@ -17,8 +17,6 @@ kotlin {
 android {
     namespace = "io.github.edwinchang24.shengjidisplay"
     compileSdk = 34
-    sourceSets["main"].manifest.srcFile("src/main/AndroidManifest.xml")
-    sourceSets["main"].res.srcDir("src/main/res")
     defaultConfig {
         applicationId = "io.github.edwinchang24.shengjidisplay"
         minSdk = 24
