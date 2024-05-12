@@ -75,10 +75,10 @@ fun CallsDisplay(
                                 Modifier.fillMaxSize()
                                     .alpha(
                                         animateFloatAsState(
-                                            targetValue =
-                                            if (call.found == call.number) 0.5f else 1f,
-                                            label = ""
-                                        )
+                                                targetValue =
+                                                    if (call.found == call.number) 0.4f else 1f,
+                                                label = ""
+                                            )
                                             .value
                                     )
                                     .padding(16.dp)
@@ -93,7 +93,7 @@ fun CallsDisplay(
                                 style = LocalTextStyle.current.copy(fontSize = 28.sp)
                             )
                         }
-                        val primaryColor = MaterialTheme.colorScheme.primary
+                        val color = MaterialTheme.colorScheme.outlineVariant
                         val lineScale by
                             animateFloatAsState(
                                 if (call.found == call.number) 0.5f else 0f,
@@ -102,7 +102,7 @@ fun CallsDisplay(
                             )
                         Canvas(modifier = Modifier.fillMaxSize()) {
                             drawLine(
-                                primaryColor,
+                                color,
                                 start =
                                     Offset(
                                         size.width * (0.5f - lineScale),
@@ -113,7 +113,7 @@ fun CallsDisplay(
                                         size.width * (0.5f + lineScale),
                                         size.height * (0.5f - lineScale)
                                     ),
-                                strokeWidth = 16f
+                                strokeWidth = 12f
                             )
                         }
                     }

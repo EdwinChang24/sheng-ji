@@ -286,11 +286,8 @@ private fun BoxWithConstraintsScope.Teammate(
         val color =
             if (draggingOthers && !isDragging) MaterialTheme.colorScheme.inversePrimary
             else MaterialTheme.colorScheme.primary
-        val alpha by animateFloatAsState(if (editing) 1f else 0.75f)
         val fadeColor by animateColorAsState(if (editing) color else Color.Transparent)
-        Canvas(
-            modifier = Modifier.fillMaxSize().zIndex(if (isDragging) -1f else -2f).alpha(alpha)
-        ) {
+        Canvas(modifier = Modifier.fillMaxSize().zIndex(if (isDragging) -1f else -2f).alpha(1f)) {
             translate(left = width / 2, top = height / 2) {
                 drawLine(
                     Brush.radialGradient(0.05f to fadeColor, 0.5f to color, center = Offset.Zero),
