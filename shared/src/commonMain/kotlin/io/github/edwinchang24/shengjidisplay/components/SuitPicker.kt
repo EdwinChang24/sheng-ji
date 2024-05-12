@@ -15,7 +15,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
 import io.github.edwinchang24.shengjidisplay.model.Suit

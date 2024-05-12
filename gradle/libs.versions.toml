@@ -16,6 +16,7 @@ kotlinx-serialization = "1.6.3"
 kotlinx-datetime = "0.6.0-RC.2"
 ksp = "1.9.23-1.0.20"
 lifecycle-runtime = "2.7.0"
+uuid = "0.8.4"
 
 [libraries]
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
@@ -42,6 +43,7 @@ ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+uuid = { group = "com.benasher44", name = "uuid", version.ref = "uuid" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
