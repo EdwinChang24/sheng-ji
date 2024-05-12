@@ -110,6 +110,15 @@ fun SettingsPage(navigator: DestinationsNavigator, viewModel: MainActivityViewMo
                 Text("Lock screen orientation to portrait")
             }
             BooleanPicker(
+                value = state.settings.fullScreen,
+                setValue = {
+                    viewModel.state.value =
+                        state.copy(settings = state.settings.copy(fullScreen = it))
+                }
+            ) {
+                Text("Use fullscreen")
+            }
+            BooleanPicker(
                 value = state.settings.autoHideCalls,
                 setValue = {
                     viewModel.state.value =

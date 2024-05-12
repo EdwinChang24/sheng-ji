@@ -50,12 +50,16 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Constraints.Companion.Infinity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
@@ -165,16 +169,40 @@ fun DisplayPage(
         context.activity()?.window.let { window ->
             if (state.settings.keepScreenOn)
                 window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            else window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             onDispose { window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) }
         }
     }
     DisposableEffect(state.settings.lockScreenOrientation) {
         context.activity().let { activity ->
-            if (state.settings.lockScreenOrientation) {
-                activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-            }
+            activity?.requestedOrientation =
+                if (state.settings.lockScreenOrientation) ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                else ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
             onDispose {
                 activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            }
+        }
+    }
+    val view = LocalView.current
+    DisposableEffect(state.settings.fullScreen) {
+        context.activity()?.window?.let { window ->
+            WindowCompat.getInsetsController(window, view).run {
+                if (state.settings.fullScreen) {
+                    systemBarsBehavior =
+                        WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                    hide(WindowInsetsCompat.Type.systemBars())
+                } else {
+                    show(WindowInsetsCompat.Type.systemBars())
+                    systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
+                }
+            }
+        }
+        onDispose {
+            context.activity()?.window?.let { window ->
+                WindowCompat.getInsetsController(window, view).run {
+                    show(WindowInsetsCompat.Type.systemBars())
+                    systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
+                }
             }
         }
     }

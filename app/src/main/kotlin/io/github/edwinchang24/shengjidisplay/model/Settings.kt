@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 data class Settings(
     val keepScreenOn: Boolean = true,
     val lockScreenOrientation: Boolean = true,
+    val fullScreen: Boolean = true,
     val autoHideCalls: Boolean = true,
     val verticalOrder: VerticalOrder = VerticalOrder.Auto,
     val perpendicularMode: Boolean = false,
