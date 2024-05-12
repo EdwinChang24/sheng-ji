@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -100,6 +101,7 @@ fun CallsDisplay(
                                 animationSpec = tween(durationMillis = 100),
                                 label = ""
                             )
+                        val strokeWidth = with(LocalDensity.current) { 4.dp.toPx() }
                         Canvas(modifier = Modifier.fillMaxSize()) {
                             drawLine(
                                 color,
@@ -113,7 +115,7 @@ fun CallsDisplay(
                                         size.width * (0.5f + lineScale),
                                         size.height * (0.5f - lineScale)
                                     ),
-                                strokeWidth = 12f
+                                strokeWidth = strokeWidth
                             )
                         }
                     }
