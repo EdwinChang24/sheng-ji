@@ -52,18 +52,17 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.zIndex
+import com.benasher44.uuid.uuid4
 import io.github.edwinchang24.shengjidisplay.resources.Res
 import io.github.edwinchang24.shengjidisplay.resources.ic_clear_all
 import io.github.edwinchang24.shengjidisplay.resources.ic_done
 import io.github.edwinchang24.shengjidisplay.resources.ic_drag_pan
 import io.github.edwinchang24.shengjidisplay.resources.ic_undo
-import java.util.UUID
 import kotlin.math.PI
 import kotlin.math.absoluteValue
 import kotlin.math.atan2
@@ -101,7 +100,7 @@ fun Teammates(
         }
         LaunchedEffect(
             *if (teammateOffsets.isNotEmpty()) teammateOffsets.values.toTypedArray()
-            else arrayOf(null)
+            else arrayOf(Offset.Unspecified)
         ) {
             setSavedTeammatesRad(teammateOffsets.mapValues { (_, offset) -> offset.atan2() })
         }
@@ -144,7 +143,7 @@ fun Teammates(
         var recentlyCleared: Map<String, Float>? by rememberSaveable { mutableStateOf(null) }
         LaunchedEffect(
             *if (teammateOffsets.isNotEmpty()) teammateOffsets.values.toTypedArray()
-            else arrayOf(null)
+            else arrayOf(Offset.Unspecified)
         ) {
             if (teammateOffsets.isNotEmpty()) recentlyCleared = null
         }
@@ -460,7 +459,7 @@ private fun BoxWithConstraintsScope.MainButton(
                                 detectTapGestures(
                                     onPress = {
                                         new =
-                                            UUID.randomUUID().toString() to
+                                            uuid4().toString() to
                                                 it - Offset(mainButtonRadiusPx, mainButtonRadiusPx)
                                         setDraggingNew(true)
                                     },

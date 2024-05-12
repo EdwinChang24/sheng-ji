@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
@@ -7,6 +9,7 @@ plugins {
 
 kotlin {
     androidTarget()
+    @OptIn(ExperimentalWasmDsl::class) wasmJs { browser() }
     sourceSets {
         all {
             languageSettings { optIn("org.jetbrains.compose.resources.ExperimentalResourceApi") }
@@ -16,9 +19,9 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.foundation)
             implementation(compose.components.resources)
-            implementation(compose.preview)
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.serialization)
+            implementation(libs.uuid)
         }
         androidMain.dependencies {
             implementation(libs.core.ktx)

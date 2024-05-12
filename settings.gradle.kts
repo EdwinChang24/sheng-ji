@@ -9,14 +9,14 @@ pluginManagement {
 }
 
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
     }
 }
 
-rootProject.name = "升级 Display"
+rootProject.name = "sheng-ji-display"
 
 include(":shared")
 include(":androidApp")
+include(":webApp")
