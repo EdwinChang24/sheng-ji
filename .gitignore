@@ -296,3 +296,7 @@ gradle-app.setting
 # Java heap dump
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,linux,android,jetbrains,gradle,kotlin,git
+
+### Custom ###
+
+.kotlin

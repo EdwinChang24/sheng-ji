@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeJB)
 }
 
@@ -38,6 +39,7 @@ kotlin {
                 implementation(compose.ui)
                 implementation(compose.foundation)
                 implementation(compose.material3)
+                implementation(compose.components.resources)
             }
         }
     }

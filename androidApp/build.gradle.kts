@@ -2,6 +2,8 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.composeJB)
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.ksp)
     alias(libs.plugins.serialization)
@@ -40,10 +42,8 @@ android {
     }
     kotlin { jvmToolchain(17) }
     buildFeatures {
-        compose = true
         buildConfig = true
     }
-    composeOptions { kotlinCompilerExtensionVersion = "1.5.13" }
     packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
 }
 
@@ -53,10 +53,10 @@ dependencies {
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.activity.compose)
     implementation(platform(libs.compose.bom))
-    implementation(libs.ui)
+    implementation(compose.ui)
     implementation(libs.ui.graphics)
-    implementation(libs.ui.tooling.preview)
-    implementation(libs.material3)
+    implementation(compose.preview)
+    implementation(compose.material3)
     implementation(libs.core.splashscreen)
     implementation(libs.kotlinx.serialization)
     implementation(libs.compose.destinations)
@@ -65,6 +65,5 @@ dependencies {
     implementation(libs.hilt)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
-    debugImplementation(libs.ui.tooling)
-    debugImplementation(libs.ui.test.manifest)
+    debugImplementation(compose.uiTooling)
 }
