@@ -67,7 +67,7 @@ import io.github.edwinchang24.shengjidisplay.MainNavGraph
 import io.github.edwinchang24.shengjidisplay.R
 import io.github.edwinchang24.shengjidisplay.components.IconButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
-import io.github.edwinchang24.shengjidisplay.model.HorizontalOrientation
+import io.github.edwinchang24.shengjidisplay.model.ContentRotationSetting
 import io.github.edwinchang24.shengjidisplay.model.VerticalOrder
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -75,7 +75,10 @@ import io.github.edwinchang24.shengjidisplay.model.VerticalOrder
 @MainNavGraph
 @Composable
 fun SettingsPage(navigator: DestinationsNavigator, viewModel: MainActivityViewModel) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val state by
+        viewModel.state.collectAsStateWithLifecycle(
+            lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
+        )
     Scaffold(
         topBar = {
             TopAppBar(
@@ -134,33 +137,17 @@ fun SettingsPage(navigator: DestinationsNavigator, viewModel: MainActivityViewMo
                         state.copy(settings = state.settings.copy(verticalOrder = it))
                 }
             )
-            BooleanPicker(
-                value = state.settings.perpendicularMode,
-                setValue = {
+            ContentRotationPicker(
+                contentRotationSetting = state.settings.contentRotation,
+                setContentRotationSetting = {
                     viewModel.state.value =
-                        state.copy(settings = state.settings.copy(perpendicularMode = it))
+                        state.copy(settings = state.settings.copy(contentRotation = it))
                 }
-            ) {
-                Text("Perpendicular mode")
-            }
-            AnimatedVisibility(
-                visible = state.settings.perpendicularMode,
-                enter = fadeIn() + expandVertically(expandFrom = Alignment.Top, clip = false),
-                exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Top, clip = false)
-            ) {
-                HorizontalOrientationPicker(
-                    horizontalOrientation = state.settings.horizontalOrientation,
-                    setHorizontalOrientation = {
-                        viewModel.state.value =
-                            state.copy(settings = state.settings.copy(horizontalOrientation = it))
-                    }
-                )
-            }
+            )
             AnimatedVisibility(
                 visible =
                     state.settings.verticalOrder == VerticalOrder.Auto ||
-                        (state.settings.perpendicularMode &&
-                            state.settings.horizontalOrientation == HorizontalOrientation.Auto),
+                        state.settings.contentRotation == ContentRotationSetting.Auto,
                 enter = fadeIn() + expandVertically(expandFrom = Alignment.Top, clip = false),
                 exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Top, clip = false)
             ) {
@@ -312,23 +299,23 @@ private fun VerticalOrderPicker(
 }
 
 @Composable
-private fun HorizontalOrientationPicker(
-    horizontalOrientation: HorizontalOrientation,
-    setHorizontalOrientation: (HorizontalOrientation) -> Unit
+private fun ContentRotationPicker(
+    contentRotationSetting: ContentRotationSetting,
+    setContentRotationSetting: (ContentRotationSetting) -> Unit
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
     ) {
-        Text("Horizontal orientation")
+        Text("Content rotation")
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Max)
         ) {
             PressableWithEmphasis {
                 PickerCard(
-                    onClick = { setHorizontalOrientation(HorizontalOrientation.Auto) },
-                    selected = horizontalOrientation == HorizontalOrientation.Auto,
+                    onClick = { setContentRotationSetting(ContentRotationSetting.Auto) },
+                    selected = contentRotationSetting == ContentRotationSetting.Auto,
                     interactionSource = interactionSource
                 ) {
                     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
@@ -342,8 +329,25 @@ private fun HorizontalOrientationPicker(
             }
             PressableWithEmphasis {
                 PickerCard(
-                    onClick = { setHorizontalOrientation(HorizontalOrientation.TopTowardsRight) },
-                    selected = horizontalOrientation == HorizontalOrientation.TopTowardsRight,
+                    onClick = { setContentRotationSetting(ContentRotationSetting.Center) },
+                    selected = contentRotationSetting == ContentRotationSetting.Center,
+                    interactionSource = interactionSource
+                ) {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxSize().padding(16.dp).pressEmphasis()
+                    ) {
+                        Text("Aa", textAlign = TextAlign.Center, modifier = Modifier.rotate(180f))
+                        HorizontalDivider()
+                        Text("Aa", textAlign = TextAlign.Center)
+                    }
+                }
+            }
+            PressableWithEmphasis {
+                PickerCard(
+                    onClick = { setContentRotationSetting(ContentRotationSetting.TopTowardsRight) },
+                    selected = contentRotationSetting == ContentRotationSetting.TopTowardsRight,
                     interactionSource = interactionSource
                 ) {
                     Column(
@@ -360,9 +364,9 @@ private fun HorizontalOrientationPicker(
             PressableWithEmphasis {
                 PickerCard(
                     onClick = {
-                        setHorizontalOrientation(HorizontalOrientation.BottomTowardsRight)
+                        setContentRotationSetting(ContentRotationSetting.BottomTowardsRight)
                     },
-                    selected = horizontalOrientation == HorizontalOrientation.BottomTowardsRight,
+                    selected = contentRotationSetting == ContentRotationSetting.BottomTowardsRight,
                     interactionSource = interactionSource
                 ) {
                     Column(

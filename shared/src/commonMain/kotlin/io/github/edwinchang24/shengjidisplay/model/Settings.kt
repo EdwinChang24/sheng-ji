@@ -1,5 +1,6 @@
 package io.github.edwinchang24.shengjidisplay.model
 
+import io.github.edwinchang24.shengjidisplay.display.ContentRotation
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -10,8 +11,7 @@ data class Settings(
     val fullScreen: Boolean = true,
     val autoHideCalls: Boolean = true,
     val verticalOrder: VerticalOrder = VerticalOrder.Auto,
-    val perpendicularMode: Boolean = false,
-    val horizontalOrientation: HorizontalOrientation = HorizontalOrientation.Auto,
+    val contentRotation: ContentRotationSetting = ContentRotationSetting.Center,
     val autoSwitchSeconds: Int = 5,
     val showClock: Boolean = true,
     val clockOrientation: Boolean = true
@@ -27,14 +27,35 @@ sealed interface VerticalOrder {
 }
 
 @Serializable
-sealed interface HorizontalOrientation {
-    @Serializable @SerialName("auto") data object Auto : HorizontalOrientation
+sealed interface ContentRotationSetting {
+    val possibleRotations: List<ContentRotation>
+
+    @Serializable
+    @SerialName("auto")
+    data object Auto : ContentRotationSetting {
+        override val possibleRotations =
+            listOf(
+                ContentRotation.TopTowardsRight,
+                ContentRotation.Center,
+                ContentRotation.BottomTowardsRight
+            )
+    }
+
+    @Serializable
+    @SerialName("center")
+    data object Center : ContentRotationSetting {
+        override val possibleRotations = listOf(ContentRotation.Center)
+    }
 
     @Serializable
     @SerialName("topTowardsRight")
-    data object TopTowardsRight : HorizontalOrientation
+    data object TopTowardsRight : ContentRotationSetting {
+        override val possibleRotations = listOf(ContentRotation.TopTowardsRight)
+    }
 
     @Serializable
     @SerialName("bottomTowardsRight")
-    data object BottomTowardsRight : HorizontalOrientation
+    data object BottomTowardsRight : ContentRotationSetting {
+        override val possibleRotations = listOf(ContentRotation.BottomTowardsRight)
+    }
 }

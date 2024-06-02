@@ -60,8 +60,8 @@ import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -79,10 +79,12 @@ import io.github.edwinchang24.shengjidisplay.destinations.EditCallDialogDestinat
 import io.github.edwinchang24.shengjidisplay.destinations.EditTrumpDialogDestination
 import io.github.edwinchang24.shengjidisplay.destinations.HomePageDestination
 import io.github.edwinchang24.shengjidisplay.destinations.SettingsPageDestination
+import io.github.edwinchang24.shengjidisplay.display.ContentRotation
+import io.github.edwinchang24.shengjidisplay.display.DisplayContent
+import io.github.edwinchang24.shengjidisplay.display.DisplayContentWithRotation
+import io.github.edwinchang24.shengjidisplay.display.DisplayScheme
 import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
 import io.github.edwinchang24.shengjidisplay.model.AppState
-import io.github.edwinchang24.shengjidisplay.model.HorizontalOrientation
-import io.github.edwinchang24.shengjidisplay.model.VerticalOrder
 import kotlinx.coroutines.delay
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -93,38 +95,6 @@ import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 
-sealed interface DisplayContent {
-    sealed interface Direction {
-        data object Center : Direction
-
-        data object Left : Direction
-
-        data object Right : Direction
-
-        fun opposite() =
-            when (this) {
-                Center -> Center
-                Left -> Right
-                Right -> Left
-            }
-    }
-
-    data class Trump(val direction: Direction) : DisplayContent
-
-    data class Calls(val direction: Direction) : DisplayContent
-
-    data object None : DisplayContent
-}
-
-data class DisplaySettingsState(
-    val autoHideCalls: Boolean,
-    val verticalOrder: VerticalOrder,
-    val perpendicularMode: Boolean,
-    val horizontalOrientation: HorizontalOrientation,
-    val autoSwitchSeconds: Int,
-    val showCalls: Boolean
-)
-
 @SuppressLint("SourceLockedOrientationActivity")
 @Destination(style = DisplayPageTransitions::class)
 @MainNavGraph
@@ -133,27 +103,34 @@ fun DisplayPage(
     editTeammates: Boolean = false,
     navigator: DestinationsNavigator,
     mainActivityViewModel: MainActivityViewModel,
-    displayViewModel: DisplayViewModel = hiltViewModel()
+    displayViewModel: DisplayViewModel = viewModel()
 ) {
     val context = LocalContext.current
-    val state by mainActivityViewModel.state.collectAsStateWithLifecycle()
-    val showCalls = !(state.settings.autoHideCalls && state.calls.all { it.found == it.number })
-    val topContent by displayViewModel.topContent.collectAsStateWithLifecycle()
-    val bottomContent by displayViewModel.bottomContent.collectAsStateWithLifecycle()
+    val state by
+        mainActivityViewModel.state.collectAsStateWithLifecycle(
+            lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
+        )
+    val content by
+        displayViewModel.currentContent.collectAsStateWithLifecycle(
+            lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
+        )
+    val displayScheme = DisplayScheme.Main
     var currentTimeMs by rememberSaveable {
         mutableLongStateOf(Clock.System.now().toEpochMilliseconds())
     }
     var editingTeammates by rememberSaveable { mutableStateOf(editTeammates) }
-    LaunchedEffect(state.settings, showCalls) {
-        displayViewModel.onPotentialUpdate(
-            DisplaySettingsState(
-                state.settings.autoHideCalls,
-                state.settings.verticalOrder,
-                state.settings.perpendicularMode,
-                state.settings.horizontalOrientation,
-                state.settings.autoSwitchSeconds,
-                showCalls
-            )
+    var pause by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(
+        displayScheme.getPossibleContentPairs(state),
+        state.settings.contentRotation.possibleRotations,
+        pause,
+        state.settings.autoSwitchSeconds
+    ) {
+        displayViewModel.onStateUpdate(
+            newPossibleContentPairs = DisplayScheme.Main.getPossibleContentPairs(state),
+            newPossibleRotations = state.settings.contentRotation.possibleRotations,
+            newPause = pause,
+            newAutoSwitchSeconds = state.settings.autoSwitchSeconds
         )
     }
     LaunchedEffect(true) {
@@ -213,7 +190,7 @@ fun DisplayPage(
                 modifier = Modifier.weight(1f).fillMaxWidth()
             ) {
                 DisplayContent(
-                    content = topContent,
+                    content = content,
                     top = true,
                     state = state,
                     onEditTrump = { navigator.navigate(EditTrumpDialogDestination) },
@@ -229,7 +206,10 @@ fun DisplayPage(
                     onNewCall = { navigator.navigate(EditCallDialogDestination(0)) }
                 )
             }
-            DisplayLabel(content = topContent, modifier = Modifier.rotate(180f))
+            DisplayLabel(
+                content = content.displayContentPair.topContent,
+                modifier = Modifier.rotate(180f)
+            )
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
@@ -250,10 +230,11 @@ fun DisplayPage(
                     )
                 }
                 ActionButtons(
-                    state = state,
-                    showCalls = showCalls,
-                    autoPlay = displayViewModel.autoPlay.collectAsStateWithLifecycle().value,
-                    setAutoPlay = { displayViewModel.autoPlay.value = it },
+                    showPause =
+                        displayScheme.getPossibleContentPairs(state).size > 1 ||
+                            state.settings.contentRotation.possibleRotations.size > 1,
+                    pause = pause,
+                    setPause = { pause = it },
                     onEditTeammates = { editingTeammates = true },
                     onNavigateSettings = { navigator.navigate(SettingsPageDestination) },
                     onExit = navigator::navigateUp,
@@ -271,13 +252,13 @@ fun DisplayPage(
                     )
                 }
             }
-            DisplayLabel(content = bottomContent)
+            DisplayLabel(content = content.displayContentPair.bottomContent)
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.weight(1f).fillMaxWidth()
             ) {
                 DisplayContent(
-                    content = bottomContent,
+                    content = content,
                     top = false,
                     state = state,
                     onEditTrump = { navigator.navigate(EditTrumpDialogDestination) },
@@ -314,15 +295,11 @@ fun DisplayPage(
 }
 
 @Composable
-private fun DisplayLabel(content: DisplayContent, modifier: Modifier = Modifier) {
-    AnimatedContent(
-        when (content) {
-            is DisplayContent.Trump -> "Trump card"
-            is DisplayContent.Calls -> "Calls"
-            DisplayContent.None -> ""
-        },
-        label = ""
-    ) { label ->
+private fun DisplayLabel(
+    content: io.github.edwinchang24.shengjidisplay.display.DisplayContent,
+    modifier: Modifier = Modifier
+) {
+    AnimatedContent(content.name, label = "") { label ->
         Box(contentAlignment = Alignment.Center, modifier = modifier.fillMaxWidth().padding(8.dp)) {
             Text(label, style = MaterialTheme.typography.labelLarge)
         }
@@ -371,10 +348,9 @@ private fun Clock(
 
 @Composable
 private fun ActionButtons(
-    state: AppState,
-    showCalls: Boolean,
-    autoPlay: Boolean,
-    setAutoPlay: (Boolean) -> Unit,
+    showPause: Boolean,
+    pause: Boolean,
+    setPause: (Boolean) -> Unit,
     onEditTeammates: () -> Unit,
     onNavigateSettings: () -> Unit,
     onExit: () -> Unit,
@@ -382,14 +358,10 @@ private fun ActionButtons(
 ) {
     Layout(
         content = {
-            if (
-                (state.settings.verticalOrder == VerticalOrder.Auto && showCalls) ||
-                    (state.settings.perpendicularMode &&
-                        state.settings.horizontalOrientation == HorizontalOrientation.Auto)
-            ) {
-                IconButtonWithEmphasis(onClick = { setAutoPlay(!autoPlay) }) {
-                    if (autoPlay) Icon(painterResource(R.drawable.ic_pause), null)
-                    else Icon(painterResource(R.drawable.ic_play_arrow), null)
+            if (showPause) {
+                IconButtonWithEmphasis(onClick = { setPause(!pause) }) {
+                    if (pause) Icon(painterResource(R.drawable.ic_play_arrow), null)
+                    else Icon(painterResource(R.drawable.ic_pause), null)
                 }
             }
             IconButtonWithEmphasis(onClick = onEditTeammates) {
@@ -426,7 +398,7 @@ private fun ActionButtons(
 
 @Composable
 private fun DisplayContent(
-    content: DisplayContent,
+    content: DisplayContentWithRotation,
     top: Boolean,
     state: AppState,
     onEditTrump: () -> Unit,
@@ -435,27 +407,19 @@ private fun DisplayContent(
     modifier: Modifier = Modifier
 ) {
     AnimatedContent(
-        content,
+        (if (top) content.displayContentPair.topContent
+        else content.displayContentPair.bottomContent) to content.rotation,
         transitionSpec = {
             (fadeIn(tween(durationMillis = 1000)) +
                     slideIntoContainer(
                         towards =
-                            when (val ts = targetState) {
-                                is DisplayContent.Trump ->
-                                    when (ts.direction) {
-                                        DisplayContent.Direction.Center ->
-                                            if (top) SlideDirection.Down else SlideDirection.Up
-                                        DisplayContent.Direction.Left -> SlideDirection.Right
-                                        DisplayContent.Direction.Right -> SlideDirection.Left
-                                    }
-                                is DisplayContent.Calls ->
-                                    when (ts.direction) {
-                                        DisplayContent.Direction.Center ->
-                                            if (top) SlideDirection.Down else SlideDirection.Up
-                                        DisplayContent.Direction.Left -> SlideDirection.Right
-                                        DisplayContent.Direction.Right -> SlideDirection.Left
-                                    }
-                                DisplayContent.None -> SlideDirection.Down
+                            when (targetState.second) {
+                                ContentRotation.Center ->
+                                    if (top) SlideDirection.Down else SlideDirection.Up
+                                ContentRotation.TopTowardsRight ->
+                                    if (top) SlideDirection.Left else SlideDirection.Right
+                                ContentRotation.BottomTowardsRight ->
+                                    if (top) SlideDirection.Right else SlideDirection.Left
                             },
                         animationSpec = tween(durationMillis = 1000),
                         initialOffset = { it / 3 }
@@ -463,22 +427,13 @@ private fun DisplayContent(
                     fadeOut(tween(durationMillis = 1000)) +
                         slideOutOfContainer(
                             towards =
-                                when (val ins = initialState) {
-                                    is DisplayContent.Trump ->
-                                        when (ins.direction) {
-                                            DisplayContent.Direction.Center ->
-                                                if (top) SlideDirection.Up else SlideDirection.Down
-                                            DisplayContent.Direction.Left -> SlideDirection.Left
-                                            DisplayContent.Direction.Right -> SlideDirection.Right
-                                        }
-                                    is DisplayContent.Calls ->
-                                        when (ins.direction) {
-                                            DisplayContent.Direction.Center ->
-                                                if (top) SlideDirection.Up else SlideDirection.Down
-                                            DisplayContent.Direction.Left -> SlideDirection.Left
-                                            DisplayContent.Direction.Right -> SlideDirection.Right
-                                        }
-                                    DisplayContent.None -> SlideDirection.Up
+                                when (initialState.second) {
+                                    ContentRotation.Center ->
+                                        if (top) SlideDirection.Up else SlideDirection.Down
+                                    ContentRotation.TopTowardsRight ->
+                                        if (top) SlideDirection.Right else SlideDirection.Left
+                                    ContentRotation.BottomTowardsRight ->
+                                        if (top) SlideDirection.Left else SlideDirection.Right
                                 },
                             animationSpec = tween(durationMillis = 1000),
                             targetOffset = { it / 3 }
@@ -488,16 +443,16 @@ private fun DisplayContent(
         label = "",
         modifier = modifier.fillMaxSize()
     ) { c ->
-        when (c) {
+        when (c.first) {
             is DisplayContent.Trump ->
                 Box(
                     modifier =
                         Modifier.fillMaxSize()
                             .rotate(
-                                when (c.direction) {
-                                    DisplayContent.Direction.Center -> if (top) 180f else 0f
-                                    DisplayContent.Direction.Left -> 90f
-                                    DisplayContent.Direction.Right -> -90f
+                                when (c.second) {
+                                    ContentRotation.Center -> if (top) 180f else 0f
+                                    ContentRotation.TopTowardsRight -> if (top) -90f else 90f
+                                    ContentRotation.BottomTowardsRight -> if (top) 90f else -90f
                                 }
                             )
                 ) {
@@ -550,10 +505,10 @@ private fun DisplayContent(
                     modifier =
                         Modifier.fillMaxSize()
                             .rotate(
-                                when (c.direction) {
-                                    DisplayContent.Direction.Center -> if (top) 180f else 0f
-                                    DisplayContent.Direction.Left -> 90f
-                                    DisplayContent.Direction.Right -> -90f
+                                when (c.second) {
+                                    ContentRotation.Center -> if (top) 180f else 0f
+                                    ContentRotation.TopTowardsRight -> if (top) -90f else 90f
+                                    ContentRotation.BottomTowardsRight -> if (top) 90f else -90f
                                 }
                             )
                 ) {

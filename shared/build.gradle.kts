@@ -20,6 +20,7 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.foundation)
             implementation(compose.components.resources)
+            implementation(libs.lifecycle.viewmodel.compose)
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.serialization)
             implementation(libs.uuid)
