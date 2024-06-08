@@ -1,12 +1,7 @@
 package io.github.edwinchang24.shengjidisplay.pages
 
 import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.BorderStroke
@@ -36,6 +31,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
@@ -94,6 +90,7 @@ fun SettingsPage(navigator: DestinationsNavigator, viewModel: MainActivityViewMo
         Column(
             modifier = Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState())
         ) {
+            SectionHeader("General")
             BooleanPicker(
                 value = state.settings.keepScreenOn,
                 setValue = {
@@ -121,22 +118,6 @@ fun SettingsPage(navigator: DestinationsNavigator, viewModel: MainActivityViewMo
             ) {
                 Text("Use fullscreen")
             }
-            BooleanPicker(
-                value = state.settings.autoHideCalls,
-                setValue = {
-                    viewModel.state.value =
-                        state.copy(settings = state.settings.copy(autoHideCalls = it))
-                }
-            ) {
-                Text("Hide calls when all are found")
-            }
-            VerticalOrderPicker(
-                verticalOrder = state.settings.verticalOrder,
-                setVerticalOrder = {
-                    viewModel.state.value =
-                        state.copy(settings = state.settings.copy(verticalOrder = it))
-                }
-            )
             ContentRotationPicker(
                 contentRotationSetting = state.settings.contentRotation,
                 setContentRotationSetting = {
@@ -144,21 +125,16 @@ fun SettingsPage(navigator: DestinationsNavigator, viewModel: MainActivityViewMo
                         state.copy(settings = state.settings.copy(contentRotation = it))
                 }
             )
-            AnimatedVisibility(
-                visible =
+            AutoSwitchSecondsPicker(
+                autoSwitchSeconds = state.settings.autoSwitchSeconds,
+                setAutoSwitchSeconds = {
+                    viewModel.state.value =
+                        state.copy(settings = state.settings.copy(autoSwitchSeconds = it))
+                },
+                enabled =
                     state.settings.verticalOrder == VerticalOrder.Auto ||
-                        state.settings.contentRotation == ContentRotationSetting.Auto,
-                enter = fadeIn() + expandVertically(expandFrom = Alignment.Top, clip = false),
-                exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Top, clip = false)
-            ) {
-                AutoSwitchSecondsPicker(
-                    autoSwitchSeconds = state.settings.autoSwitchSeconds,
-                    setAutoSwitchSeconds = {
-                        viewModel.state.value =
-                            state.copy(settings = state.settings.copy(autoSwitchSeconds = it))
-                    }
-                )
-            }
+                        state.settings.contentRotation == ContentRotationSetting.Auto
+            )
             BooleanPicker(
                 value = state.settings.showClock,
                 setValue = {
@@ -168,13 +144,40 @@ fun SettingsPage(navigator: DestinationsNavigator, viewModel: MainActivityViewMo
             ) {
                 Text("Show clock")
             }
+            SectionHeader("Main display")
+            VerticalOrderPicker(
+                verticalOrder = state.settings.verticalOrder,
+                setVerticalOrder = {
+                    viewModel.state.value =
+                        state.copy(settings = state.settings.copy(verticalOrder = it))
+                }
+            )
+            BooleanPicker(
+                value = state.settings.autoHideCalls,
+                setValue = {
+                    viewModel.state.value =
+                        state.copy(settings = state.settings.copy(autoHideCalls = it))
+                }
+            ) {
+                Text("Hide calls when all are found")
+            }
             Text(
                 "${stringResource(R.string.app_name)} ${BuildConfig.VERSION_NAME}",
                 style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier.align(Alignment.CenterHorizontally).padding(vertical = 16.dp)
+                modifier = Modifier.align(Alignment.CenterHorizontally).padding(24.dp)
             )
         }
     }
+}
+
+@Composable
+private fun SectionHeader(text: String, modifier: Modifier = Modifier) {
+    Text(
+        text,
+        style = MaterialTheme.typography.titleSmall,
+        color = MaterialTheme.colorScheme.primary,
+        modifier = modifier.padding(start = 24.dp, end = 24.dp, top = 24.dp, bottom = 12.dp)
+    )
 }
 
 @Composable
@@ -391,23 +394,32 @@ private val autoSwitchIntervals =
         10 to "10 seconds",
         20 to "20 seconds",
         60 to "1 minute",
-        300 to "5 minutes"
+        300 to "5 minutes",
+        1_577_847_600 to "50 years"
     )
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun AutoSwitchSecondsPicker(autoSwitchSeconds: Int, setAutoSwitchSeconds: (Int) -> Unit) {
+private fun AutoSwitchSecondsPicker(
+    autoSwitchSeconds: Int,
+    setAutoSwitchSeconds: (Int) -> Unit,
+    enabled: Boolean
+) {
     val focusManager = LocalFocusManager.current
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
     ) {
-        Text("Auto switch interval")
+        Text(
+            "Auto switch interval",
+            color = LocalContentColor.current.copy(alpha = if (enabled) 1f else 0.5f)
+        )
         var expanded by rememberSaveable { mutableStateOf(false) }
         ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
             OutlinedTextField(
                 value = autoSwitchIntervals[autoSwitchSeconds] ?: "$autoSwitchSeconds seconds",
                 onValueChange = {},
+                enabled = enabled,
                 readOnly = true,
                 leadingIcon = { Icon(painterResource(R.drawable.ic_timer), null) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
