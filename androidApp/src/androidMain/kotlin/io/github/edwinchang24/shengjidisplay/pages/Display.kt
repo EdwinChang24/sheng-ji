@@ -9,7 +9,10 @@ import android.view.WindowManager
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
+import androidx.compose.animation.EnterExitState
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -40,6 +43,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -74,6 +78,7 @@ import io.github.edwinchang24.shengjidisplay.components.CallsDisplay
 import io.github.edwinchang24.shengjidisplay.components.IconButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.components.OutlinedButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.components.PlayingCard
+import io.github.edwinchang24.shengjidisplay.components.PossibleTrumps
 import io.github.edwinchang24.shengjidisplay.components.Teammates
 import io.github.edwinchang24.shengjidisplay.destinations.EditCallDialogDestination
 import io.github.edwinchang24.shengjidisplay.destinations.EditTrumpDialogDestination
@@ -100,6 +105,7 @@ import kotlinx.datetime.toLocalDateTime
 @MainNavGraph
 @Composable
 fun DisplayPage(
+    displayScheme: DisplayScheme,
     editTeammates: Boolean = false,
     navigator: DestinationsNavigator,
     mainActivityViewModel: MainActivityViewModel,
@@ -114,7 +120,6 @@ fun DisplayPage(
         displayViewModel.currentContent.collectAsStateWithLifecycle(
             lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
         )
-    val displayScheme = DisplayScheme.Main
     var currentTimeMs by rememberSaveable {
         mutableLongStateOf(Clock.System.now().toEpochMilliseconds())
     }
@@ -127,7 +132,7 @@ fun DisplayPage(
         state.settings.autoSwitchSeconds
     ) {
         displayViewModel.onStateUpdate(
-            newPossibleContentPairs = DisplayScheme.Main.getPossibleContentPairs(state),
+            newPossibleContentPairs = displayScheme.getPossibleContentPairs(state),
             newPossibleRotations = state.settings.contentRotation.possibleRotations,
             newPause = pause,
             newAutoSwitchSeconds = state.settings.autoSwitchSeconds
@@ -396,6 +401,7 @@ private fun ActionButtons(
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun DisplayContent(
     content: DisplayContentWithRotation,
@@ -443,19 +449,20 @@ private fun DisplayContent(
         label = "",
         modifier = modifier.fillMaxSize()
     ) { c ->
-        when (c.first) {
-            is DisplayContent.Trump ->
-                Box(
-                    modifier =
-                        Modifier.fillMaxSize()
-                            .rotate(
-                                when (c.second) {
-                                    ContentRotation.Center -> if (top) 180f else 0f
-                                    ContentRotation.TopTowardsRight -> if (top) -90f else 90f
-                                    ContentRotation.BottomTowardsRight -> if (top) 90f else -90f
-                                }
-                            )
-                ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier =
+                Modifier.fillMaxSize()
+                    .rotate(
+                        when (c.second) {
+                            ContentRotation.Center -> if (top) 180f else 0f
+                            ContentRotation.TopTowardsRight -> if (top) -90f else 90f
+                            ContentRotation.BottomTowardsRight -> if (top) 90f else -90f
+                        }
+                    )
+        ) {
+            when (c.first) {
+                is DisplayContent.Trump ->
                     AnimatedContent(targetState = state.trump, label = "") { targetTrump ->
                         targetTrump?.let {
                             Box(
@@ -499,19 +506,7 @@ private fun DisplayContent(
                                 }
                             }
                     }
-                }
-            is DisplayContent.Calls ->
-                Box(
-                    modifier =
-                        Modifier.fillMaxSize()
-                            .rotate(
-                                when (c.second) {
-                                    ContentRotation.Center -> if (top) 180f else 0f
-                                    ContentRotation.TopTowardsRight -> if (top) -90f else 90f
-                                    ContentRotation.BottomTowardsRight -> if (top) 90f else -90f
-                                }
-                            )
-                ) {
+                is DisplayContent.Calls ->
                     AnimatedContent(
                         targetState = state.calls,
                         contentKey = { it.isEmpty() },
@@ -552,8 +547,20 @@ private fun DisplayContent(
                                 }
                             }
                     }
+                is DisplayContent.PossibleTrumps -> {
+                    val scale = remember { Animatable(0.5f) }
+                    LaunchedEffect(transition.targetState) {
+                        if (transition.targetState == EnterExitState.PostExit)
+                            scale.animateTo(0.5f, tween(1000))
+                        else scale.animateTo(1f, tween(1000))
+                    }
+                    PossibleTrumps(
+                        state.possibleTrumps,
+                        modifier = Modifier.fillMaxSize(scale.value)
+                    )
                 }
-            DisplayContent.None -> Box(modifier = Modifier.fillMaxSize())
+                DisplayContent.None -> Box(modifier = Modifier.fillMaxSize())
+            }
         }
     }
 }

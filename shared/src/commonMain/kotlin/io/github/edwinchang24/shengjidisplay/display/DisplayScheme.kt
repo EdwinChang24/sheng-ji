@@ -2,10 +2,15 @@ package io.github.edwinchang24.shengjidisplay.display
 
 import io.github.edwinchang24.shengjidisplay.model.AppState
 import io.github.edwinchang24.shengjidisplay.model.VerticalOrder
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-interface DisplayScheme {
+@Serializable
+sealed interface DisplayScheme {
     fun getPossibleContentPairs(state: AppState): List<DisplayContentPair>
 
+    @SerialName("main")
+    @Serializable
     data object Main : DisplayScheme {
         override fun getPossibleContentPairs(state: AppState): List<DisplayContentPair> {
             val showCalls =
@@ -26,5 +31,12 @@ interface DisplayScheme {
                 listOf(DisplayContent.Trump and DisplayContent.Trump)
             }
         }
+    }
+
+    @SerialName("possibleTrumps")
+    @Serializable
+    data object PossibleTrumps : DisplayScheme {
+        override fun getPossibleContentPairs(state: AppState) =
+            listOf(DisplayContent.PossibleTrumps and DisplayContent.PossibleTrumps)
     }
 }

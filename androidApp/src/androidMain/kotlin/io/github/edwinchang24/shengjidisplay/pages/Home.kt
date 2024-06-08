@@ -62,8 +62,10 @@ import io.github.edwinchang24.shengjidisplay.components.OutlinedButtonWithEmphas
 import io.github.edwinchang24.shengjidisplay.components.PlayingCard
 import io.github.edwinchang24.shengjidisplay.destinations.DisplayPageDestination
 import io.github.edwinchang24.shengjidisplay.destinations.EditCallDialogDestination
+import io.github.edwinchang24.shengjidisplay.destinations.EditPossibleTrumpsDialogDestination
 import io.github.edwinchang24.shengjidisplay.destinations.EditTrumpDialogDestination
 import io.github.edwinchang24.shengjidisplay.destinations.SettingsPageDestination
+import io.github.edwinchang24.shengjidisplay.display.DisplayScheme
 import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
 import io.github.edwinchang24.shengjidisplay.model.Call
 import io.github.edwinchang24.shengjidisplay.util.formatCallNumber
@@ -105,6 +107,30 @@ fun HomePage(
                     .padding(top = 16.dp)
                     .verticalScroll(rememberScrollState())
         ) {
+            Text(
+                "Possible trumps",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(horizontal = 24.dp)
+            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier =
+                    Modifier.fillMaxWidth()
+                        .clickable { navigator.navigate(EditPossibleTrumpsDialogDestination) }
+                        .padding(horizontal = 24.dp, vertical = 8.dp)
+            ) {
+                Text(
+                    if (state.possibleTrumps.isEmpty()) "None selected"
+                    else state.possibleTrumps.joinToString(),
+                    modifier = Modifier.weight(1f).padding(end = 16.dp)
+                )
+                OutlinedButtonWithEmphasis(
+                    onClick = { navigator.navigate(EditPossibleTrumpsDialogDestination) }
+                ) {
+                    Icon(painterResource(R.drawable.ic_edit), null)
+                    Text("Edit")
+                }
+            }
             Text(
                 "Trump card",
                 style = MaterialTheme.typography.titleLarge,
@@ -263,26 +289,56 @@ fun HomePage(
                 modifier =
                     Modifier.fillMaxWidth()
                         .clickable {
-                            navigator.navigate(DisplayPageDestination(editTeammates = true))
+                            navigator.navigate(
+                                DisplayPageDestination(
+                                    displayScheme = DisplayScheme.Main,
+                                    editTeammates = true
+                                )
+                            )
                         }
                         .padding(horizontal = 24.dp, vertical = 8.dp)
             ) {
                 Text("${state.teammates.size} teammates added")
                 Spacer(modifier = Modifier.weight(1f))
                 OutlinedButtonWithEmphasis(
-                    onClick = { navigator.navigate(DisplayPageDestination(editTeammates = true)) }
+                    onClick = {
+                        navigator.navigate(
+                            DisplayPageDestination(
+                                displayScheme = DisplayScheme.Main,
+                                editTeammates = true
+                            )
+                        )
+                    }
                 ) {
                     Icon(painterResource(R.drawable.ic_edit), null)
                     Text("Edit")
                 }
             }
             Spacer(modifier = Modifier.weight(1f))
-            ButtonWithEmphasis(
-                onClick = { navigator.navigate(DisplayPageDestination()) },
-                modifier = Modifier.align(Alignment.CenterHorizontally).padding(horizontal = 24.dp)
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp)
             ) {
-                Icon(painterResource(R.drawable.ic_smart_display), null)
-                Text("Start display")
+                ButtonWithEmphasis(
+                    onClick = {
+                        navigator.navigate(
+                            DisplayPageDestination(displayScheme = DisplayScheme.PossibleTrumps)
+                        )
+                    }
+                ) {
+                    Icon(painterResource(R.drawable.ic_smart_display), null)
+                    Text("Start possible trumps display")
+                }
+                ButtonWithEmphasis(
+                    onClick = {
+                        navigator.navigate(
+                            DisplayPageDestination(displayScheme = DisplayScheme.Main)
+                        )
+                    }
+                ) {
+                    Icon(painterResource(R.drawable.ic_smart_display), null)
+                    Text("Start main display")
+                }
             }
             Text(
                 "Version ${BuildConfig.VERSION_NAME}",

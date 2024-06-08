@@ -14,4 +14,8 @@ sealed interface DisplayContent {
     data object Calls : DisplayContent {
         override val name = "Calls"
     }
+
+    data object PossibleTrumps : DisplayContent {
+        override val name = "Possible trumps"
+    }
 }

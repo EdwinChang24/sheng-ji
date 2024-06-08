@@ -22,16 +22,16 @@ fun RankPicker(rank: String?, setRank: (String) -> Unit, modifier: Modifier = Mo
 }
 
 @Composable
-private fun RankButton(it: String, setRank: (String) -> Unit, selected: Boolean) {
+private fun RankButton(rank: String, setRank: (String) -> Unit, selected: Boolean) {
     PressableWithEmphasis {
         IconButton(
-            onClick = { setRank(it) },
+            onClick = { setRank(rank) },
             colors =
                 if (selected) IconButtonDefaults.filledIconButtonColors()
                 else IconButtonDefaults.iconButtonColors(),
             interactionSource = interactionSource
         ) {
-            Text(it, modifier = Modifier.pressEmphasis())
+            Text(rank, modifier = Modifier.pressEmphasis())
         }
     }
 }
