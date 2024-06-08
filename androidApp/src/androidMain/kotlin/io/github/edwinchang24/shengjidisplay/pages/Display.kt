@@ -81,6 +81,7 @@ import io.github.edwinchang24.shengjidisplay.components.PlayingCard
 import io.github.edwinchang24.shengjidisplay.components.PossibleTrumps
 import io.github.edwinchang24.shengjidisplay.components.Teammates
 import io.github.edwinchang24.shengjidisplay.destinations.EditCallDialogDestination
+import io.github.edwinchang24.shengjidisplay.destinations.EditPossibleTrumpsDialogDestination
 import io.github.edwinchang24.shengjidisplay.destinations.EditTrumpDialogDestination
 import io.github.edwinchang24.shengjidisplay.destinations.HomePageDestination
 import io.github.edwinchang24.shengjidisplay.destinations.SettingsPageDestination
@@ -208,6 +209,9 @@ fun DisplayPage(
                                     }
                             )
                     },
+                    onEditPossibleTrumps = {
+                        navigator.navigate(EditPossibleTrumpsDialogDestination)
+                    },
                     onNewCall = { navigator.navigate(EditCallDialogDestination(0)) }
                 )
             }
@@ -275,6 +279,9 @@ fun DisplayPage(
                                         it[index] = it[index].copy(found = found)
                                     }
                             )
+                    },
+                    onEditPossibleTrumps = {
+                        navigator.navigate(EditPossibleTrumpsDialogDestination)
                     },
                     onNewCall = { navigator.navigate(EditCallDialogDestination(0)) }
                 )
@@ -410,6 +417,7 @@ private fun DisplayContent(
     onEditTrump: () -> Unit,
     onEditCallFound: (index: Int, found: Int) -> Unit,
     onNewCall: () -> Unit,
+    onEditPossibleTrumps: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     AnimatedContent(
@@ -554,10 +562,35 @@ private fun DisplayContent(
                             scale.animateTo(0.5f, tween(1000))
                         else scale.animateTo(1f, tween(1000))
                     }
-                    PossibleTrumps(
-                        state.possibleTrumps,
-                        modifier = Modifier.fillMaxSize(scale.value)
-                    )
+                    PressableWithEmphasis {
+                        if (state.possibleTrumps.isEmpty()) {
+                            Column(
+                                verticalArrangement =
+                                    Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier =
+                                    Modifier.clip(MaterialTheme.shapes.large)
+                                        .clickableForEmphasis(onClick = onEditPossibleTrumps)
+                                        .padding(24.dp)
+                                        .pressEmphasis()
+                            ) {
+                                Text("No possible trumps added")
+                                OutlinedButton(onClick = onEditPossibleTrumps) {
+                                    Icon(painterResource(R.drawable.ic_add), null)
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text("Add")
+                                }
+                            }
+                        } else {
+                            PossibleTrumps(
+                                state.possibleTrumps,
+                                modifier =
+                                    Modifier.fillMaxSize(scale.value)
+                                        .clickableForEmphasis(onClick = onEditPossibleTrumps)
+                                        .pressEmphasis()
+                            )
+                        }
+                    }
                 }
                 DisplayContent.None -> Box(modifier = Modifier.fillMaxSize())
             }
