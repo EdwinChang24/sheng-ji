@@ -9,7 +9,7 @@ plugins {
 
 group = "io.github.edwinchang24.shengjidisplay"
 
-version = "1.3.0"
+version = "1.3.1"
 
 kotlin {
     @OptIn(ExperimentalWasmDsl::class)
