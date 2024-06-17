@@ -54,7 +54,7 @@ buildkonfig {
     packageName = "io.github.edwinchang24.shengjidisplay"
     exposeObjectWithName = "VersionConfig"
     defaultConfigs {
-        val file = File("./version.properties")
+        val file = File(project.rootDir, "version.properties")
         val properties =
             if (file.exists()) Properties().apply { load(file.inputStream()) } else null
         buildConfigField(STRING, "version", properties?.getProperty("version", "?") ?: "?")
