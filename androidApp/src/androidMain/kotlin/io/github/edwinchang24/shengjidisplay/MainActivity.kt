@@ -4,20 +4,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
-import com.ramcosta.composedestinations.DestinationsNavHost
-import com.ramcosta.composedestinations.navigation.dependency
-import dagger.hilt.android.AndroidEntryPoint
-import io.github.edwinchang24.shengjidisplay.theme.ShengJiDisplayTheme
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
-@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel: MainActivityViewModel by viewModels()
 
@@ -27,18 +18,11 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         viewModel.load(this)
         setContent {
-            ShengJiDisplayTheme {
-                Surface(
-                    color = MaterialTheme.colorScheme.background,
-                    modifier = Modifier.fillMaxSize().windowInsetsPadding(WindowInsets(0))
-                ) {
-                    DestinationsNavHost(
-                        navGraph = NavGraphs.main,
-                        dependenciesContainerBuilder = { dependency(viewModel) },
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
-            }
+            val state by
+                viewModel.state.collectAsStateWithLifecycle(
+                    lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
+                )
+            App(state, setState = { viewModel.state.value = it })
         }
     }
 }

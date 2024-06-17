@@ -1,7 +1,8 @@
+import java.util.Properties
+
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.hilt)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeJB)
     alias(libs.plugins.kotlinMultiplatform)
@@ -24,7 +25,11 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 1
-        versionName = "1.3.1"
+
+        val file = File("./version.properties")
+        val properties =
+            if (file.exists()) Properties().apply { load(file.inputStream()) } else null
+        versionName = properties?.getProperty("version", "?") ?: "?"
 
         vectorDrawables { useSupportLibrary = true }
     }
@@ -41,9 +46,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlin { jvmToolchain(17) }
-    buildFeatures {
-        buildConfig = true
-    }
+    buildFeatures { buildConfig = true }
     packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
 }
 
@@ -58,11 +61,6 @@ dependencies {
     implementation(compose.material3)
     implementation(libs.core.splashscreen)
     implementation(libs.kotlinx.serialization)
-    implementation(libs.compose.destinations)
-    ksp(libs.compose.destinations.ksp)
     implementation(libs.kotlinx.datetime)
-    implementation(libs.hilt)
-    ksp(libs.hilt.compiler)
-    implementation(libs.hilt.navigation.compose)
     debugImplementation(compose.uiTooling)
 }

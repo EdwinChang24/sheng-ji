@@ -1,9 +1,6 @@
 package io.github.edwinchang24.shengjidisplay.pages
 
-import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -20,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CardDefaults
@@ -48,40 +46,32 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavBackStackEntry
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.spec.DestinationStyle
-import io.github.edwinchang24.shengjidisplay.BuildConfig
-import io.github.edwinchang24.shengjidisplay.MainActivityViewModel
-import io.github.edwinchang24.shengjidisplay.MainNavGraph
-import io.github.edwinchang24.shengjidisplay.R
+import io.github.edwinchang24.shengjidisplay.VersionConfig
 import io.github.edwinchang24.shengjidisplay.components.IconButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
+import io.github.edwinchang24.shengjidisplay.model.AppState
 import io.github.edwinchang24.shengjidisplay.model.ContentRotationSetting
 import io.github.edwinchang24.shengjidisplay.model.VerticalOrder
+import io.github.edwinchang24.shengjidisplay.navigation.Navigator
+import io.github.edwinchang24.shengjidisplay.resources.Res
+import io.github.edwinchang24.shengjidisplay.resources.app_name
+import io.github.edwinchang24.shengjidisplay.resources.ic_arrow_back
+import io.github.edwinchang24.shengjidisplay.resources.ic_timer
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Destination(style = SettingsPageTransitions::class)
-@MainNavGraph
 @Composable
-fun SettingsPage(navigator: DestinationsNavigator, viewModel: MainActivityViewModel) {
-    val state by
-        viewModel.state.collectAsStateWithLifecycle(
-            lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
-        )
+fun SettingsPage(navigator: Navigator, state: AppState, setState: (AppState) -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Display settings") },
                 navigationIcon = {
-                    IconButtonWithEmphasis(onClick = { navigator.navigateUp() }) {
-                        Icon(painterResource(R.drawable.ic_arrow_back), null)
+                    IconButtonWithEmphasis(onClick = { navigator.toggleSettings() }) {
+                        Icon(painterResource(Res.drawable.ic_arrow_back), null)
                     }
                 }
             )
@@ -94,8 +84,7 @@ fun SettingsPage(navigator: DestinationsNavigator, viewModel: MainActivityViewMo
             BooleanPicker(
                 value = state.settings.keepScreenOn,
                 setValue = {
-                    viewModel.state.value =
-                        state.copy(settings = state.settings.copy(keepScreenOn = it))
+                    setState(state.copy(settings = state.settings.copy(keepScreenOn = it)))
                 }
             ) {
                 Text("Keep screen on")
@@ -103,33 +92,27 @@ fun SettingsPage(navigator: DestinationsNavigator, viewModel: MainActivityViewMo
             BooleanPicker(
                 value = state.settings.lockScreenOrientation,
                 setValue = {
-                    viewModel.state.value =
-                        state.copy(settings = state.settings.copy(lockScreenOrientation = it))
+                    setState(state.copy(settings = state.settings.copy(lockScreenOrientation = it)))
                 }
             ) {
                 Text("Lock screen orientation to portrait")
             }
             BooleanPicker(
                 value = state.settings.fullScreen,
-                setValue = {
-                    viewModel.state.value =
-                        state.copy(settings = state.settings.copy(fullScreen = it))
-                }
+                setValue = { setState(state.copy(settings = state.settings.copy(fullScreen = it))) }
             ) {
                 Text("Use fullscreen")
             }
             ContentRotationPicker(
                 contentRotationSetting = state.settings.contentRotation,
                 setContentRotationSetting = {
-                    viewModel.state.value =
-                        state.copy(settings = state.settings.copy(contentRotation = it))
+                    setState(state.copy(settings = state.settings.copy(contentRotation = it)))
                 }
             )
             AutoSwitchSecondsPicker(
                 autoSwitchSeconds = state.settings.autoSwitchSeconds,
                 setAutoSwitchSeconds = {
-                    viewModel.state.value =
-                        state.copy(settings = state.settings.copy(autoSwitchSeconds = it))
+                    setState(state.copy(settings = state.settings.copy(autoSwitchSeconds = it)))
                 },
                 enabled =
                     state.settings.verticalOrder == VerticalOrder.Auto ||
@@ -137,10 +120,7 @@ fun SettingsPage(navigator: DestinationsNavigator, viewModel: MainActivityViewMo
             )
             BooleanPicker(
                 value = state.settings.showClock,
-                setValue = {
-                    viewModel.state.value =
-                        state.copy(settings = state.settings.copy(showClock = it))
-                }
+                setValue = { setState(state.copy(settings = state.settings.copy(showClock = it))) }
             ) {
                 Text("Show clock")
             }
@@ -148,21 +128,19 @@ fun SettingsPage(navigator: DestinationsNavigator, viewModel: MainActivityViewMo
             VerticalOrderPicker(
                 verticalOrder = state.settings.verticalOrder,
                 setVerticalOrder = {
-                    viewModel.state.value =
-                        state.copy(settings = state.settings.copy(verticalOrder = it))
+                    setState(state.copy(settings = state.settings.copy(verticalOrder = it)))
                 }
             )
             BooleanPicker(
                 value = state.settings.autoHideCalls,
                 setValue = {
-                    viewModel.state.value =
-                        state.copy(settings = state.settings.copy(autoHideCalls = it))
+                    setState(state.copy(settings = state.settings.copy(autoHideCalls = it)))
                 }
             ) {
                 Text("Hide calls when all are found")
             }
             Text(
-                "${stringResource(R.string.app_name)} ${BuildConfig.VERSION_NAME}",
+                "${stringResource(Res.string.app_name)} ${VersionConfig.version}",
                 style = MaterialTheme.typography.labelSmall,
                 modifier = Modifier.align(Alignment.CenterHorizontally).padding(24.dp)
             )
@@ -421,7 +399,7 @@ private fun AutoSwitchSecondsPicker(
                 onValueChange = {},
                 enabled = enabled,
                 readOnly = true,
-                leadingIcon = { Icon(painterResource(R.drawable.ic_timer), null) },
+                leadingIcon = { Icon(painterResource(Res.drawable.ic_timer), null) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
                 colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
                 modifier = Modifier.menuAnchor()
@@ -446,26 +424,4 @@ private fun AutoSwitchSecondsPicker(
             }
         }
     }
-}
-
-object SettingsPageTransitions : DestinationStyle.Animated {
-    override fun AnimatedContentTransitionScope<NavBackStackEntry>.enterTransition() =
-        slideInHorizontally { fullWidth ->
-            fullWidth
-        }
-
-    override fun AnimatedContentTransitionScope<NavBackStackEntry>.exitTransition() =
-        slideOutHorizontally { fullWidth ->
-            fullWidth
-        }
-
-    override fun AnimatedContentTransitionScope<NavBackStackEntry>.popEnterTransition() =
-        slideInHorizontally { fullWidth ->
-            fullWidth
-        }
-
-    override fun AnimatedContentTransitionScope<NavBackStackEntry>.popExitTransition() =
-        slideOutHorizontally { fullWidth ->
-            fullWidth
-        }
 }

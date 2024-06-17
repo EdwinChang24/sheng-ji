@@ -1,9 +1,7 @@
 package io.github.edwinchang24.shengjidisplay.pages
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -22,7 +20,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,66 +31,46 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavBackStackEntry
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.result.NavResult
-import com.ramcosta.composedestinations.result.ResultRecipient
-import com.ramcosta.composedestinations.spec.DestinationStyle
-import io.github.edwinchang24.shengjidisplay.BuildConfig
-import io.github.edwinchang24.shengjidisplay.MainActivityViewModel
-import io.github.edwinchang24.shengjidisplay.MainNavGraph
-import io.github.edwinchang24.shengjidisplay.R
-import io.github.edwinchang24.shengjidisplay.appDestination
+import io.github.edwinchang24.shengjidisplay.VersionConfig
 import io.github.edwinchang24.shengjidisplay.components.ButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.components.CallFoundText
 import io.github.edwinchang24.shengjidisplay.components.IconButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.components.OutlinedButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.components.PlayingCard
-import io.github.edwinchang24.shengjidisplay.destinations.DisplayPageDestination
-import io.github.edwinchang24.shengjidisplay.destinations.EditCallDialogDestination
-import io.github.edwinchang24.shengjidisplay.destinations.EditPossibleTrumpsDialogDestination
-import io.github.edwinchang24.shengjidisplay.destinations.EditTrumpDialogDestination
-import io.github.edwinchang24.shengjidisplay.destinations.SettingsPageDestination
 import io.github.edwinchang24.shengjidisplay.display.DisplayScheme
 import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
+import io.github.edwinchang24.shengjidisplay.model.AppState
 import io.github.edwinchang24.shengjidisplay.model.Call
+import io.github.edwinchang24.shengjidisplay.navigation.Dialog
+import io.github.edwinchang24.shengjidisplay.navigation.Navigator
+import io.github.edwinchang24.shengjidisplay.navigation.Screen
+import io.github.edwinchang24.shengjidisplay.resources.Res
+import io.github.edwinchang24.shengjidisplay.resources.app_name
+import io.github.edwinchang24.shengjidisplay.resources.ic_add
+import io.github.edwinchang24.shengjidisplay.resources.ic_clear_all
+import io.github.edwinchang24.shengjidisplay.resources.ic_close
+import io.github.edwinchang24.shengjidisplay.resources.ic_edit
+import io.github.edwinchang24.shengjidisplay.resources.ic_settings
+import io.github.edwinchang24.shengjidisplay.resources.ic_smart_display
 import io.github.edwinchang24.shengjidisplay.util.formatCallNumber
-import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Destination(style = HomePageTransitions::class)
-@MainNavGraph(start = true)
 @Composable
-fun HomePage(
-    navigator: DestinationsNavigator,
-    editCallResultRecipient: ResultRecipient<EditCallDialogDestination, Int>,
-    viewModel: MainActivityViewModel
-) {
-    val coroutineScope = rememberCoroutineScope()
-    val state by
-        viewModel.state.collectAsStateWithLifecycle(
-            lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
-        )
+fun HomePage(navigator: Navigator, state: AppState, setState: (AppState) -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.app_name)) },
+                title = { Text(stringResource(Res.string.app_name)) },
                 actions = {
-                    IconButtonWithEmphasis(
-                        onClick = { navigator.navigate(SettingsPageDestination) }
-                    ) {
-                        Icon(painterResource(R.drawable.ic_settings), null)
+                    IconButtonWithEmphasis(onClick = { navigator.toggleSettings() }) {
+                        Icon(painterResource(Res.drawable.ic_settings), null)
                     }
                 }
             )
@@ -116,7 +93,7 @@ fun HomePage(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier =
                     Modifier.fillMaxWidth()
-                        .clickable { navigator.navigate(EditPossibleTrumpsDialogDestination) }
+                        .clickable { navigator.navigate(Dialog.EditPossibleTrumps) }
                         .padding(horizontal = 24.dp, vertical = 8.dp)
             ) {
                 Text(
@@ -125,9 +102,9 @@ fun HomePage(
                     modifier = Modifier.weight(1f).padding(end = 16.dp)
                 )
                 OutlinedButtonWithEmphasis(
-                    onClick = { navigator.navigate(EditPossibleTrumpsDialogDestination) }
+                    onClick = { navigator.navigate(Dialog.EditPossibleTrumps) }
                 ) {
-                    Icon(painterResource(R.drawable.ic_edit), null)
+                    Icon(painterResource(Res.drawable.ic_edit), null)
                     Text("Edit")
                 }
             }
@@ -142,7 +119,7 @@ fun HomePage(
                         contentAlignment = Alignment.Center,
                         modifier =
                             Modifier.fillMaxWidth()
-                                .clickable { navigator.navigate(EditTrumpDialogDestination) }
+                                .clickable { navigator.navigate(Dialog.EditTrump) }
                                 .padding(horizontal = 24.dp, vertical = 16.dp)
                     ) {
                         PressableWithEmphasis {
@@ -153,7 +130,7 @@ fun HomePage(
                                 modifier =
                                     Modifier.clip(MaterialTheme.shapes.medium)
                                         .clickableForEmphasis {
-                                            navigator.navigate(EditTrumpDialogDestination)
+                                            navigator.navigate(Dialog.EditTrump)
                                         }
                                         .padding(8.dp)
                             ) {
@@ -163,9 +140,9 @@ fun HomePage(
                                     modifier = Modifier.padding(8.dp).pressEmphasis()
                                 )
                                 IconButtonWithEmphasis(
-                                    onClick = { viewModel.state.value = state.copy(trump = null) }
+                                    onClick = { setState(state.copy(trump = null)) }
                                 ) {
-                                    Icon(painterResource(R.drawable.ic_close), null)
+                                    Icon(painterResource(Res.drawable.ic_close), null)
                                 }
                             }
                         }
@@ -175,15 +152,13 @@ fun HomePage(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier =
                             Modifier.fillMaxWidth()
-                                .clickable { navigator.navigate(EditTrumpDialogDestination) }
+                                .clickable { navigator.navigate(Dialog.EditTrump) }
                                 .padding(horizontal = 24.dp, vertical = 8.dp)
                     ) {
                         Text("No trump card selected")
                         Spacer(modifier = Modifier.weight(1f))
-                        ButtonWithEmphasis(
-                            onClick = { navigator.navigate(EditTrumpDialogDestination) }
-                        ) {
-                            Icon(painterResource(R.drawable.ic_add), null)
+                        ButtonWithEmphasis(onClick = { navigator.navigate(Dialog.EditTrump) }) {
+                            Icon(painterResource(Res.drawable.ic_add), null)
                             Text("Add")
                         }
                     }
@@ -208,21 +183,15 @@ fun HomePage(
                             )
                 ) {
                     OutlinedButtonWithEmphasis(
-                        onClick = { viewModel.state.value = state.copy(calls = emptyList()) }
+                        onClick = { setState(state.copy(calls = emptyList())) }
                     ) {
-                        Icon(painterResource(R.drawable.ic_clear_all), null)
+                        Icon(painterResource(Res.drawable.ic_clear_all), null)
                         Text("Clear all")
                     }
                 }
             }
             if (state.calls.isNotEmpty()) {
-                val listState = rememberLazyListState()
-                editCallResultRecipient.onNavResult {
-                    if (it is NavResult.Value)
-                        coroutineScope.launch { listState.animateScrollToItem(it.value) }
-                }
                 LazyRow(
-                    state = listState,
                     contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -231,32 +200,32 @@ fun HomePage(
                     itemsIndexed(state.calls) { index, call ->
                         CallCard(
                             call = call,
-                            onEdit = { navigator.navigate(EditCallDialogDestination(index)) },
+                            onEdit = { navigator.navigate(Dialog.EditCall(index)) },
                             setFound = {
-                                viewModel.state.value =
+                                setState(
                                     state.copy(
                                         calls =
                                             state.calls.toMutableList().apply {
                                                 this[index] = this[index].copy(found = it)
                                             }
                                     )
+                                )
                             },
                             onDelete = {
-                                viewModel.state.value =
+                                setState(
                                     state.copy(
                                         calls =
                                             state.calls.toMutableList().apply { removeAt(index) }
                                     )
+                                )
                             }
                         )
                     }
                     item {
                         OutlinedButtonWithEmphasis(
-                            onClick = {
-                                navigator.navigate(EditCallDialogDestination(state.calls.size))
-                            }
+                            onClick = { navigator.navigate(Dialog.EditCall(state.calls.size)) }
                         ) {
-                            Icon(painterResource(R.drawable.ic_add), null)
+                            Icon(painterResource(Res.drawable.ic_add), null)
                             Text("Add call")
                         }
                     }
@@ -266,15 +235,13 @@ fun HomePage(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier =
                         Modifier.fillMaxWidth()
-                            .clickable { navigator.navigate(EditCallDialogDestination(0)) }
+                            .clickable { navigator.navigate(Dialog.EditCall(0)) }
                             .padding(horizontal = 24.dp, vertical = 8.dp)
                 ) {
                     Text("No calls added")
                     Spacer(modifier = Modifier.weight(1f))
-                    ButtonWithEmphasis(
-                        onClick = { navigator.navigate(EditCallDialogDestination(0)) }
-                    ) {
-                        Icon(painterResource(R.drawable.ic_add), null)
+                    ButtonWithEmphasis(onClick = { navigator.navigate(Dialog.EditCall(0)) }) {
+                        Icon(painterResource(Res.drawable.ic_add), null)
                         Text("Add")
                     }
                 }
@@ -290,10 +257,7 @@ fun HomePage(
                     Modifier.fillMaxWidth()
                         .clickable {
                             navigator.navigate(
-                                DisplayPageDestination(
-                                    displayScheme = DisplayScheme.Main,
-                                    editTeammates = true
-                                )
+                                Screen.Display(scheme = DisplayScheme.Main, editTeammates = true)
                             )
                         }
                         .padding(horizontal = 24.dp, vertical = 8.dp)
@@ -303,14 +267,11 @@ fun HomePage(
                 OutlinedButtonWithEmphasis(
                     onClick = {
                         navigator.navigate(
-                            DisplayPageDestination(
-                                displayScheme = DisplayScheme.Main,
-                                editTeammates = true
-                            )
+                            Screen.Display(scheme = DisplayScheme.Main, editTeammates = true)
                         )
                     }
                 ) {
-                    Icon(painterResource(R.drawable.ic_edit), null)
+                    Icon(painterResource(Res.drawable.ic_edit), null)
                     Text("Edit")
                 }
             }
@@ -321,27 +282,21 @@ fun HomePage(
             ) {
                 ButtonWithEmphasis(
                     onClick = {
-                        navigator.navigate(
-                            DisplayPageDestination(displayScheme = DisplayScheme.PossibleTrumps)
-                        )
+                        navigator.navigate(Screen.Display(scheme = DisplayScheme.PossibleTrumps))
                     }
                 ) {
-                    Icon(painterResource(R.drawable.ic_smart_display), null)
+                    Icon(painterResource(Res.drawable.ic_smart_display), null)
                     Text("Start possible trumps display")
                 }
                 ButtonWithEmphasis(
-                    onClick = {
-                        navigator.navigate(
-                            DisplayPageDestination(displayScheme = DisplayScheme.Main)
-                        )
-                    }
+                    onClick = { navigator.navigate(Screen.Display(scheme = DisplayScheme.Main)) }
                 ) {
-                    Icon(painterResource(R.drawable.ic_smart_display), null)
+                    Icon(painterResource(Res.drawable.ic_smart_display), null)
                     Text("Start main display")
                 }
             }
             Text(
-                "Version ${BuildConfig.VERSION_NAME}",
+                "Version ${VersionConfig.version}",
                 style = MaterialTheme.typography.labelSmall,
                 modifier = Modifier.align(Alignment.CenterHorizontally).padding(bottom = 16.dp)
             )
@@ -395,35 +350,9 @@ private fun CallCard(
                     }
                 }
                 IconButtonWithEmphasis(onClick = onDelete) {
-                    Icon(painterResource(R.drawable.ic_close), null)
+                    Icon(painterResource(Res.drawable.ic_close), null)
                 }
             }
         }
     }
-}
-
-object HomePageTransitions : DestinationStyle.Animated {
-    override fun AnimatedContentTransitionScope<NavBackStackEntry>.enterTransition() =
-        when (initialState.appDestination()) {
-            DisplayPageDestination -> fadeIn(tween(delayMillis = 250))
-            else -> fadeIn()
-        }
-
-    override fun AnimatedContentTransitionScope<NavBackStackEntry>.exitTransition() =
-        when (targetState.appDestination()) {
-            DisplayPageDestination -> fadeOut(tween(durationMillis = 250))
-            else -> fadeOut()
-        }
-
-    override fun AnimatedContentTransitionScope<NavBackStackEntry>.popEnterTransition() =
-        when (initialState.appDestination()) {
-            DisplayPageDestination -> fadeIn(tween(delayMillis = 250))
-            else -> fadeIn()
-        }
-
-    override fun AnimatedContentTransitionScope<NavBackStackEntry>.popExitTransition() =
-        when (targetState.appDestination()) {
-            DisplayPageDestination -> fadeOut(tween(durationMillis = 250))
-            else -> fadeOut()
-        }
 }

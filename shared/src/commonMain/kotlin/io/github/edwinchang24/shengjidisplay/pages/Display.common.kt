@@ -1,13 +1,6 @@
 package io.github.edwinchang24.shengjidisplay.pages
 
-import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
-import android.content.pm.ActivityInfo
-import android.view.WindowManager
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
 import androidx.compose.animation.EnterExitState
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -38,7 +31,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -53,44 +45,35 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Constraints.Companion.Infinity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavBackStackEntry
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.spec.DestinationStyle
-import io.github.edwinchang24.shengjidisplay.MainActivityViewModel
-import io.github.edwinchang24.shengjidisplay.MainNavGraph
-import io.github.edwinchang24.shengjidisplay.R
-import io.github.edwinchang24.shengjidisplay.appDestination
 import io.github.edwinchang24.shengjidisplay.components.CallsDisplay
 import io.github.edwinchang24.shengjidisplay.components.IconButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.components.OutlinedButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.components.PlayingCard
 import io.github.edwinchang24.shengjidisplay.components.PossibleTrumps
 import io.github.edwinchang24.shengjidisplay.components.Teammates
-import io.github.edwinchang24.shengjidisplay.destinations.EditCallDialogDestination
-import io.github.edwinchang24.shengjidisplay.destinations.EditPossibleTrumpsDialogDestination
-import io.github.edwinchang24.shengjidisplay.destinations.EditTrumpDialogDestination
-import io.github.edwinchang24.shengjidisplay.destinations.HomePageDestination
-import io.github.edwinchang24.shengjidisplay.destinations.SettingsPageDestination
 import io.github.edwinchang24.shengjidisplay.display.ContentRotation
 import io.github.edwinchang24.shengjidisplay.display.DisplayContent
 import io.github.edwinchang24.shengjidisplay.display.DisplayContentWithRotation
 import io.github.edwinchang24.shengjidisplay.display.DisplayScheme
 import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
 import io.github.edwinchang24.shengjidisplay.model.AppState
+import io.github.edwinchang24.shengjidisplay.navigation.Dialog
+import io.github.edwinchang24.shengjidisplay.navigation.Navigator
+import io.github.edwinchang24.shengjidisplay.navigation.Screen
+import io.github.edwinchang24.shengjidisplay.resources.Res
+import io.github.edwinchang24.shengjidisplay.resources.ic_add
+import io.github.edwinchang24.shengjidisplay.resources.ic_close
+import io.github.edwinchang24.shengjidisplay.resources.ic_group
+import io.github.edwinchang24.shengjidisplay.resources.ic_pause
+import io.github.edwinchang24.shengjidisplay.resources.ic_play_arrow
+import io.github.edwinchang24.shengjidisplay.resources.ic_settings
 import kotlinx.coroutines.delay
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -100,23 +83,17 @@ import kotlinx.datetime.format
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.painterResource
 
-@SuppressLint("SourceLockedOrientationActivity")
-@Destination(style = DisplayPageTransitions::class)
-@MainNavGraph
 @Composable
 fun DisplayPage(
     displayScheme: DisplayScheme,
     editTeammates: Boolean = false,
-    navigator: DestinationsNavigator,
-    mainActivityViewModel: MainActivityViewModel,
-    displayViewModel: DisplayViewModel = viewModel()
+    navigator: Navigator,
+    state: AppState,
+    setState: (AppState) -> Unit,
+    displayViewModel: DisplayViewModel = viewModel { DisplayViewModel() }
 ) {
-    val context = LocalContext.current
-    val state by
-        mainActivityViewModel.state.collectAsStateWithLifecycle(
-            lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
-        )
     val content by
         displayViewModel.currentContent.collectAsStateWithLifecycle(
             lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
@@ -146,49 +123,9 @@ fun DisplayPage(
             currentTimeMs = Clock.System.now().toEpochMilliseconds()
         }
     }
-    fun Context.activity(): Activity? =
-        this as? Activity ?: (this as? ContextWrapper)?.baseContext?.activity()
-    DisposableEffect(state.settings.keepScreenOn) {
-        context.activity()?.window.let { window ->
-            if (state.settings.keepScreenOn)
-                window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            else window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            onDispose { window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) }
-        }
-    }
-    DisposableEffect(state.settings.lockScreenOrientation) {
-        context.activity().let { activity ->
-            activity?.requestedOrientation =
-                if (state.settings.lockScreenOrientation) ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                else ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-            onDispose {
-                activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-            }
-        }
-    }
-    val view = LocalView.current
-    DisposableEffect(state.settings.fullScreen) {
-        context.activity()?.window?.let { window ->
-            WindowCompat.getInsetsController(window, view).run {
-                if (state.settings.fullScreen) {
-                    systemBarsBehavior =
-                        WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-                    hide(WindowInsetsCompat.Type.systemBars())
-                } else {
-                    show(WindowInsetsCompat.Type.systemBars())
-                    systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
-                }
-            }
-        }
-        onDispose {
-            context.activity()?.window?.let { window ->
-                WindowCompat.getInsetsController(window, view).run {
-                    show(WindowInsetsCompat.Type.systemBars())
-                    systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
-                }
-            }
-        }
-    }
+    KeepScreenOn(enabled = state.settings.keepScreenOn)
+    LockScreenOrientation(enabled = state.settings.lockScreenOrientation)
+    FullScreen(enabled = state.settings.fullScreen)
     Scaffold { padding ->
         Column(modifier = Modifier.fillMaxSize().padding(padding)) {
             Box(
@@ -199,20 +136,19 @@ fun DisplayPage(
                     content = content,
                     top = true,
                     state = state,
-                    onEditTrump = { navigator.navigate(EditTrumpDialogDestination) },
+                    onEditTrump = { navigator.navigate(Dialog.EditTrump) },
                     onEditCallFound = { index, found ->
-                        mainActivityViewModel.state.value =
+                        setState(
                             state.copy(
                                 calls =
                                     state.calls.toMutableList().also {
                                         it[index] = it[index].copy(found = found)
                                     }
                             )
+                        )
                     },
-                    onEditPossibleTrumps = {
-                        navigator.navigate(EditPossibleTrumpsDialogDestination)
-                    },
-                    onNewCall = { navigator.navigate(EditCallDialogDestination(0)) }
+                    onEditPossibleTrumps = { navigator.navigate(Dialog.EditPossibleTrumps) },
+                    onNewCall = { navigator.navigate(Dialog.EditCall(0)) }
                 )
             }
             DisplayLabel(
@@ -232,8 +168,9 @@ fun DisplayPage(
                         currentTimeMs,
                         orientation = state.settings.clockOrientation,
                         setOrientation = {
-                            mainActivityViewModel.state.value =
+                            setState(
                                 state.copy(settings = state.settings.copy(clockOrientation = it))
+                            )
                         },
                         leftSide = true
                     )
@@ -245,8 +182,8 @@ fun DisplayPage(
                     pause = pause,
                     setPause = { pause = it },
                     onEditTeammates = { editingTeammates = true },
-                    onNavigateSettings = { navigator.navigate(SettingsPageDestination) },
-                    onExit = navigator::navigateUp,
+                    onNavigateSettings = navigator::toggleSettings,
+                    onExit = { navigator.navigate(Screen.Home) },
                     modifier = Modifier.weight(1f)
                 )
                 if (state.settings.showClock) {
@@ -254,8 +191,9 @@ fun DisplayPage(
                         currentTimeMs,
                         orientation = state.settings.clockOrientation,
                         setOrientation = {
-                            mainActivityViewModel.state.value =
+                            setState(
                                 state.copy(settings = state.settings.copy(clockOrientation = it))
+                            )
                         },
                         leftSide = false
                     )
@@ -270,20 +208,19 @@ fun DisplayPage(
                     content = content,
                     top = false,
                     state = state,
-                    onEditTrump = { navigator.navigate(EditTrumpDialogDestination) },
+                    onEditTrump = { navigator.navigate(Dialog.EditTrump) },
                     onEditCallFound = { index, found ->
-                        mainActivityViewModel.state.value =
+                        setState(
                             state.copy(
                                 calls =
                                     state.calls.toMutableList().also {
                                         it[index] = it[index].copy(found = found)
                                     }
                             )
+                        )
                     },
-                    onEditPossibleTrumps = {
-                        navigator.navigate(EditPossibleTrumpsDialogDestination)
-                    },
-                    onNewCall = { navigator.navigate(EditCallDialogDestination(0)) }
+                    onEditPossibleTrumps = { navigator.navigate(Dialog.EditPossibleTrumps) },
+                    onNewCall = { navigator.navigate(Dialog.EditCall(0)) }
                 )
             }
         }
@@ -297,20 +234,21 @@ fun DisplayPage(
         Teammates(
             editing = editingTeammates,
             savedTeammatesRad = state.teammates,
-            setSavedTeammatesRad = {
-                mainActivityViewModel.state.value = state.copy(teammates = it)
-            },
+            setSavedTeammatesRad = { setState(state.copy(teammates = it)) },
             onDone = { editingTeammates = false },
             modifier = Modifier.padding(padding)
         )
     }
 }
 
+@Composable expect fun KeepScreenOn(enabled: Boolean)
+
+@Composable expect fun LockScreenOrientation(enabled: Boolean)
+
+@Composable expect fun FullScreen(enabled: Boolean)
+
 @Composable
-private fun DisplayLabel(
-    content: io.github.edwinchang24.shengjidisplay.display.DisplayContent,
-    modifier: Modifier = Modifier
-) {
+private fun DisplayLabel(content: DisplayContent, modifier: Modifier = Modifier) {
     AnimatedContent(content.name, label = "") { label ->
         Box(contentAlignment = Alignment.Center, modifier = modifier.fillMaxWidth().padding(8.dp)) {
             Text(label, style = MaterialTheme.typography.labelLarge)
@@ -372,18 +310,18 @@ private fun ActionButtons(
         content = {
             if (showPause) {
                 IconButtonWithEmphasis(onClick = { setPause(!pause) }) {
-                    if (pause) Icon(painterResource(R.drawable.ic_play_arrow), null)
-                    else Icon(painterResource(R.drawable.ic_pause), null)
+                    if (pause) Icon(painterResource(Res.drawable.ic_play_arrow), null)
+                    else Icon(painterResource(Res.drawable.ic_pause), null)
                 }
             }
             IconButtonWithEmphasis(onClick = onEditTeammates) {
-                Icon(painterResource(R.drawable.ic_group), null)
+                Icon(painterResource(Res.drawable.ic_group), null)
             }
             IconButtonWithEmphasis(onClick = onNavigateSettings) {
-                Icon(painterResource(R.drawable.ic_settings), null)
+                Icon(painterResource(Res.drawable.ic_settings), null)
             }
             IconButtonWithEmphasis(onClick = onExit) {
-                Icon(painterResource(R.drawable.ic_close), null)
+                Icon(painterResource(Res.drawable.ic_close), null)
             }
         },
         modifier = modifier
@@ -507,7 +445,7 @@ private fun DisplayContent(
                                     ) {
                                         Text("No trump card selected")
                                         OutlinedButtonWithEmphasis(onClick = onEditTrump) {
-                                            Icon(painterResource(R.drawable.ic_add), null)
+                                            Icon(painterResource(Res.drawable.ic_add), null)
                                             Text("Add")
                                         }
                                     }
@@ -547,7 +485,7 @@ private fun DisplayContent(
                                     ) {
                                         Text("No calls added")
                                         OutlinedButton(onClick = onNewCall) {
-                                            Icon(painterResource(R.drawable.ic_add), null)
+                                            Icon(painterResource(Res.drawable.ic_add), null)
                                             Spacer(modifier = Modifier.width(8.dp))
                                             Text("Add")
                                         }
@@ -576,7 +514,7 @@ private fun DisplayContent(
                             ) {
                                 Text("No possible trumps added")
                                 OutlinedButton(onClick = onEditPossibleTrumps) {
-                                    Icon(painterResource(R.drawable.ic_add), null)
+                                    Icon(painterResource(Res.drawable.ic_add), null)
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text("Add")
                                 }
@@ -596,30 +534,4 @@ private fun DisplayContent(
             }
         }
     }
-}
-
-object DisplayPageTransitions : DestinationStyle.Animated {
-    override fun AnimatedContentTransitionScope<NavBackStackEntry>.enterTransition() =
-        when (initialState.appDestination()) {
-            HomePageDestination -> fadeIn(tween(delayMillis = 250))
-            else -> fadeIn()
-        }
-
-    override fun AnimatedContentTransitionScope<NavBackStackEntry>.exitTransition() =
-        when (targetState.appDestination()) {
-            HomePageDestination -> fadeOut(tween(durationMillis = 250))
-            else -> fadeOut()
-        }
-
-    override fun AnimatedContentTransitionScope<NavBackStackEntry>.popEnterTransition() =
-        when (initialState.appDestination()) {
-            HomePageDestination -> fadeIn(tween(delayMillis = 250))
-            else -> fadeIn()
-        }
-
-    override fun AnimatedContentTransitionScope<NavBackStackEntry>.popExitTransition() =
-        when (targetState.appDestination()) {
-            HomePageDestination -> fadeOut(tween(durationMillis = 250))
-            else -> fadeOut()
-        }
 }
