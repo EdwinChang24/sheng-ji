@@ -3,21 +3,15 @@ package io.github.edwinchang24.shengjidisplay.interaction
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.SpringSpec
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.LocalIndication
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
-import androidx.compose.ui.draw.scale
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun PressableWithEmphasis(content: @Composable PressableWithEmphasisScope.() -> Unit) {
+actual fun PressableWithEmphasis(content: @Composable PressableWithEmphasisScope.() -> Unit) {
     val interactionSource = remember { MutableInteractionSource() }
     val scale = remember { Animatable(1f) }
     LaunchedEffect(true) {
@@ -53,22 +47,4 @@ fun PressableWithEmphasis(content: @Composable PressableWithEmphasisScope.() -> 
         }
     }
     PressableWithEmphasisScope(interactionSource, scale.value).content()
-}
-
-class PressableWithEmphasisScope(
-    val interactionSource: MutableInteractionSource,
-    private val scale: Float
-) {
-    fun Modifier.pressEmphasis() = scale(scale)
-
-    @OptIn(ExperimentalFoundationApi::class)
-    fun Modifier.clickableForEmphasis(onLongClick: (() -> Unit)? = null, onClick: () -> Unit) =
-        composed {
-            this@composed.combinedClickable(
-                interactionSource = interactionSource,
-                indication = LocalIndication.current,
-                onClick = onClick,
-                onLongClick = onLongClick
-            )
-        }
 }
