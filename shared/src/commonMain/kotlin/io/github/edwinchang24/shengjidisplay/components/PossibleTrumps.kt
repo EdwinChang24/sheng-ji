@@ -29,7 +29,6 @@ fun PossibleTrumps(possibleTrumps: Set<String>, modifier: Modifier = Modifier) {
         val height = with(LocalDensity.current) { constraints.maxHeight.toFloat().toDp() }
         val radius = minOf(width, height) / 2.75f
         val infiniteTransition = rememberInfiniteTransition()
-        LaunchedEffect(true) { println(radius) }
         val rotation by
             infiniteTransition.animateFloat(
                 0f,
