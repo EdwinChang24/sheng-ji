@@ -1,26 +1,32 @@
 package io.github.edwinchang24.shengjidisplay
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.SpringSpec
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.AnchoredDraggableState
+import androidx.compose.foundation.gestures.DraggableAnchors
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.anchoredDraggable
+import androidx.compose.foundation.gestures.animateTo
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
@@ -29,7 +35,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -37,14 +42,18 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import io.github.edwinchang24.shengjidisplay.dialogs.EditCallDialog
 import io.github.edwinchang24.shengjidisplay.dialogs.EditPossibleTrumpsDialog
@@ -58,12 +67,9 @@ import io.github.edwinchang24.shengjidisplay.pages.DisplayPage
 import io.github.edwinchang24.shengjidisplay.pages.HomePage
 import io.github.edwinchang24.shengjidisplay.pages.SettingsPage
 import io.github.edwinchang24.shengjidisplay.theme.ShengJiDisplayTheme
+import kotlinx.coroutines.launch
 
-@OptIn(
-    ExperimentalMaterial3Api::class,
-    ExperimentalMaterial3WindowSizeClassApi::class,
-    ExperimentalAnimationApi::class
-)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun App(state: AppState, setState: (AppState) -> Unit, modifier: Modifier = Modifier) {
     ShengJiDisplayTheme {
@@ -71,12 +77,28 @@ fun App(state: AppState, setState: (AppState) -> Unit, modifier: Modifier = Modi
             color = MaterialTheme.colorScheme.background,
             modifier = modifier.fillMaxSize().windowInsetsPadding(WindowInsets(0))
         ) {
-            val windowSizeClass = calculateWindowSizeClass()
+            val density = LocalDensity.current
             var currentScreen by
                 rememberSaveable(stateSaver = Screen.Saver) { mutableStateOf(Screen.Home) }
-            var settingsOpen by rememberSaveable { mutableStateOf(false) }
+            val settingsDragState =
+                rememberSaveable(
+                    saver =
+                        AnchoredDraggableState.Saver(
+                            animationSpec = SpringSpec(),
+                            positionalThreshold = { it * 0.5f },
+                            velocityThreshold = { with(density) { 125.dp.toPx() } }
+                        )
+                ) {
+                    AnchoredDraggableState(
+                        false,
+                        positionalThreshold = { it * 0.5f },
+                        velocityThreshold = { with(density) { 125.dp.toPx() } },
+                        animationSpec = SpringSpec()
+                    )
+                }
             var currentDialog by
                 rememberSaveable(stateSaver = Dialog.Saver) { mutableStateOf(null) }
+            val coroutineScope = rememberCoroutineScope()
             val navigator =
                 object : Navigator {
                     override fun navigate(screen: Screen) {
@@ -84,7 +106,9 @@ fun App(state: AppState, setState: (AppState) -> Unit, modifier: Modifier = Modi
                     }
 
                     override fun toggleSettings() {
-                        settingsOpen = !settingsOpen
+                        coroutineScope.launch {
+                            settingsDragState.animateTo(!settingsDragState.targetValue)
+                        }
                     }
 
                     override fun navigate(dialog: Dialog) {
@@ -95,7 +119,12 @@ fun App(state: AppState, setState: (AppState) -> Unit, modifier: Modifier = Modi
                         currentDialog = null
                     }
                 }
-            AndroidBackHandler(currentScreen, settingsOpen, currentDialog, navigator)
+            AndroidBackHandler(
+                currentScreen,
+                settingsDragState.targetValue,
+                currentDialog,
+                navigator
+            )
             AnimatedContent(
                 targetState = currentScreen,
                 transitionSpec = {
@@ -115,35 +144,7 @@ fun App(state: AppState, setState: (AppState) -> Unit, modifier: Modifier = Modi
                         )
                 }
             }
-            AnimatedVisibility(
-                visible = settingsOpen,
-                enter = slideInHorizontally { it },
-                exit = slideOutHorizontally { it }
-            ) {
-                Box(
-                    modifier =
-                        Modifier.fillMaxSize()
-                            .animateEnterExit(enter = fadeIn(), exit = fadeOut())
-                            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
-                            .pointerInput(true) {
-                                detectTapGestures { settingsOpen = false }
-                                detectDragGestures(
-                                    onDragEnd = { settingsOpen = false },
-                                    onDragCancel = { settingsOpen = false },
-                                    onDrag = { _, _ -> }
-                                )
-                            }
-                )
-                Surface(
-                    color = MaterialTheme.colorScheme.background,
-                    modifier =
-                        if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact)
-                            Modifier.fillMaxSize()
-                        else Modifier.fillMaxHeight()
-                ) {
-                    SettingsPage(navigator, state, setState)
-                }
-            }
+            SettingsPane(settingsDragState, navigator, state, setState)
             AnimatedContent(
                 targetState = currentDialog,
                 transitionSpec = {
@@ -205,6 +206,81 @@ fun App(state: AppState, setState: (AppState) -> Unit, modifier: Modifier = Modi
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3WindowSizeClassApi::class)
+@Composable
+private fun SettingsPane(
+    dragState: AnchoredDraggableState<Boolean>,
+    navigator: Navigator,
+    state: AppState,
+    setState: (AppState) -> Unit
+) {
+    val coroutineScope = rememberCoroutineScope()
+    val windowSizeClass = calculateWindowSizeClass()
+    val closeSettings = { coroutineScope.launch { dragState.animateTo(false) } }
+    Box(
+        modifier =
+            Modifier.fillMaxSize()
+                .background(
+                    MaterialTheme.colorScheme.background.copy(
+                        alpha =
+                            0.75f *
+                                (1f -
+                                    (dragState.offset
+                                        .takeIf { !it.isNaN() }
+                                        ?.let { offset ->
+                                            offset /
+                                                (dragState.anchors.positionOf(false).takeIf {
+                                                    !it.isNaN()
+                                                } ?: offset)
+                                        } ?: 1f))
+                    )
+                )
+                .then(
+                    if (!dragState.currentValue) Modifier
+                    else
+                        Modifier.pointerInput(true) { detectTapGestures { closeSettings() } }
+                            .anchoredDraggable(
+                                state = dragState,
+                                orientation = Orientation.Horizontal
+                            )
+                )
+    )
+    Box(contentAlignment = Alignment.CenterEnd, modifier = Modifier.fillMaxSize()) {
+        BoxWithConstraints {
+            val width = with(LocalDensity.current) { maxWidth.toPx() }
+            LaunchedEffect(width) {
+                dragState.updateAnchors(
+                    newAnchors =
+                        DraggableAnchors {
+                            true at 0f
+                            false at width
+                        }
+                )
+            }
+            Surface(
+                color = MaterialTheme.colorScheme.surfaceContainer,
+                modifier =
+                    (if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact)
+                            Modifier.fillMaxSize()
+                        else Modifier.fillMaxHeight())
+                        .then(
+                            Modifier.offset {
+                                    IntOffset(
+                                        (dragState.offset.takeIf { it != Float.NaN }
+                                                ?: Float.MAX_VALUE)
+                                            .toInt(),
+                                        0
+                                    )
+                                }
+                                .anchoredDraggable(state = dragState, Orientation.Horizontal)
+                        )
+            ) {
+                SettingsPage(navigator, state, setState)
             }
         }
     }

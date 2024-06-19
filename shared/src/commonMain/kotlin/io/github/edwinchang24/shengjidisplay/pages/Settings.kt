@@ -2,6 +2,7 @@ package io.github.edwinchang24.shengjidisplay.pages
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -12,12 +13,15 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContent
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CardDefaults
@@ -33,9 +37,7 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -64,22 +66,30 @@ import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsPage(navigator: Navigator, state: AppState, setState: (AppState) -> Unit) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Display settings") },
-                navigationIcon = {
-                    IconButtonWithEmphasis(onClick = { navigator.toggleSettings() }) {
-                        Icon(painterResource(Res.drawable.ic_arrow_back), null)
-                    }
-                }
-            )
-        }
-    ) { padding ->
-        Column(
-            modifier = Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState())
+fun SettingsPage(
+    navigator: Navigator,
+    state: AppState,
+    setState: (AppState) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier =
+            modifier
+                .windowInsetsPadding(WindowInsets.safeContent)
+                .background(MaterialTheme.colorScheme.surfaceContainer)
+                .width(IntrinsicSize.Max)
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth().padding(12.dp)
         ) {
+            IconButtonWithEmphasis(onClick = { navigator.toggleSettings() }) {
+                Icon(painterResource(Res.drawable.ic_arrow_back), null)
+            }
+            Text("Display settings", style = MaterialTheme.typography.titleLarge)
+        }
+        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
             SectionHeader("General")
             BooleanPicker(
                 value = state.settings.keepScreenOn,
