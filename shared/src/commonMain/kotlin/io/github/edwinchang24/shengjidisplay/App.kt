@@ -230,14 +230,15 @@ private fun SettingsPane(
                         alpha =
                             0.75f *
                                 (1f -
-                                    (dragState.offset
-                                        .takeIf { !it.isNaN() }
-                                        ?.let { offset ->
-                                            offset /
-                                                (dragState.anchors.positionOf(false).takeIf {
-                                                    !it.isNaN()
-                                                } ?: offset)
-                                        } ?: 1f))
+                                        (dragState.offset
+                                            .takeIf { !it.isNaN() }
+                                            ?.let { offset ->
+                                                offset /
+                                                    (dragState.anchors.positionOf(false).takeIf {
+                                                        !it.isNaN()
+                                                    } ?: offset)
+                                            } ?: 1f))
+                                    .coerceIn(0f..1f)
                     )
                 )
                 .then(
