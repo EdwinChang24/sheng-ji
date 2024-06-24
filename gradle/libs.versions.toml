@@ -2,15 +2,12 @@
 activity-compose = "1.9.0"
 agp = "8.5.0"
 buildkonfig = "0.15.1"
-compose-bom = "2024.06.00"
-compose-destinations = "1.10.2"
 compose-plugin = "1.6.11"
 core-ktx = "1.13.1"
 core-splashscreen = "1.0.1"
 kotlin = "2.0.0-RC3"
 kotlinx-serialization = "1.7.0-RC"
 kotlinx-datetime = "0.6.0"
-ksp = "2.0.0-RC3-1.0.20"
 lifecycle-runtime = "2.8.0"
 lifecycle-viewmodel = "2.8.0"
 spotless = "7.0.0.BETA1"
@@ -19,16 +16,12 @@ window-sc = "0.5.0"
 
 [libraries]
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
-compose-destinations = { group = "io.github.raamcosta.compose-destinations", name = "core", version.ref = "compose-destinations" }
-compose-destinations-ksp = { group = "io.github.raamcosta.compose-destinations", name = "ksp", version.ref = "compose-destinations" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
 core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "core-splashscreen" }
 kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinx-datetime" }
 lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle-runtime" }
 lifecycle-viewmodel-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle-viewmodel" }
-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 uuid = { group = "com.benasher44", name = "uuid", version.ref = "uuid" }
 window-sc = { group = "dev.chrisbanes.material3", name = "material3-window-size-class-multiplatform", version.ref = "window-sc" }
 
@@ -39,6 +32,5 @@ buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildkonfig"
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 composeJB = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }

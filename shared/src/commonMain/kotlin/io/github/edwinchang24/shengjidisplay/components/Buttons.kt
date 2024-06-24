@@ -6,20 +6,25 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
 
 @Composable
 fun ButtonWithEmphasis(
+    text: String,
+    icon: Painter? = null,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    content: @Composable () -> Unit
+    enabled: Boolean = true
 ) {
     PressableWithEmphasis {
         Button(
@@ -33,7 +38,8 @@ fun ButtonWithEmphasis(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.pressEmphasis()
             ) {
-                content()
+                icon?.let { Icon(it, null) }
+                Text(text, maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
         }
     }
@@ -41,11 +47,12 @@ fun ButtonWithEmphasis(
 
 @Composable
 fun OutlinedButtonWithEmphasis(
+    text: String,
+    icon: Painter? = null,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    colors: ButtonColors = ButtonDefaults.outlinedButtonColors(),
-    content: @Composable () -> Unit
+    colors: ButtonColors = ButtonDefaults.outlinedButtonColors()
 ) {
     PressableWithEmphasis {
         OutlinedButton(
@@ -60,7 +67,8 @@ fun OutlinedButtonWithEmphasis(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.pressEmphasis()
             ) {
-                content()
+                icon?.let { Icon(it, null) }
+                Text(text, maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
         }
     }

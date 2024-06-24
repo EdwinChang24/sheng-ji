@@ -444,10 +444,11 @@ private fun DisplayContent(
                                                 .pressEmphasis()
                                     ) {
                                         Text("No trump card selected")
-                                        OutlinedButtonWithEmphasis(onClick = onEditTrump) {
-                                            Icon(painterResource(Res.drawable.ic_add), null)
-                                            Text("Add")
-                                        }
+                                        OutlinedButtonWithEmphasis(
+                                            text = "Add",
+                                            icon = painterResource(Res.drawable.ic_add),
+                                            onClick = onEditTrump
+                                        )
                                     }
                                 }
                             }

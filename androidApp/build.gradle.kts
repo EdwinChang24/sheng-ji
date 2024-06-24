@@ -6,8 +6,6 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeJB)
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.serialization)
 }
 
 kotlin {
@@ -54,13 +52,10 @@ dependencies {
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.activity.compose)
-    implementation(platform(libs.compose.bom))
     implementation(compose.ui)
-    implementation(libs.ui.graphics)
     implementation(compose.preview)
     implementation(compose.material3)
     implementation(libs.core.splashscreen)
     implementation(libs.kotlinx.serialization)
-    implementation(libs.kotlinx.datetime)
     debugImplementation(compose.uiTooling)
 }

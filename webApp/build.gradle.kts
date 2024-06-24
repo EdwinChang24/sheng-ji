@@ -24,6 +24,7 @@ kotlin {
                                 add(project.rootDir.path + "/shared/")
                                 add(project.rootDir.path + "/webApp/")
                             }
+                        watchOptions = watchOptions?.copy(ignored = "**/**")
                     }
             }
         }

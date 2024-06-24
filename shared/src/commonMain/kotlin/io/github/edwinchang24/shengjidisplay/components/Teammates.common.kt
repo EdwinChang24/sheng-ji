@@ -501,29 +501,25 @@ fun ActionButtons(
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier) {
         OutlinedButtonWithEmphasis(
+            text = if (!hasRecentlyCleared) "Clear" else "Undo",
+            icon =
+                painterResource(
+                    if (!hasRecentlyCleared) Res.drawable.ic_clear_all else Res.drawable.ic_undo
+                ),
             onClick = onPressClear,
             enabled = canClear || hasRecentlyCleared,
             colors =
                 ButtonDefaults.outlinedButtonColors()
                     .copy(containerColor = MaterialTheme.colorScheme.surface)
-        ) {
-            if (!hasRecentlyCleared) {
-                Icon(painterResource(Res.drawable.ic_clear_all), null)
-                Text("Clear")
-            } else {
-                Icon(painterResource(Res.drawable.ic_undo), null)
-                Text("Undo")
-            }
-        }
+        )
         Spacer(modifier = Modifier.height(mainButtonRadiusDp * 2 + 16.dp))
         OutlinedButtonWithEmphasis(
+            text = "Done",
+            icon = painterResource(Res.drawable.ic_done),
             onClick = onDone,
             colors =
                 ButtonDefaults.outlinedButtonColors()
                     .copy(containerColor = MaterialTheme.colorScheme.surface)
-        ) {
-            Icon(painterResource(Res.drawable.ic_done), null)
-            Text("Done")
-        }
+        )
     }
 }

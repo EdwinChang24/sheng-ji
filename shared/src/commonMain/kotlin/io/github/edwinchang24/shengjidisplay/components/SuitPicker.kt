@@ -27,6 +27,10 @@ fun SuitPicker(suit: Suit?, setSuit: (Suit) -> Unit, modifier: Modifier = Modifi
             PressableWithEmphasis {
                 OutlinedCard(
                     onClick = { setSuit(it) },
+                    colors =
+                        CardDefaults.outlinedCardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+                        ),
                     border =
                         BorderStroke(
                             width =
