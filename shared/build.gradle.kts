@@ -28,11 +28,11 @@ kotlin {
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.serialization)
             implementation(libs.uuid)
-            implementation(libs.window.sc)
         }
         androidMain.dependencies {
             implementation(libs.core.ktx)
             implementation(libs.activity.compose)
+            implementation(libs.window)
         }
     }
 }

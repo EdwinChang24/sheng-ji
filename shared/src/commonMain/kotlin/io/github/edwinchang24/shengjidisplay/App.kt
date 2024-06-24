@@ -38,9 +38,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -67,6 +64,8 @@ import io.github.edwinchang24.shengjidisplay.pages.DisplayPage
 import io.github.edwinchang24.shengjidisplay.pages.HomePage
 import io.github.edwinchang24.shengjidisplay.pages.SettingsPage
 import io.github.edwinchang24.shengjidisplay.theme.ShengJiDisplayTheme
+import io.github.edwinchang24.shengjidisplay.util.WindowSize
+import io.github.edwinchang24.shengjidisplay.util.calculateWindowSize
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
@@ -211,7 +210,7 @@ fun App(state: AppState, setState: (AppState) -> Unit, modifier: Modifier = Modi
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3WindowSizeClassApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SettingsPane(
     dragState: AnchoredDraggableState<Boolean>,
@@ -220,7 +219,7 @@ private fun SettingsPane(
     setState: (AppState) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val windowSizeClass = calculateWindowSizeClass()
+    val windowSize = calculateWindowSize()
     val closeSettings = { coroutineScope.launch { dragState.animateTo(false) } }
     Box(
         modifier =
@@ -266,8 +265,7 @@ private fun SettingsPane(
             Surface(
                 color = MaterialTheme.colorScheme.surfaceContainer,
                 modifier =
-                    (if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact)
-                            Modifier.fillMaxSize()
+                    (if (windowSize == WindowSize.Small) Modifier.fillMaxSize()
                         else Modifier.fillMaxHeight())
                         .then(
                             Modifier.offset {

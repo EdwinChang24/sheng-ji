@@ -1,6 +1,15 @@
 package io.github.edwinchang24.shengjidisplay.pages
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -10,16 +19,15 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -29,9 +37,6 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -41,16 +46,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.IntrinsicMeasurable
-import androidx.compose.ui.layout.IntrinsicMeasureScope
-import androidx.compose.ui.layout.LayoutModifier
-import androidx.compose.ui.layout.Measurable
-import androidx.compose.ui.layout.MeasureScope
+import androidx.compose.ui.layout.SubcomposeLayout
+import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.github.edwinchang24.shengjidisplay.VersionConfig
 import io.github.edwinchang24.shengjidisplay.components.ButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.components.CallFoundText
 import io.github.edwinchang24.shengjidisplay.components.IconButtonWithEmphasis
@@ -76,18 +79,16 @@ import io.github.edwinchang24.shengjidisplay.resources.ic_close
 import io.github.edwinchang24.shengjidisplay.resources.ic_edit
 import io.github.edwinchang24.shengjidisplay.resources.ic_settings
 import io.github.edwinchang24.shengjidisplay.resources.ic_smart_display
+import io.github.edwinchang24.shengjidisplay.util.WindowSize
+import io.github.edwinchang24.shengjidisplay.util.calculateWindowSize
 import io.github.edwinchang24.shengjidisplay.util.formatCallNumber
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(
-    ExperimentalMaterial3Api::class,
-    ExperimentalMaterial3WindowSizeClassApi::class,
-    ExperimentalLayoutApi::class
-)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun HomePage(navigator: Navigator, state: AppState, setState: (AppState) -> Unit) {
-    val windowWidthSizeClass = calculateWindowSizeClass().widthSizeClass
+    val windowSize = calculateWindowSize()
     Scaffold(
         topBar = {
             TopAppBar(
@@ -106,197 +107,252 @@ fun HomePage(navigator: Navigator, state: AppState, setState: (AppState) -> Unit
             )
         }
     ) { padding ->
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier =
-                Modifier.fillMaxSize()
-                    .padding(padding)
-                    .verticalScroll(rememberScrollState())
-                    .padding(24.dp)
-        ) {
-            var tempTrumpRank by rememberSaveable(state.trump) { mutableStateOf(state.trump?.rank) }
-            var tempTrumpSuit by rememberSaveable(state.trump) { mutableStateOf(state.trump?.suit) }
-            LaunchedEffect(tempTrumpRank, tempTrumpSuit) {
-                tempTrumpRank?.let { r ->
-                    tempTrumpSuit?.let { s -> setState(state.copy(trump = PlayingCard(r, s))) }
-                }
-            }
-            val cardColors =
-                CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
-            if (windowWidthSizeClass == WindowWidthSizeClass.Compact) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(24.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Card(colors = cardColors, modifier = Modifier.height(IntrinsicSize.Max)) {
-                        PossibleTrumpsSelection(windowWidthSizeClass, navigator, state, setState)
+        Box(modifier = Modifier.fillMaxSize().padding(padding)) {
+            val large = windowSize == WindowSize.Large
+            var startButtonsHeight by rememberSaveable { mutableStateOf(0) }
+            val startButtonsHeightDp = with(LocalDensity.current) { startButtonsHeight.toDp() }
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                var tempTrumpRank by
+                    rememberSaveable(state.trump) { mutableStateOf(state.trump?.rank) }
+                var tempTrumpSuit by
+                    rememberSaveable(state.trump) { mutableStateOf(state.trump?.suit) }
+                LaunchedEffect(tempTrumpRank, tempTrumpSuit) {
+                    tempTrumpRank?.let { r ->
+                        tempTrumpSuit?.let { s -> setState(state.copy(trump = PlayingCard(r, s))) }
                     }
-                    Card(colors = cardColors, modifier = Modifier.height(IntrinsicSize.Max)) {
+                }
+                val cardColors =
+                    CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    )
+                val callsLayoutId = "calls"
+                val cards =
+                    @Composable {
+                        PossibleTrumpsSelection(
+                            cardColors,
+                            windowSize,
+                            navigator,
+                            state,
+                            setState,
+                            modifier = Modifier.padding(12.dp)
+                        )
                         TrumpCardSelection(
+                            cardColors,
                             tempTrumpRank,
                             { tempTrumpRank = it },
                             tempTrumpSuit,
                             { tempTrumpSuit = it },
-                            windowWidthSizeClass,
+                            windowSize,
                             navigator,
                             state,
-                            setState
+                            setState,
+                            modifier = Modifier.padding(12.dp)
+                        )
+                        CallsSelection(
+                            cardColors,
+                            navigator,
+                            state,
+                            setState,
+                            modifier = Modifier.padding(12.dp).layoutId(callsLayoutId)
+                        )
+                        TeammatesSelection(
+                            cardColors,
+                            navigator,
+                            state,
+                            modifier = Modifier.padding(12.dp)
                         )
                     }
-                    Card(colors = cardColors, modifier = Modifier.height(IntrinsicSize.Max)) {
-                        CallsSelection(navigator, state, setState)
-                    }
-                    Card(colors = cardColors, modifier = Modifier.height(IntrinsicSize.Max)) {
-                        TeammatesSelection(navigator, state)
-                    }
-                }
-            } else {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                SubcomposeLayout(
                     modifier =
-                        (if (windowWidthSizeClass == WindowWidthSizeClass.Expanded)
-                                Modifier.width(IntrinsicSize.Max)
-                            else Modifier.fillMaxWidth())
-                            .then(Modifier.align(Alignment.CenterHorizontally))
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(24.dp),
-                        modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Max)
-                    ) {
-                        Card(colors = cardColors, modifier = Modifier.weight(1f).fillMaxHeight()) {
-                            PossibleTrumpsSelection(
-                                windowWidthSizeClass,
-                                navigator,
-                                state,
-                                setState
-                            )
+                        Modifier.verticalScroll(rememberScrollState())
+                            .padding(12.dp)
+                            .padding(bottom = if (!large) startButtonsHeightDp else 0.dp)
+                ) { constraints ->
+                    if (windowSize == WindowSize.Small) {
+                        val placeables =
+                            subcompose(0, cards).map {
+                                it.measure(
+                                    constraints.copy(
+                                        minWidth = constraints.maxWidth,
+                                        maxWidth = constraints.maxWidth
+                                    )
+                                )
+                            }
+                        layout(constraints.maxWidth, placeables.sumOf { it.height }) {
+                            var y = 0
+                            placeables.forEach {
+                                it.placeRelative(0, y)
+                                y += it.height
+                            }
                         }
-                        Card(colors = cardColors, modifier = Modifier.weight(1f).fillMaxHeight()) {
-                            TrumpCardSelection(
-                                tempTrumpRank,
-                                { tempTrumpRank = it },
-                                tempTrumpSuit,
-                                { tempTrumpSuit = it },
-                                windowWidthSizeClass,
-                                navigator,
-                                state,
-                                setState
-                            )
-                        }
-                    }
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(24.dp),
-                        modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Max)
-                    ) {
-                        Card(colors = cardColors, modifier = Modifier.weight(1f).fillMaxHeight()) {
-                            CallsSelection(navigator, state, setState)
-                        }
-                        Card(colors = cardColors, modifier = Modifier.weight(1f).fillMaxHeight()) {
-                            TeammatesSelection(navigator, state)
+                    } else {
+                        var slotId = 0
+                        val placeablesFiltered =
+                            subcompose(slotId++, cards)
+                                .filterNot { it.layoutId == callsLayoutId }
+                                .map { it.measure(constraints) }
+                        val width =
+                            minOf(constraints.maxWidth, placeablesFiltered.maxOf { it.width } * 2)
+                        val placeablesWithFinalWidth =
+                            subcompose(slotId++, cards).map {
+                                it.measure(
+                                    constraints.copy(minWidth = width / 2, maxWidth = width / 2)
+                                )
+                            }
+                        val maxHeights =
+                            placeablesWithFinalWidth.chunked(2).map { it.maxOf { p -> p.height } }
+                        val placeablesFinal =
+                            subcompose(slotId, cards).mapIndexed { index, m ->
+                                m.measure(
+                                    Constraints(
+                                        minWidth = width / 2,
+                                        maxWidth = width / 2,
+                                        minHeight = maxHeights[index / 2],
+                                        maxHeight = maxHeights[index / 2]
+                                    )
+                                )
+                            }
+                        layout(width, maxHeights.sum()) {
+                            var y = 0
+                            placeablesFinal.chunked(2).forEach { row ->
+                                var x = 0
+                                row.forEach {
+                                    it.placeRelative(x, y)
+                                    x += it.width
+                                }
+                                y += row.maxOf { it.height }
+                            }
                         }
                     }
                 }
+                if (large) {
+                    StartButtons(navigator, modifier = Modifier.align(Alignment.CenterVertically))
+                }
             }
-            Spacer(modifier = Modifier.weight(1f))
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                ButtonWithEmphasis(
-                    text = "Start possible trumps display",
-                    icon = painterResource(Res.drawable.ic_smart_display),
-                    onClick = {
-                        navigator.navigate(Screen.Display(scheme = DisplayScheme.PossibleTrumps))
-                    }
-                )
-                ButtonWithEmphasis(
-                    text = "Start main display",
-                    icon = painterResource(Res.drawable.ic_smart_display),
-                    onClick = { navigator.navigate(Screen.Display(scheme = DisplayScheme.Main)) }
+            if (!large) {
+                StartButtons(
+                    navigator,
+                    modifier =
+                        Modifier.align(Alignment.BottomCenter)
+                            .onGloballyPositioned { startButtonsHeight = it.size.height }
+                            .padding(bottom = 24.dp)
                 )
             }
-            Text(
-                "Version ${VersionConfig.version}",
-                style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
         }
     }
 }
 
 @Composable
+private fun StartButtons(navigator: Navigator, modifier: Modifier = Modifier) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier) {
+        ButtonWithEmphasis(
+            text = "Start possible trumps display",
+            icon = painterResource(Res.drawable.ic_smart_display),
+            onClick = { navigator.navigate(Screen.Display(scheme = DisplayScheme.PossibleTrumps)) }
+        )
+        ButtonWithEmphasis(
+            text = "Start main display",
+            icon = painterResource(Res.drawable.ic_smart_display),
+            onClick = { navigator.navigate(Screen.Display(scheme = DisplayScheme.Main)) }
+        )
+    }
+}
+
+@Composable
 private fun PossibleTrumpsSelection(
-    windowWidthSizeClass: WindowWidthSizeClass,
+    cardColors: CardColors,
+    windowSize: WindowSize,
     navigator: Navigator,
     state: AppState,
     setState: (AppState) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val expanded = windowWidthSizeClass == WindowWidthSizeClass.Expanded
-    Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+    val large = windowSize == WindowSize.Large
+    Card(
+        colors = cardColors,
         modifier =
             modifier
+                .width(IntrinsicSize.Max)
+                .clip(CardDefaults.shape)
                 .then(
-                    if (!expanded)
-                        Modifier.clickable { navigator.navigate(Dialog.EditPossibleTrumps) }
+                    if (!large) Modifier.clickable { navigator.navigate(Dialog.EditPossibleTrumps) }
                     else Modifier
                 )
-                .fillMaxHeight()
-                .padding(vertical = 24.dp)
     ) {
-        Text(
-            "Possible trumps",
-            style = MaterialTheme.typography.titleLarge,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.padding(horizontal = 24.dp)
-        )
-        if (expanded) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp)
-            ) {
-                AnimatedContent(state.possibleTrumps, modifier = Modifier.fillMaxWidth()) {
-                    targetState ->
-                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(vertical = 24.dp)
+        ) {
+            Text(
+                "Possible trumps",
+                style = MaterialTheme.typography.titleLarge,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(horizontal = 24.dp)
+            )
+            if (large) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp)
+                ) {
+                    AnimatedContent(
+                        state.possibleTrumps,
+                        modifier = Modifier.fillMaxWidth(),
+                        transitionSpec = {
+                            (fadeIn(animationSpec = tween(220, delayMillis = 90)) +
+                                    scaleIn(
+                                        initialScale = 0.92f,
+                                        animationSpec = tween(220, delayMillis = 90)
+                                    ))
+                                .togetherWith(fadeOut(animationSpec = tween(90)))
+                                .using(SizeTransform())
+                        }
+                    ) { targetState ->
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                if (targetState.isEmpty()) "None selected"
+                                else targetState.joinToString(),
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
+                    }
+                    PossibleTrumpsPicker(
+                        selected = state.possibleTrumps,
+                        setSelected = { setState(state.copy(possibleTrumps = it)) }
+                    )
+                }
+            } else {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp)
+                ) {
+                    AnimatedContent(
+                        state.possibleTrumps,
+                        modifier = Modifier.weight(1f).padding(end = 16.dp)
+                    ) { targetState ->
                         Text(
                             if (targetState.isEmpty()) "None selected"
                             else targetState.joinToString(),
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.padding(16.dp)
+                            modifier = Modifier.padding(end = 16.dp)
                         )
                     }
-                }
-                PossibleTrumpsPicker(
-                    selected = state.possibleTrumps,
-                    setSelected = { setState(state.copy(possibleTrumps = it)) }
-                )
-            }
-        } else {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp)
-            ) {
-                AnimatedContent(
-                    state.possibleTrumps,
-                    modifier = Modifier.weight(1f).padding(end = 16.dp)
-                ) { targetState ->
-                    Text(
-                        if (targetState.isEmpty()) "None selected" else targetState.joinToString(),
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(end = 16.dp)
+                    OutlinedButtonWithEmphasis(
+                        text = "Edit",
+                        icon = painterResource(Res.drawable.ic_edit),
+                        onClick = { navigator.navigate(Dialog.EditPossibleTrumps) }
                     )
                 }
-                OutlinedButtonWithEmphasis(
-                    text = "Edit",
-                    icon = painterResource(Res.drawable.ic_edit),
-                    onClick = { navigator.navigate(Dialog.EditPossibleTrumps) }
-                )
             }
         }
     }
@@ -304,137 +360,146 @@ private fun PossibleTrumpsSelection(
 
 @Composable
 private fun TrumpCardSelection(
+    cardColors: CardColors,
     tempTrumpRank: String?,
     setTempTrumpRank: (String) -> Unit,
     tempTrumpSuit: Suit?,
     setTempTrumpSuit: (Suit) -> Unit,
-    windowWidthSizeClass: WindowWidthSizeClass,
+    windowSize: WindowSize,
     navigator: Navigator,
     state: AppState,
     setState: (AppState) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val expanded = windowWidthSizeClass == WindowWidthSizeClass.Expanded
-    Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+    val large = windowSize == WindowSize.Large
+    Card(
+        colors = cardColors,
         modifier =
             modifier
+                .width(IntrinsicSize.Max)
+                .clip(CardDefaults.shape)
                 .then(
-                    if (!expanded) Modifier.clickable { navigator.navigate(Dialog.EditTrump) }
+                    if (!large) Modifier.clickable { navigator.navigate(Dialog.EditTrump) }
                     else Modifier
                 )
-                .fillMaxHeight()
-                .padding(vertical = 24.dp)
     ) {
-        Text(
-            "Trump card",
-            style = MaterialTheme.typography.titleLarge,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.padding(horizontal = 24.dp)
-        )
-        if (expanded) {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                AnimatedContent(targetState = state.trump, modifier = Modifier.fillMaxWidth()) {
-                    targetTrump ->
-                    Row(
-                        horizontalArrangement =
-                            Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        if (targetTrump != null) {
-                            PlayingCard(
-                                targetTrump,
-                                textStyle = LocalTextStyle.current.copy(fontSize = 32.sp)
-                            )
-                            IconButtonWithEmphasis(
-                                onClick = { setState(state.copy(trump = null)) }
-                            ) {
-                                Icon(painterResource(Res.drawable.ic_close), null)
-                            }
-                        } else {
-                            Text(
-                                "No trump card selected",
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
-                    }
-                }
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp)
-                ) {
-                    Text("Rank", style = MaterialTheme.typography.labelMedium)
-                    RankPicker(
-                        tempTrumpRank,
-                        setTempTrumpRank,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    )
-                }
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp)
-                ) {
-                    Text("Suit", style = MaterialTheme.typography.labelMedium)
-                    SuitPicker(
-                        tempTrumpSuit,
-                        setTempTrumpSuit,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    )
-                }
-            }
-        } else {
-            AnimatedContent(targetState = state.trump) { targetTrump ->
-                if (targetTrump != null) {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier =
-                            Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 16.dp)
-                    ) {
-                        PressableWithEmphasis {
-                            Row(
-                                horizontalArrangement =
-                                    Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier =
-                                    Modifier.clip(MaterialTheme.shapes.medium)
-                                        .clickableForEmphasis {
-                                            navigator.navigate(Dialog.EditTrump)
-                                        }
-                                        .padding(8.dp)
-                            ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(vertical = 24.dp)
+        ) {
+            Text(
+                "Trump card",
+                style = MaterialTheme.typography.titleLarge,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(horizontal = 24.dp)
+            )
+            if (large) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    AnimatedContent(
+                        targetState = state.trump,
+                        modifier = Modifier.fillMaxWidth()
+                    ) { targetTrump ->
+                        Row(
+                            horizontalArrangement =
+                                Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(16.dp)
+                        ) {
+                            if (targetTrump != null) {
                                 PlayingCard(
                                     targetTrump,
-                                    textStyle = LocalTextStyle.current.copy(fontSize = 32.sp),
-                                    modifier = Modifier.padding(8.dp).pressEmphasis()
+                                    textStyle = LocalTextStyle.current.copy(fontSize = 32.sp)
                                 )
                                 IconButtonWithEmphasis(
                                     onClick = { setState(state.copy(trump = null)) }
                                 ) {
                                     Icon(painterResource(Res.drawable.ic_close), null)
                                 }
+                            } else {
+                                Text(
+                                    "No trump card selected",
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis
+                                )
                             }
                         }
                     }
-                } else {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier =
-                            Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp)
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp)
                     ) {
-                        Text(
-                            "No trump card selected",
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.weight(1f).padding(end = 16.dp)
+                        Text("Rank", style = MaterialTheme.typography.labelMedium)
+                        RankPicker(
+                            tempTrumpRank,
+                            setTempTrumpRank,
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
                         )
-                        ButtonWithEmphasis(
-                            text = "Add",
-                            icon = painterResource(Res.drawable.ic_add),
-                            onClick = { navigator.navigate(Dialog.EditTrump) }
+                    }
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp)
+                    ) {
+                        Text("Suit", style = MaterialTheme.typography.labelMedium)
+                        SuitPicker(
+                            tempTrumpSuit,
+                            setTempTrumpSuit,
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
                         )
+                    }
+                }
+            } else {
+                AnimatedContent(targetState = state.trump) { targetTrump ->
+                    if (targetTrump != null) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier =
+                                Modifier.fillMaxWidth()
+                                    .padding(horizontal = 24.dp, vertical = 16.dp)
+                        ) {
+                            PressableWithEmphasis {
+                                Row(
+                                    horizontalArrangement =
+                                        Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier =
+                                        Modifier.clip(MaterialTheme.shapes.medium)
+                                            .clickableForEmphasis {
+                                                navigator.navigate(Dialog.EditTrump)
+                                            }
+                                            .padding(8.dp)
+                                ) {
+                                    PlayingCard(
+                                        targetTrump,
+                                        textStyle = LocalTextStyle.current.copy(fontSize = 32.sp),
+                                        modifier = Modifier.padding(8.dp).pressEmphasis()
+                                    )
+                                    IconButtonWithEmphasis(
+                                        onClick = { setState(state.copy(trump = null)) }
+                                    ) {
+                                        Icon(painterResource(Res.drawable.ic_close), null)
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier =
+                                Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp)
+                        ) {
+                            Text(
+                                "No trump card selected",
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.weight(1f).padding(end = 16.dp)
+                            )
+                            ButtonWithEmphasis(
+                                text = "Add",
+                                icon = painterResource(Res.drawable.ic_add),
+                                onClick = { navigator.navigate(Dialog.EditTrump) }
+                            )
+                        }
                     }
                 }
             }
@@ -444,112 +509,116 @@ private fun TrumpCardSelection(
 
 @Composable
 private fun CallsSelection(
+    cardColors: CardColors,
     navigator: Navigator,
     state: AppState,
     setState: (AppState) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+    Card(
+        colors = cardColors,
         modifier =
             modifier
+                .width(IntrinsicSize.Max)
+                .clip(CardDefaults.shape)
                 .then(
                     if (state.calls.isEmpty())
                         Modifier.clickable { navigator.navigate(Dialog.EditCall(0)) }
                     else Modifier
                 )
-                .fillMaxHeight()
-                .padding(vertical = 24.dp)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp)
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(vertical = 24.dp)
         ) {
-            Text(
-                "Calls",
-                style = MaterialTheme.typography.titleLarge,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            if (state.calls.isNotEmpty()) {
-                OutlinedButtonWithEmphasis(
-                    text = "Clear all",
-                    icon = painterResource(Res.drawable.ic_clear_all),
-                    onClick = { setState(state.copy(calls = emptyList())) }
-                )
-            }
-        }
-        if (state.calls.isNotEmpty()) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                modifier =
-                    Modifier.padding(bottom = 8.dp)
-                        .then(
-                            object : LayoutModifier {
-                                override fun MeasureScope.measure(
-                                    measurable: Measurable,
-                                    constraints: Constraints
-                                ) =
-                                    with(measurable.measure(constraints)) {
-                                        layout(width, height) { placeRelative(0, 0) }
-                                    }
-
-                                override fun IntrinsicMeasureScope.maxIntrinsicWidth(
-                                    measurable: IntrinsicMeasurable,
-                                    height: Int
-                                ) = 200.dp.roundToPx()
-                            }
-                        )
-                        .horizontalScroll(rememberScrollState())
-                        .padding(horizontal = 24.dp, vertical = 8.dp)
-            ) {
-                state.calls.forEachIndexed { index, call ->
-                    CallCard(
-                        call = call,
-                        onEdit = { navigator.navigate(Dialog.EditCall(index)) },
-                        setFound = {
-                            setState(
-                                state.copy(
-                                    calls =
-                                        state.calls.toMutableList().apply {
-                                            this[index] = this[index].copy(found = it)
-                                        }
-                                )
-                            )
-                        },
-                        onDelete = {
-                            setState(
-                                state.copy(
-                                    calls = state.calls.toMutableList().apply { removeAt(index) }
-                                )
-                            )
-                        }
-                    )
-                }
-                OutlinedButtonWithEmphasis(
-                    text = "Add call",
-                    icon = painterResource(Res.drawable.ic_add),
-                    onClick = { navigator.navigate(Dialog.EditCall(state.calls.size)) }
-                )
-            }
-        } else {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp)
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp)
             ) {
                 Text(
-                    "No calls added",
+                    "Calls",
+                    style = MaterialTheme.typography.titleLarge,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f).padding(end = 16.dp)
+                    overflow = TextOverflow.Ellipsis
                 )
-                ButtonWithEmphasis(
-                    text = "Add",
-                    icon = painterResource(Res.drawable.ic_add),
-                    onClick = { navigator.navigate(Dialog.EditCall(0)) }
-                )
+                AnimatedVisibility(
+                    visible = state.calls.isNotEmpty(),
+                    enter =
+                        fadeIn() +
+                            expandVertically(expandFrom = Alignment.CenterVertically, clip = false),
+                    exit =
+                        fadeOut() +
+                            shrinkVertically(
+                                shrinkTowards = Alignment.CenterVertically,
+                                clip = false
+                            ),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Box(contentAlignment = Alignment.CenterEnd) {
+                        OutlinedButtonWithEmphasis(
+                            text = "Clear all",
+                            icon = painterResource(Res.drawable.ic_clear_all),
+                            onClick = { setState(state.copy(calls = emptyList())) }
+                        )
+                    }
+                }
+            }
+            if (state.calls.isNotEmpty()) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier =
+                        Modifier.padding(bottom = 8.dp)
+                            .horizontalScroll(rememberScrollState())
+                            .padding(horizontal = 24.dp, vertical = 8.dp)
+                ) {
+                    state.calls.forEachIndexed { index, call ->
+                        CallCard(
+                            call = call,
+                            onEdit = { navigator.navigate(Dialog.EditCall(index)) },
+                            setFound = {
+                                setState(
+                                    state.copy(
+                                        calls =
+                                            state.calls.toMutableList().apply {
+                                                this[index] = this[index].copy(found = it)
+                                            }
+                                    )
+                                )
+                            },
+                            onDelete = {
+                                setState(
+                                    state.copy(
+                                        calls =
+                                            state.calls.toMutableList().apply { removeAt(index) }
+                                    )
+                                )
+                            }
+                        )
+                    }
+                    OutlinedButtonWithEmphasis(
+                        text = "Add call",
+                        icon = painterResource(Res.drawable.ic_add),
+                        onClick = { navigator.navigate(Dialog.EditCall(state.calls.size)) }
+                    )
+                }
+            } else {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp)
+                ) {
+                    Text(
+                        "No calls added",
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f).padding(end = 16.dp)
+                    )
+                    ButtonWithEmphasis(
+                        text = "Add",
+                        icon = painterResource(Res.drawable.ic_add),
+                        onClick = { navigator.navigate(Dialog.EditCall(0)) }
+                    )
+                }
             }
         }
     }
@@ -618,48 +687,51 @@ private fun CallCard(
 
 @Composable
 private fun TeammatesSelection(
+    cardColors: CardColors,
     navigator: Navigator,
     state: AppState,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+    Card(
+        colors = cardColors,
         modifier =
-            modifier
-                .clickable {
-                    navigator.navigate(
-                        Screen.Display(scheme = DisplayScheme.Main, editTeammates = true)
-                    )
-                }
-                .fillMaxHeight()
-                .padding(vertical = 24.dp)
+            modifier.width(IntrinsicSize.Max).clip(CardDefaults.shape).clickable {
+                navigator.navigate(
+                    Screen.Display(scheme = DisplayScheme.Main, editTeammates = true)
+                )
+            }
     ) {
-        Text(
-            "Teammates",
-            style = MaterialTheme.typography.titleLarge,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.padding(horizontal = 24.dp)
-        )
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp)
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(vertical = 24.dp)
         ) {
             Text(
-                "${state.teammates.size} teammates added",
+                "Teammates",
+                style = MaterialTheme.typography.titleLarge,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f).padding(end = 16.dp)
+                modifier = Modifier.padding(horizontal = 24.dp)
             )
-            OutlinedButtonWithEmphasis(
-                text = "Edit",
-                icon = painterResource(Res.drawable.ic_edit),
-                onClick = {
-                    navigator.navigate(
-                        Screen.Display(scheme = DisplayScheme.Main, editTeammates = true)
-                    )
-                }
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp)
+            ) {
+                Text(
+                    "${state.teammates.size} teammates added",
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f).padding(end = 16.dp)
+                )
+                OutlinedButtonWithEmphasis(
+                    text = "Edit",
+                    icon = painterResource(Res.drawable.ic_edit),
+                    onClick = {
+                        navigator.navigate(
+                            Screen.Display(scheme = DisplayScheme.Main, editTeammates = true)
+                        )
+                    }
+                )
+            }
         }
     }
 }
