@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
@@ -24,12 +25,14 @@ fun ButtonWithEmphasis(
     icon: Painter? = null,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    elevation: ButtonElevation = ButtonDefaults.buttonElevation()
 ) {
     PressableWithEmphasis {
         Button(
             onClick = onClick,
             enabled = enabled,
+            elevation = elevation,
             interactionSource = interactionSource,
             modifier = modifier
         ) {

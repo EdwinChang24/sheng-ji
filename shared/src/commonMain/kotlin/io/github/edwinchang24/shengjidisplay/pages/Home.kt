@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
@@ -238,7 +239,7 @@ fun HomePage(navigator: Navigator, state: AppState, setState: (AppState) -> Unit
                     modifier =
                         Modifier.align(Alignment.BottomCenter)
                             .onGloballyPositioned { startButtonsHeight = it.size.height }
-                            .padding(bottom = 24.dp)
+                            .padding(start = 24.dp, end = 24.dp, bottom = 24.dp)
                 )
             }
         }
@@ -251,12 +252,14 @@ private fun StartButtons(navigator: Navigator, modifier: Modifier = Modifier) {
         ButtonWithEmphasis(
             text = "Start possible trumps display",
             icon = painterResource(Res.drawable.ic_smart_display),
-            onClick = { navigator.navigate(Screen.Display(scheme = DisplayScheme.PossibleTrumps)) }
+            onClick = { navigator.navigate(Screen.Display(scheme = DisplayScheme.PossibleTrumps)) },
+            elevation = ButtonDefaults.buttonElevation(6.dp, 6.dp, 6.dp, 8.dp, 6.dp)
         )
         ButtonWithEmphasis(
             text = "Start main display",
             icon = painterResource(Res.drawable.ic_smart_display),
-            onClick = { navigator.navigate(Screen.Display(scheme = DisplayScheme.Main)) }
+            onClick = { navigator.navigate(Screen.Display(scheme = DisplayScheme.Main)) },
+            elevation = ButtonDefaults.buttonElevation(6.dp, 6.dp, 6.dp, 8.dp, 6.dp)
         )
     }
 }
