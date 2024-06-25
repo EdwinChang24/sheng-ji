@@ -1,6 +1,7 @@
 package io.github.edwinchang24.shengjidisplay
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.SpringSpec
 import androidx.compose.animation.core.tween
@@ -18,26 +19,19 @@ import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.gestures.animateTo
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -144,32 +138,37 @@ fun App(state: AppState, setState: (AppState) -> Unit, modifier: Modifier = Modi
                 }
             }
             SettingsPane(settingsDragState, navigator, state, setState)
+            AnimatedVisibility(
+                currentDialog != null,
+                enter = fadeIn(),
+                exit = fadeOut(),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Box(
+                    modifier =
+                        Modifier.fillMaxSize()
+                            .alpha(0.75f)
+                            .background(MaterialTheme.colorScheme.surfaceDim)
+                            .pointerInput(true) {
+                                detectTapGestures { currentDialog = null }
+                                detectDragGestures(
+                                    onDragEnd = { currentDialog = null },
+                                    onDragCancel = { currentDialog = null },
+                                    onDrag = { _, _ -> }
+                                )
+                            }
+                )
+            }
             AnimatedContent(
                 targetState = currentDialog,
                 transitionSpec = {
-                    (fadeIn(tween(200)) + slideInVertically { it / 16 } togetherWith
-                            fadeOut(tween(200)) + slideOutVertically { -it / 8 })
-                        .using(sizeTransform = null)
+                    fadeIn(tween(200)) + slideInVertically { it / 16 } togetherWith
+                        fadeOut(tween(200)) + slideOutVertically { -it / 8 }
                 },
                 modifier = Modifier.fillMaxSize()
             ) { targetDialog ->
-                if (targetDialog != null) {
-                    Box(
-                        modifier =
-                            Modifier.fillMaxSize()
-                                .animateEnterExit(enter = fadeIn(), exit = fadeOut())
-                                .alpha(0.75f)
-                                .background(MaterialTheme.colorScheme.background)
-                                .pointerInput(true) {
-                                    detectTapGestures { currentDialog = null }
-                                    detectDragGestures(
-                                        onDragEnd = { currentDialog = null },
-                                        onDragCancel = { currentDialog = null },
-                                        onDrag = { _, _ -> }
-                                    )
-                                }
-                    )
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                    if (targetDialog != null) {
                         Card(
                             shape = MaterialTheme.shapes.large,
                             colors =
@@ -178,29 +177,12 @@ fun App(state: AppState, setState: (AppState) -> Unit, modifier: Modifier = Modi
                                 ),
                             modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars)
                         ) {
-                            Column(
-                                verticalArrangement = Arrangement.spacedBy(16.dp),
-                                modifier =
-                                    Modifier.width(IntrinsicSize.Max)
-                                        .verticalScroll(rememberScrollState())
-                                        .padding(24.dp)
-                            ) {
-                                Text(
-                                    targetDialog.title,
-                                    style = MaterialTheme.typography.headlineMedium
-                                )
-                                when (targetDialog) {
-                                    is Dialog.EditCall ->
-                                        EditCallDialog(
-                                            targetDialog.index,
-                                            navigator,
-                                            state,
-                                            setState
-                                        )
-                                    Dialog.EditPossibleTrumps ->
-                                        EditPossibleTrumpsDialog(navigator, state, setState)
-                                    Dialog.EditTrump -> EditTrumpDialog(navigator, state, setState)
-                                }
+                            when (targetDialog) {
+                                is Dialog.EditCall ->
+                                    EditCallDialog(targetDialog.index, navigator, state, setState)
+                                Dialog.EditPossibleTrumps ->
+                                    EditPossibleTrumpsDialog(navigator, state, setState)
+                                Dialog.EditTrump -> EditTrumpDialog(navigator, state, setState)
                             }
                         }
                     }
@@ -225,7 +207,7 @@ private fun SettingsPane(
         modifier =
             Modifier.fillMaxSize()
                 .background(
-                    MaterialTheme.colorScheme.background.copy(
+                    MaterialTheme.colorScheme.surfaceDim.copy(
                         alpha =
                             0.75f *
                                 (1f -
