@@ -2,7 +2,6 @@ package io.github.edwinchang24.shengjidisplay
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.SpringSpec
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -26,7 +25,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -62,7 +60,7 @@ import io.github.edwinchang24.shengjidisplay.util.WindowSize
 import io.github.edwinchang24.shengjidisplay.util.calculateWindowSize
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun App(state: AppState, setState: (AppState) -> Unit, modifier: Modifier = Modifier) {
     ShengJiDisplayTheme {
@@ -252,8 +250,7 @@ private fun SettingsPane(
                         .then(
                             Modifier.offset {
                                     IntOffset(
-                                        (dragState.offset.takeIf { it != Float.NaN }
-                                                ?: Float.MAX_VALUE)
+                                        (dragState.offset.takeIf { !it.isNaN() } ?: Float.MAX_VALUE)
                                             .toInt(),
                                         0
                                     )

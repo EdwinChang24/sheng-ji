@@ -64,7 +64,6 @@ import io.github.edwinchang24.shengjidisplay.resources.ic_timer
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsPage(
     navigator: Navigator,

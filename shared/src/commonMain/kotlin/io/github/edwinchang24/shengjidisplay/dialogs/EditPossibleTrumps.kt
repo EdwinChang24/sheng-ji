@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import io.github.edwinchang24.shengjidisplay.components.ButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.components.OutlinedButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.components.PossibleTrumpsPicker
-import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
 import io.github.edwinchang24.shengjidisplay.model.AppState
 import io.github.edwinchang24.shengjidisplay.navigation.Navigator
 import io.github.edwinchang24.shengjidisplay.resources.Res
@@ -73,21 +70,6 @@ fun EditPossibleTrumpsDialog(navigator: Navigator, state: AppState, setState: (A
                     navigator.closeDialog()
                 }
             )
-        }
-    }
-}
-
-@Composable
-private fun RankButton(rank: String, toggleRank: (String) -> Unit, selected: Boolean) {
-    PressableWithEmphasis {
-        IconButton(
-            onClick = { toggleRank(rank) },
-            colors =
-                if (selected) IconButtonDefaults.filledIconButtonColors()
-                else IconButtonDefaults.iconButtonColors(),
-            interactionSource = interactionSource
-        ) {
-            Text(rank, modifier = Modifier.pressEmphasis())
         }
     }
 }

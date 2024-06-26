@@ -24,9 +24,7 @@ class DisplayViewModel : ViewModel() {
     private var pause = false
     private var autoSwitchSeconds = Settings().autoSwitchSeconds
     val currentContent =
-        MutableStateFlow<DisplayContentWithRotation>(
-            DisplayContent.None and DisplayContent.None with ContentRotation.Center
-        )
+        MutableStateFlow(DisplayContent.None and DisplayContent.None with ContentRotation.Center)
 
     suspend fun onStateUpdate(
         newPossibleContentPairs: List<DisplayContentPair>,
@@ -86,7 +84,9 @@ class DisplayViewModel : ViewModel() {
                     (possibleContentPairs.indexOf(currentContent.displayContentPair) + 1) %
                         possibleContentPairs.size
                 )
-            }) ?: possibleContentPairs.firstOrNull() ?: DisplayContent.None and DisplayContent.None
+            })
+                ?: possibleContentPairs.firstOrNull()
+                ?: (DisplayContent.None and DisplayContent.None)
         return newContent with newRotation
     }
 }

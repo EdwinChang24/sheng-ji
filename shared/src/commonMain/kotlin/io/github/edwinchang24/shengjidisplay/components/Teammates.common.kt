@@ -84,7 +84,7 @@ fun Teammates(
         val width = constraints.maxWidth.toFloat()
         val height = constraints.maxHeight.toFloat()
         val mainButtonRadiusPx = mainButtonRadiusPx
-        var teammateOffsets = remember {
+        val teammateOffsets = remember {
             mutableStateMapOf(
                 *savedTeammatesRad
                     .map { (id, angleRad) ->
@@ -111,7 +111,7 @@ fun Teammates(
                 (height / 2 - mainButtonRadiusPx) / 2 + mainButtonRadiusPx
             )
         }
-        var dragging = remember {
+        val dragging = remember {
             mutableStateMapOf(*savedTeammatesRad.map { (id, _) -> id to false }.toTypedArray())
         }
         var draggingNew by remember { mutableStateOf(false) }
@@ -133,7 +133,7 @@ fun Teammates(
                     editing = editing,
                     offset = offset,
                     onOffsetChange = { teammateOffsets[id] = it },
-                    getRestingOffest = getRestingOffset,
+                    getRestingOffset = getRestingOffset,
                     draggingOthers = dragging.any { id != it.key && it.value } || draggingNew,
                     setDragging = { dragging[id] = it },
                     delete = { teammateOffsets.remove(id) }
@@ -207,7 +207,7 @@ private fun BoxWithConstraintsScope.Teammate(
     editing: Boolean,
     offset: Offset,
     onOffsetChange: (Offset) -> Unit,
-    getRestingOffest: (Offset) -> Offset,
+    getRestingOffset: (Offset) -> Offset,
     draggingOthers: Boolean,
     setDragging: (Boolean) -> Unit,
     delete: () -> Unit,
@@ -228,11 +228,11 @@ private fun BoxWithConstraintsScope.Teammate(
             setDragging(false)
             if (new) {
                 if (offset.getDistanceSquared() > mainButtonRadiusPx.pow(2)) {
-                    onOffsetChange(getRestingOffest(offset))
+                    onOffsetChange(getRestingOffset(offset))
                 } else delete()
             } else {
                 if (offsetLocal.getDistanceSquared() > mainButtonRadiusPx.pow(2)) {
-                    offsetLocal = getRestingOffest(offsetLocal)
+                    offsetLocal = getRestingOffset(offsetLocal)
                 } else delete()
             }
         } else {
@@ -277,12 +277,12 @@ private fun BoxWithConstraintsScope.Teammate(
             }
         val midArrow1 =
             (calcOffset.atan2() + PI / 4).let {
-                getRestingOffest(calcOffset) -
+                getRestingOffset(calcOffset) -
                     Offset((cos(it) * arrowLength).toFloat(), (sin(it) * arrowLength).toFloat())
             }
         val midArrow2 =
             (calcOffset.atan2() - PI / 4).let {
-                getRestingOffest(calcOffset) -
+                getRestingOffset(calcOffset) -
                     Offset((cos(it) * arrowLength).toFloat(), (sin(it) * arrowLength).toFloat())
             }
         val color =
@@ -314,14 +314,14 @@ private fun BoxWithConstraintsScope.Teammate(
                 )
                 drawLine(
                     color,
-                    start = getRestingOffest(calcOffset),
+                    start = getRestingOffset(calcOffset),
                     end = midArrow1,
                     strokeWidth = strokeRadius * 2,
                     cap = StrokeCap.Round
                 )
                 drawLine(
                     color,
-                    start = getRestingOffest(calcOffset),
+                    start = getRestingOffset(calcOffset),
                     end = midArrow2,
                     strokeWidth = strokeRadius * 2,
                     cap = StrokeCap.Round
@@ -395,7 +395,7 @@ private fun BoxWithConstraintsScope.MainButton(
     dragging: Boolean,
     deletingTeammate: Boolean,
     setDraggingNew: (Boolean) -> Unit,
-    getRestingOffest: (Offset) -> Offset,
+    getRestingOffset: (Offset) -> Offset,
     addNewTeammate: (Pair<String, Offset>) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -405,9 +405,8 @@ private fun BoxWithConstraintsScope.MainButton(
     val mainButtonRadiusPx = mainButtonRadiusPx
     val onRelease = {
         new?.let { n ->
-            val teammate = n
             new = null
-            addNewTeammate(teammate)
+            addNewTeammate(n)
         }
         setDraggingNew(false)
     }
@@ -481,7 +480,7 @@ private fun BoxWithConstraintsScope.MainButton(
                 editing = true,
                 offset,
                 { new = id to it },
-                getRestingOffest,
+                getRestingOffset,
                 draggingOthers = false,
                 setDragging = {},
                 delete = {},

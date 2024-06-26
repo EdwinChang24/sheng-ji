@@ -71,7 +71,7 @@ fun PossibleTrumpsPicker(
                     ),
                 onClick = {
                     if (saved != null) {
-                        saved?.let { setSelected(it.sortedBy { allRanks.indexOf(it) }.toSet()) }
+                        saved?.let { setSelected(it.sortedBy { r -> allRanks.indexOf(r) }.toSet()) }
                     } else {
                         saved = selected
                         setSelected(emptySet())
