@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
@@ -44,14 +45,13 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.Constraints.Companion.Infinity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import io.github.edwinchang24.shengjidisplay.components.ActionMenu
+import io.github.edwinchang24.shengjidisplay.components.ActionMenuButtonSize
 import io.github.edwinchang24.shengjidisplay.components.CallsDisplay
 import io.github.edwinchang24.shengjidisplay.components.IconButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.components.OutlinedButtonWithEmphasis
@@ -63,6 +63,7 @@ import io.github.edwinchang24.shengjidisplay.display.DisplayContent
 import io.github.edwinchang24.shengjidisplay.display.DisplayContentWithRotation
 import io.github.edwinchang24.shengjidisplay.display.DisplayScheme
 import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
+import io.github.edwinchang24.shengjidisplay.model.Action
 import io.github.edwinchang24.shengjidisplay.model.AppState
 import io.github.edwinchang24.shengjidisplay.navigation.Dialog
 import io.github.edwinchang24.shengjidisplay.navigation.Navigator
@@ -71,9 +72,8 @@ import io.github.edwinchang24.shengjidisplay.resources.Res
 import io.github.edwinchang24.shengjidisplay.resources.ic_add
 import io.github.edwinchang24.shengjidisplay.resources.ic_close
 import io.github.edwinchang24.shengjidisplay.resources.ic_group
-import io.github.edwinchang24.shengjidisplay.resources.ic_pause
-import io.github.edwinchang24.shengjidisplay.resources.ic_play_arrow
-import io.github.edwinchang24.shengjidisplay.resources.ic_settings
+import io.github.edwinchang24.shengjidisplay.util.WindowSize
+import io.github.edwinchang24.shengjidisplay.util.calculateWindowSize
 import kotlinx.coroutines.delay
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -94,6 +94,7 @@ fun DisplayPage(
     setState: (AppState) -> Unit,
     displayViewModel: DisplayViewModel = viewModel { DisplayViewModel() }
 ) {
+    val windowSize = calculateWindowSize()
     val content by
         displayViewModel.currentContent.collectAsStateWithLifecycle(
             lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
@@ -156,7 +157,7 @@ fun DisplayPage(
                 modifier = Modifier.rotate(180f)
             )
             Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 modifier =
                     Modifier.fillMaxWidth()
@@ -175,17 +176,21 @@ fun DisplayPage(
                         leftSide = true
                     )
                 }
-                ActionButtons(
-                    showPause =
-                        displayScheme.getPossibleContentPairs(state).size > 1 ||
-                            state.settings.contentRotation.possibleRotations.size > 1,
-                    pause = pause,
-                    setPause = { pause = it },
-                    onEditTeammates = { editingTeammates = true },
-                    onNavigateSettings = navigator::toggleSettings,
-                    onExit = { navigator.navigate(Screen.Home) },
-                    modifier = Modifier.weight(1f)
-                )
+                Box(contentAlignment = Alignment.CenterEnd, modifier = Modifier.weight(1f)) {
+                    if (windowSize != WindowSize.Small) {
+                        IconButtonWithEmphasis(onClick = { editingTeammates = true }) {
+                            Icon(painterResource(Res.drawable.ic_group), null)
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.size(ActionMenuButtonSize))
+                Box(contentAlignment = Alignment.CenterStart, modifier = Modifier.weight(1f)) {
+                    if (windowSize != WindowSize.Small) {
+                        IconButtonWithEmphasis(onClick = { navigator.navigate(Screen.Home) }) {
+                            Icon(painterResource(Res.drawable.ic_close), null)
+                        }
+                    }
+                }
                 if (state.settings.showClock) {
                     Clock(
                         currentTimeMs,
@@ -237,6 +242,24 @@ fun DisplayPage(
             setSavedTeammatesRad = { setState(state.copy(teammates = it)) },
             onDone = { editingTeammates = false },
             modifier = Modifier.padding(padding)
+        )
+        ActionMenu(
+            onAction = { action ->
+                when (action) {
+                    is Action.PauseResume -> pause = !pause
+                    Action.Teammates -> editingTeammates = true
+                    Action.Settings -> navigator.toggleSettings()
+                    Action.Exit -> navigator.navigate(Screen.Home)
+                    Action.Rotate -> {}
+                    Action.Scale -> {}
+                }
+            },
+            canPause =
+                displayScheme.getPossibleContentPairs(state).size > 1 ||
+                    state.settings.contentRotation.possibleRotations.size > 1,
+            pause = pause,
+            editingTeammates = editingTeammates,
+            padding = padding
         )
     }
 }
@@ -293,56 +316,6 @@ private fun Clock(
                 ),
             modifier = Modifier.rotate(if (targetOrientation xor leftSide) 0f else 180f)
         )
-    }
-}
-
-@Composable
-private fun ActionButtons(
-    showPause: Boolean,
-    pause: Boolean,
-    setPause: (Boolean) -> Unit,
-    onEditTeammates: () -> Unit,
-    onNavigateSettings: () -> Unit,
-    onExit: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Layout(
-        content = {
-            if (showPause) {
-                IconButtonWithEmphasis(onClick = { setPause(!pause) }) {
-                    if (pause) Icon(painterResource(Res.drawable.ic_play_arrow), null)
-                    else Icon(painterResource(Res.drawable.ic_pause), null)
-                }
-            }
-            IconButtonWithEmphasis(onClick = onEditTeammates) {
-                Icon(painterResource(Res.drawable.ic_group), null)
-            }
-            IconButtonWithEmphasis(onClick = onNavigateSettings) {
-                Icon(painterResource(Res.drawable.ic_settings), null)
-            }
-            IconButtonWithEmphasis(onClick = onExit) {
-                Icon(painterResource(Res.drawable.ic_close), null)
-            }
-        },
-        modifier = modifier
-    ) { measurables, constraints ->
-        val newMaxWidth =
-            constraints.maxWidth
-                .takeIf { it != Infinity }
-                ?.let { maxWidth ->
-                    measurables.size.takeIf { it != 0 }?.let { btnCount -> maxWidth / btnCount }
-                } ?: Infinity
-        val placeables =
-            measurables.map {
-                it.measure(Constraints(maxWidth = newMaxWidth, maxHeight = newMaxWidth))
-            }
-        layout(placeables.sumOf { it.width }, placeables.maxOf { it.height }) {
-            var x = 0
-            placeables.forEach {
-                it.placeRelative(x, 0)
-                x += it.width
-            }
-        }
     }
 }
 
