@@ -19,7 +19,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContent
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
@@ -74,7 +74,7 @@ fun SettingsPage(
     Column(
         modifier =
             modifier
-                .windowInsetsPadding(WindowInsets.safeContent)
+                .windowInsetsPadding(WindowInsets.safeDrawing)
                 .background(MaterialTheme.colorScheme.surfaceContainer)
                 .width(IntrinsicSize.Max)
     ) {
