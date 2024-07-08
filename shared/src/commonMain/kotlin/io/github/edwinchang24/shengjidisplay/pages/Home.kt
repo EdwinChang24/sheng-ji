@@ -77,6 +77,7 @@ import io.github.edwinchang24.shengjidisplay.resources.ic_add
 import io.github.edwinchang24.shengjidisplay.resources.ic_clear_all
 import io.github.edwinchang24.shengjidisplay.resources.ic_close
 import io.github.edwinchang24.shengjidisplay.resources.ic_edit
+import io.github.edwinchang24.shengjidisplay.resources.ic_info
 import io.github.edwinchang24.shengjidisplay.resources.ic_settings
 import io.github.edwinchang24.shengjidisplay.resources.ic_smart_display
 import io.github.edwinchang24.shengjidisplay.util.WindowSize
@@ -95,6 +96,9 @@ fun HomePage(navigator: Navigator, state: AppState, setState: (AppState) -> Unit
                 actions = {
                     IconButtonWithEmphasis(onClick = { navigator.toggleSettings() }) {
                         Icon(iconRes(Res.drawable.ic_settings), null)
+                    }
+                    IconButtonWithEmphasis(onClick = { navigator.navigate(Dialog.About) }) {
+                        Icon(iconRes(Res.drawable.ic_info), null)
                     }
                 }
             )

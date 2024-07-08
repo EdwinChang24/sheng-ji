@@ -44,6 +44,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import io.github.edwinchang24.shengjidisplay.dialogs.AboutDialog
 import io.github.edwinchang24.shengjidisplay.dialogs.EditCallDialog
 import io.github.edwinchang24.shengjidisplay.dialogs.EditPossibleTrumpsDialog
 import io.github.edwinchang24.shengjidisplay.dialogs.EditTrumpDialog
@@ -181,6 +182,7 @@ fun App(state: AppState, setState: (AppState) -> Unit, modifier: Modifier = Modi
                                 Dialog.EditPossibleTrumps ->
                                     EditPossibleTrumpsDialog(navigator, state, setState)
                                 Dialog.EditTrump -> EditTrumpDialog(navigator, state, setState)
+                                Dialog.About -> AboutDialog(navigator)
                             }
                         }
                     }

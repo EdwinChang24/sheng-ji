@@ -15,6 +15,8 @@ sealed interface Dialog {
 
     @Serializable @SerialName("editTrump") data object EditTrump : Dialog
 
+    @Serializable @SerialName("about") data object About : Dialog
+
     companion object {
         val Saver =
             Saver<Dialog?, String>(
