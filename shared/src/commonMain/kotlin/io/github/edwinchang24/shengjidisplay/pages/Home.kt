@@ -54,6 +54,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.github.edwinchang24.shengjidisplay.components.AppName
 import io.github.edwinchang24.shengjidisplay.components.ButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.components.CallFoundText
 import io.github.edwinchang24.shengjidisplay.components.IconButtonWithEmphasis
@@ -72,7 +73,6 @@ import io.github.edwinchang24.shengjidisplay.navigation.Dialog
 import io.github.edwinchang24.shengjidisplay.navigation.Navigator
 import io.github.edwinchang24.shengjidisplay.navigation.Screen
 import io.github.edwinchang24.shengjidisplay.resources.Res
-import io.github.edwinchang24.shengjidisplay.resources.app_name
 import io.github.edwinchang24.shengjidisplay.resources.ic_add
 import io.github.edwinchang24.shengjidisplay.resources.ic_clear_all
 import io.github.edwinchang24.shengjidisplay.resources.ic_close
@@ -83,7 +83,6 @@ import io.github.edwinchang24.shengjidisplay.util.WindowSize
 import io.github.edwinchang24.shengjidisplay.util.calculateWindowSize
 import io.github.edwinchang24.shengjidisplay.util.formatCallNumber
 import io.github.edwinchang24.shengjidisplay.util.iconRes
-import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -92,13 +91,7 @@ fun HomePage(navigator: Navigator, state: AppState, setState: (AppState) -> Unit
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {
-                    Text(
-                        stringResource(Res.string.app_name),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                },
+                title = { AppName() },
                 actions = {
                     IconButtonWithEmphasis(onClick = { navigator.toggleSettings() }) {
                         Icon(iconRes(Res.drawable.ic_settings), null)

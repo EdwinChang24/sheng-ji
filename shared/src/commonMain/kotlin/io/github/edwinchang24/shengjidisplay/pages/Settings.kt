@@ -50,7 +50,6 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import io.github.edwinchang24.shengjidisplay.VersionConfig
 import io.github.edwinchang24.shengjidisplay.components.IconButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
 import io.github.edwinchang24.shengjidisplay.model.AppState
@@ -58,11 +57,9 @@ import io.github.edwinchang24.shengjidisplay.model.ContentRotationSetting
 import io.github.edwinchang24.shengjidisplay.model.VerticalOrder
 import io.github.edwinchang24.shengjidisplay.navigation.Navigator
 import io.github.edwinchang24.shengjidisplay.resources.Res
-import io.github.edwinchang24.shengjidisplay.resources.app_name
 import io.github.edwinchang24.shengjidisplay.resources.ic_arrow_back
 import io.github.edwinchang24.shengjidisplay.resources.ic_timer
 import io.github.edwinchang24.shengjidisplay.util.iconRes
-import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun SettingsPage(
@@ -148,11 +145,7 @@ fun SettingsPage(
             ) {
                 Text("Hide calls when all are found")
             }
-            Text(
-                "${stringResource(Res.string.app_name)} ${VersionConfig.version}",
-                style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier.align(Alignment.CenterHorizontally).padding(24.dp)
-            )
+            Spacer(modifier = Modifier.height(64.dp))
         }
     }
 }
