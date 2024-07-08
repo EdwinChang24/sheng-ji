@@ -33,7 +33,7 @@ import io.github.edwinchang24.shengjidisplay.navigation.Navigator
 import io.github.edwinchang24.shengjidisplay.resources.Res
 import io.github.edwinchang24.shengjidisplay.resources.ic_close
 import io.github.edwinchang24.shengjidisplay.resources.ic_done
-import org.jetbrains.compose.resources.painterResource
+import io.github.edwinchang24.shengjidisplay.util.iconRes
 
 /** @param index index of call to edit; will create a new call if index is out of bounds */
 @Composable
@@ -119,12 +119,12 @@ fun EditCallDialog(
         ) {
             OutlinedButtonWithEmphasis(
                 text = "Cancel",
-                icon = painterResource(Res.drawable.ic_close),
+                icon = iconRes(Res.drawable.ic_close),
                 onClick = navigator::closeDialog
             )
             ButtonWithEmphasis(
                 text = "Done",
-                icon = painterResource(Res.drawable.ic_done),
+                icon = iconRes(Res.drawable.ic_done),
                 onClick = { onDone() },
                 enabled = rank != null && suit != null
             )

@@ -64,8 +64,8 @@ import io.github.edwinchang24.shengjidisplay.model.Action
 import io.github.edwinchang24.shengjidisplay.resources.Res
 import io.github.edwinchang24.shengjidisplay.resources.ic_action_menu
 import io.github.edwinchang24.shengjidisplay.resources.ic_close
+import io.github.edwinchang24.shengjidisplay.util.iconRes
 import kotlin.math.absoluteValue
-import org.jetbrains.compose.resources.painterResource
 
 val ActionMenuButtonSize = 56.dp
 private val ButtonSize = 100.dp
@@ -302,9 +302,7 @@ fun ActionMenu(
             ) { opened ->
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                     Icon(
-                        painterResource(
-                            if (opened) Res.drawable.ic_close else Res.drawable.ic_action_menu
-                        ),
+                        iconRes(if (opened) Res.drawable.ic_close else Res.drawable.ic_action_menu),
                         null
                     )
                 }
@@ -326,7 +324,7 @@ fun ActionMenu(
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(painterResource(it.icon()), null)
+                            Icon(iconRes(it.icon()), null)
                             Text(
                                 it.name(),
                                 style = MaterialTheme.typography.titleSmall,
@@ -410,7 +408,7 @@ private fun ActionButton(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.fillMaxSize().padding(8.dp).pressEmphasis()
                 ) {
-                    Icon(painterResource(action.icon()), null)
+                    Icon(iconRes(action.icon()), null)
                     Text(
                         action.name(),
                         maxLines = 1,

@@ -61,7 +61,7 @@ import io.github.edwinchang24.shengjidisplay.resources.Res
 import io.github.edwinchang24.shengjidisplay.resources.app_name
 import io.github.edwinchang24.shengjidisplay.resources.ic_arrow_back
 import io.github.edwinchang24.shengjidisplay.resources.ic_timer
-import org.jetbrains.compose.resources.painterResource
+import io.github.edwinchang24.shengjidisplay.util.iconRes
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -84,7 +84,7 @@ fun SettingsPage(
             modifier = Modifier.fillMaxWidth().padding(12.dp)
         ) {
             IconButtonWithEmphasis(onClick = { navigator.toggleSettings() }) {
-                Icon(painterResource(Res.drawable.ic_arrow_back), null)
+                Icon(iconRes(Res.drawable.ic_arrow_back), null)
             }
             Text("Display settings", style = MaterialTheme.typography.titleLarge)
         }
@@ -408,7 +408,7 @@ private fun AutoSwitchSecondsPicker(
                 onValueChange = {},
                 enabled = enabled,
                 readOnly = true,
-                leadingIcon = { Icon(painterResource(Res.drawable.ic_timer), null) },
+                leadingIcon = { Icon(iconRes(Res.drawable.ic_timer), null) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
                 colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
                 modifier = Modifier.menuAnchor()

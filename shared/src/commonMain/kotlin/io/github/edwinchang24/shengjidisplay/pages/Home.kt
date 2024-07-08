@@ -82,7 +82,7 @@ import io.github.edwinchang24.shengjidisplay.resources.ic_smart_display
 import io.github.edwinchang24.shengjidisplay.util.WindowSize
 import io.github.edwinchang24.shengjidisplay.util.calculateWindowSize
 import io.github.edwinchang24.shengjidisplay.util.formatCallNumber
-import org.jetbrains.compose.resources.painterResource
+import io.github.edwinchang24.shengjidisplay.util.iconRes
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -101,7 +101,7 @@ fun HomePage(navigator: Navigator, state: AppState, setState: (AppState) -> Unit
                 },
                 actions = {
                     IconButtonWithEmphasis(onClick = { navigator.toggleSettings() }) {
-                        Icon(painterResource(Res.drawable.ic_settings), null)
+                        Icon(iconRes(Res.drawable.ic_settings), null)
                     }
                 }
             )
@@ -250,13 +250,13 @@ private fun StartButtons(navigator: Navigator, modifier: Modifier = Modifier) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier) {
         ButtonWithEmphasis(
             text = "Start possible trumps display",
-            icon = painterResource(Res.drawable.ic_smart_display),
+            icon = iconRes(Res.drawable.ic_smart_display),
             onClick = { navigator.navigate(Screen.Display(scheme = DisplayScheme.PossibleTrumps)) },
             elevation = ButtonDefaults.buttonElevation(6.dp, 6.dp, 6.dp, 8.dp, 6.dp)
         )
         ButtonWithEmphasis(
             text = "Start main display",
-            icon = painterResource(Res.drawable.ic_smart_display),
+            icon = iconRes(Res.drawable.ic_smart_display),
             onClick = { navigator.navigate(Screen.Display(scheme = DisplayScheme.Main)) },
             elevation = ButtonDefaults.buttonElevation(6.dp, 6.dp, 6.dp, 8.dp, 6.dp)
         )
@@ -351,7 +351,7 @@ private fun PossibleTrumpsSelection(
                     }
                     OutlinedButtonWithEmphasis(
                         text = "Edit",
-                        icon = painterResource(Res.drawable.ic_edit),
+                        icon = iconRes(Res.drawable.ic_edit),
                         onClick = { navigator.navigate(Dialog.EditPossibleTrumps) }
                     )
                 }
@@ -416,7 +416,7 @@ private fun TrumpCardSelection(
                                 IconButtonWithEmphasis(
                                     onClick = { setState(state.copy(trump = null)) }
                                 ) {
-                                    Icon(painterResource(Res.drawable.ic_close), null)
+                                    Icon(iconRes(Res.drawable.ic_close), null)
                                 }
                             } else {
                                 Text(
@@ -479,7 +479,7 @@ private fun TrumpCardSelection(
                                     IconButtonWithEmphasis(
                                         onClick = { setState(state.copy(trump = null)) }
                                     ) {
-                                        Icon(painterResource(Res.drawable.ic_close), null)
+                                        Icon(iconRes(Res.drawable.ic_close), null)
                                     }
                                 }
                             }
@@ -498,7 +498,7 @@ private fun TrumpCardSelection(
                             )
                             ButtonWithEmphasis(
                                 text = "Add",
-                                icon = painterResource(Res.drawable.ic_add),
+                                icon = iconRes(Res.drawable.ic_add),
                                 onClick = { navigator.navigate(Dialog.EditTrump) }
                             )
                         }
@@ -559,7 +559,7 @@ private fun CallsSelection(
                     Box(contentAlignment = Alignment.CenterEnd) {
                         OutlinedButtonWithEmphasis(
                             text = "Clear all",
-                            icon = painterResource(Res.drawable.ic_clear_all),
+                            icon = iconRes(Res.drawable.ic_clear_all),
                             onClick = { setState(state.copy(calls = emptyList())) }
                         )
                     }
@@ -600,7 +600,7 @@ private fun CallsSelection(
                     }
                     OutlinedButtonWithEmphasis(
                         text = "Add call",
-                        icon = painterResource(Res.drawable.ic_add),
+                        icon = iconRes(Res.drawable.ic_add),
                         onClick = { navigator.navigate(Dialog.EditCall(state.calls.size)) }
                     )
                 }
@@ -617,7 +617,7 @@ private fun CallsSelection(
                     )
                     ButtonWithEmphasis(
                         text = "Add",
-                        icon = painterResource(Res.drawable.ic_add),
+                        icon = iconRes(Res.drawable.ic_add),
                         onClick = { navigator.navigate(Dialog.EditCall(0)) }
                     )
                 }
@@ -680,7 +680,7 @@ private fun CallCard(
                     }
                 }
                 IconButtonWithEmphasis(onClick = onDelete) {
-                    Icon(painterResource(Res.drawable.ic_close), null)
+                    Icon(iconRes(Res.drawable.ic_close), null)
                 }
             }
         }
@@ -726,7 +726,7 @@ private fun TeammatesSelection(
                 )
                 OutlinedButtonWithEmphasis(
                     text = "Edit",
-                    icon = painterResource(Res.drawable.ic_edit),
+                    icon = iconRes(Res.drawable.ic_edit),
                     onClick = {
                         navigator.navigate(
                             Screen.Display(scheme = DisplayScheme.Main, editTeammates = true)

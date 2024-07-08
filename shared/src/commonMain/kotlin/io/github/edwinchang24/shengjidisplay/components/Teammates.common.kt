@@ -63,6 +63,7 @@ import io.github.edwinchang24.shengjidisplay.resources.ic_clear_all
 import io.github.edwinchang24.shengjidisplay.resources.ic_done
 import io.github.edwinchang24.shengjidisplay.resources.ic_drag_pan
 import io.github.edwinchang24.shengjidisplay.resources.ic_undo
+import io.github.edwinchang24.shengjidisplay.util.iconRes
 import kotlin.math.PI
 import kotlin.math.absoluteValue
 import kotlin.math.atan2
@@ -70,7 +71,6 @@ import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
-import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun Teammates(
@@ -375,7 +375,7 @@ private fun BoxWithConstraintsScope.Teammate(
                     )
         ) {
             Icon(
-                painterResource(Res.drawable.ic_drag_pan),
+                iconRes(Res.drawable.ic_drag_pan),
                 null,
                 modifier =
                     Modifier.scale(
@@ -502,7 +502,7 @@ fun ActionButtons(
         OutlinedButtonWithEmphasis(
             text = if (!hasRecentlyCleared) "Clear" else "Undo",
             icon =
-                painterResource(
+                iconRes(
                     if (!hasRecentlyCleared) Res.drawable.ic_clear_all else Res.drawable.ic_undo
                 ),
             onClick = onPressClear,
@@ -514,7 +514,7 @@ fun ActionButtons(
         Spacer(modifier = Modifier.height(mainButtonRadiusDp * 2 + 16.dp))
         OutlinedButtonWithEmphasis(
             text = "Done",
-            icon = painterResource(Res.drawable.ic_done),
+            icon = iconRes(Res.drawable.ic_done),
             onClick = onDone,
             colors =
                 ButtonDefaults.outlinedButtonColors()

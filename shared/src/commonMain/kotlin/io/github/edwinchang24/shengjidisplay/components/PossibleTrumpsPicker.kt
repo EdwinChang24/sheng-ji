@@ -24,7 +24,7 @@ import io.github.edwinchang24.shengjidisplay.resources.Res
 import io.github.edwinchang24.shengjidisplay.resources.ic_clear_all
 import io.github.edwinchang24.shengjidisplay.resources.ic_undo
 import io.github.edwinchang24.shengjidisplay.util.allRanks
-import org.jetbrains.compose.resources.painterResource
+import io.github.edwinchang24.shengjidisplay.util.iconRes
 
 @Composable
 fun PossibleTrumpsPicker(
@@ -65,7 +65,7 @@ fun PossibleTrumpsPicker(
             OutlinedButtonWithEmphasis(
                 text = if (selected.isNotEmpty() || saved == null) "Clear" else "Undo",
                 icon =
-                    painterResource(
+                    iconRes(
                         if (selected.isNotEmpty() || saved == null) Res.drawable.ic_clear_all
                         else Res.drawable.ic_undo
                     ),

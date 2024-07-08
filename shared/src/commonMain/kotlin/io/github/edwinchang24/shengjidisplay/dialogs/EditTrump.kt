@@ -30,7 +30,7 @@ import io.github.edwinchang24.shengjidisplay.navigation.Navigator
 import io.github.edwinchang24.shengjidisplay.resources.Res
 import io.github.edwinchang24.shengjidisplay.resources.ic_close
 import io.github.edwinchang24.shengjidisplay.resources.ic_done
-import org.jetbrains.compose.resources.painterResource
+import io.github.edwinchang24.shengjidisplay.util.iconRes
 
 @Composable
 fun EditTrumpDialog(navigator: Navigator, state: AppState, setState: (AppState) -> Unit) {
@@ -80,12 +80,12 @@ fun EditTrumpDialog(navigator: Navigator, state: AppState, setState: (AppState) 
         ) {
             OutlinedButtonWithEmphasis(
                 text = "Cancel",
-                icon = painterResource(Res.drawable.ic_close),
+                icon = iconRes(Res.drawable.ic_close),
                 onClick = navigator::closeDialog
             )
             ButtonWithEmphasis(
                 text = "Done",
-                icon = painterResource(Res.drawable.ic_done),
+                icon = iconRes(Res.drawable.ic_done),
                 onClick = {
                     rank?.let { r ->
                         suit?.let { s ->

@@ -74,6 +74,7 @@ import io.github.edwinchang24.shengjidisplay.resources.ic_close
 import io.github.edwinchang24.shengjidisplay.resources.ic_group
 import io.github.edwinchang24.shengjidisplay.util.WindowSize
 import io.github.edwinchang24.shengjidisplay.util.calculateWindowSize
+import io.github.edwinchang24.shengjidisplay.util.iconRes
 import kotlinx.coroutines.delay
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -83,7 +84,6 @@ import kotlinx.datetime.format
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
-import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun DisplayPage(
@@ -179,7 +179,7 @@ fun DisplayPage(
                 Box(contentAlignment = Alignment.CenterEnd, modifier = Modifier.weight(1f)) {
                     if (windowSize != WindowSize.Small) {
                         IconButtonWithEmphasis(onClick = { editingTeammates = true }) {
-                            Icon(painterResource(Res.drawable.ic_group), null)
+                            Icon(iconRes(Res.drawable.ic_group), null)
                         }
                     }
                 }
@@ -187,7 +187,7 @@ fun DisplayPage(
                 Box(contentAlignment = Alignment.CenterStart, modifier = Modifier.weight(1f)) {
                     if (windowSize != WindowSize.Small) {
                         IconButtonWithEmphasis(onClick = { navigator.navigate(Screen.Home) }) {
-                            Icon(painterResource(Res.drawable.ic_close), null)
+                            Icon(iconRes(Res.drawable.ic_close), null)
                         }
                     }
                 }
@@ -419,7 +419,7 @@ private fun DisplayContent(
                                         Text("No trump card selected")
                                         OutlinedButtonWithEmphasis(
                                             text = "Add",
-                                            icon = painterResource(Res.drawable.ic_add),
+                                            icon = iconRes(Res.drawable.ic_add),
                                             onClick = onEditTrump
                                         )
                                     }
@@ -459,7 +459,7 @@ private fun DisplayContent(
                                     ) {
                                         Text("No calls added")
                                         OutlinedButton(onClick = onNewCall) {
-                                            Icon(painterResource(Res.drawable.ic_add), null)
+                                            Icon(iconRes(Res.drawable.ic_add), null)
                                             Spacer(modifier = Modifier.width(8.dp))
                                             Text("Add")
                                         }
@@ -488,7 +488,7 @@ private fun DisplayContent(
                             ) {
                                 Text("No possible trumps added")
                                 OutlinedButton(onClick = onEditPossibleTrumps) {
-                                    Icon(painterResource(Res.drawable.ic_add), null)
+                                    Icon(iconRes(Res.drawable.ic_add), null)
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text("Add")
                                 }

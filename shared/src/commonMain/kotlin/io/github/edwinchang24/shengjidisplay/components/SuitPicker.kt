@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
 import io.github.edwinchang24.shengjidisplay.model.Suit
-import org.jetbrains.compose.resources.painterResource
+import io.github.edwinchang24.shengjidisplay.util.suitIconRes
 
 @Composable
 fun SuitPicker(suit: Suit?, setSuit: (Suit) -> Unit, modifier: Modifier = Modifier) {
@@ -47,7 +47,7 @@ fun SuitPicker(suit: Suit?, setSuit: (Suit) -> Unit, modifier: Modifier = Modifi
                     modifier = Modifier.weight(1f),
                 ) {
                     Image(
-                        painterResource(it.icon),
+                        suitIconRes(it.icon),
                         null,
                         modifier =
                             Modifier.pressEmphasis()

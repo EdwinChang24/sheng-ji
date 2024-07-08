@@ -26,7 +26,7 @@ import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
 import io.github.edwinchang24.shengjidisplay.resources.Res
 import io.github.edwinchang24.shengjidisplay.resources.ic_add
 import io.github.edwinchang24.shengjidisplay.resources.ic_remove
-import org.jetbrains.compose.resources.painterResource
+import io.github.edwinchang24.shengjidisplay.util.iconRes
 
 @Composable
 fun NumberPicker(
@@ -49,11 +49,7 @@ fun NumberPicker(
                 modifier = Modifier.fillMaxHeight().weight(2f)
             ) {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                    Icon(
-                        painterResource(Res.drawable.ic_remove),
-                        null,
-                        modifier = Modifier.pressEmphasis()
-                    )
+                    Icon(iconRes(Res.drawable.ic_remove), null, modifier = Modifier.pressEmphasis())
                 }
             }
         }
@@ -83,11 +79,7 @@ fun NumberPicker(
                 modifier = Modifier.fillMaxHeight().weight(2f)
             ) {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                    Icon(
-                        painterResource(Res.drawable.ic_add),
-                        null,
-                        modifier = Modifier.pressEmphasis()
-                    )
+                    Icon(iconRes(Res.drawable.ic_add), null, modifier = Modifier.pressEmphasis())
                 }
             }
         }

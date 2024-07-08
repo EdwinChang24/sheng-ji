@@ -15,7 +15,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import io.github.edwinchang24.shengjidisplay.model.PlayingCard
 import io.github.edwinchang24.shengjidisplay.model.Suit
-import org.jetbrains.compose.resources.painterResource
+import io.github.edwinchang24.shengjidisplay.util.suitIconRes
 
 @Composable
 fun PlayingCard(
@@ -33,7 +33,7 @@ fun PlayingCard(
                 else if (isSystemInDarkTheme()) Color.White else Color.Black
         )
         Image(
-            painterResource(card.suit.icon),
+            suitIconRes(card.suit.icon),
             null,
             modifier = Modifier.size(with(LocalDensity.current) { textStyle.fontSize.toDp() })
         )
