@@ -20,6 +20,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.edwinchang24.shengjidisplay.components.ButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.components.OutlinedButtonWithEmphasis
@@ -45,7 +46,12 @@ fun EditPossibleTrumpsDialog(navigator: Navigator, state: AppState, setState: (A
             verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.padding(horizontal = 24.dp)
         ) {
-            Text("Edit possible trumps", style = MaterialTheme.typography.headlineMedium)
+            Text(
+                "Edit possible trumps",
+                style = MaterialTheme.typography.headlineMedium,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
                 PossibleTrumpsPicker(selected, { selected = it })
             }

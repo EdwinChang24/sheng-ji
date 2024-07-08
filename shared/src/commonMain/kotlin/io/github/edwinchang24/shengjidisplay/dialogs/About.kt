@@ -49,7 +49,12 @@ fun AboutDialog(navigator: Navigator, modifier: Modifier = Modifier) {
         modifier =
             modifier.width(IntrinsicSize.Max).verticalScroll(rememberScrollState()).padding(24.dp)
     ) {
-        Text("About", style = MaterialTheme.typography.headlineMedium)
+        Text(
+            "About",
+            style = MaterialTheme.typography.headlineMedium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,

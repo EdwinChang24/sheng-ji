@@ -20,6 +20,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.edwinchang24.shengjidisplay.components.ButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.components.NumberPicker
@@ -79,12 +80,22 @@ fun EditCallDialog(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.padding(horizontal = 24.dp)
         ) {
-            Text("Edit call", style = MaterialTheme.typography.headlineMedium)
+            Text(
+                "Edit call",
+                style = MaterialTheme.typography.headlineMedium,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
             Column(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Rank", style = MaterialTheme.typography.labelMedium)
+                Text(
+                    "Rank",
+                    style = MaterialTheme.typography.labelMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
                 RankPicker(
                     rank,
                     { rank = it },
@@ -95,7 +106,12 @@ fun EditCallDialog(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Suit", style = MaterialTheme.typography.labelMedium)
+                Text(
+                    "Suit",
+                    style = MaterialTheme.typography.labelMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
                 SuitPicker(
                     suit,
                     { suit = it },
@@ -106,7 +122,12 @@ fun EditCallDialog(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Number", style = MaterialTheme.typography.labelMedium)
+                Text(
+                    "Number",
+                    style = MaterialTheme.typography.labelMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
                 NumberPicker(number, { number = it })
             }
         }
