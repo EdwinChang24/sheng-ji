@@ -512,13 +512,6 @@ fun ActionButtons(
                     .copy(containerColor = MaterialTheme.colorScheme.surface)
         )
         Spacer(modifier = Modifier.height(mainButtonRadiusDp * 2 + 16.dp))
-        OutlinedButtonWithEmphasis(
-            text = "Done",
-            icon = iconRes(Res.drawable.ic_done),
-            onClick = onDone,
-            colors =
-                ButtonDefaults.outlinedButtonColors()
-                    .copy(containerColor = MaterialTheme.colorScheme.surface)
-        )
+        ButtonWithEmphasis(text = "Done", icon = iconRes(Res.drawable.ic_done), onClick = onDone)
     }
 }
