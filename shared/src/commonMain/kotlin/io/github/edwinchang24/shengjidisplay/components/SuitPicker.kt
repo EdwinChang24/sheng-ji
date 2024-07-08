@@ -3,6 +3,7 @@ package io.github.edwinchang24.shengjidisplay.components
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -13,6 +14,8 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
 import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
 import io.github.edwinchang24.shengjidisplay.model.Suit
@@ -49,6 +52,11 @@ fun SuitPicker(suit: Suit?, setSuit: (Suit) -> Unit, modifier: Modifier = Modifi
                     Image(
                         suitIconRes(it.icon),
                         null,
+                        colorFilter =
+                            ColorFilter.tint(
+                                if (it in setOf(Suit.HEARTS, Suit.DIAMONDS)) Color.Red
+                                else if (isSystemInDarkTheme()) Color.White else Color.Black
+                            ),
                         modifier =
                             Modifier.pressEmphasis()
                                 .padding(16.dp)

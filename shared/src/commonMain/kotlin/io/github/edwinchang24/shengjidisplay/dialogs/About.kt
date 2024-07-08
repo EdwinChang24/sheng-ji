@@ -18,6 +18,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.SpanStyle
@@ -116,6 +118,7 @@ fun AboutDialog(navigator: Navigator, modifier: Modifier = Modifier) {
                 Image(
                     suitIconRes(Res.drawable.hearts),
                     null,
+                    colorFilter = ColorFilter.tint(Color.Red),
                     modifier =
                         Modifier.height(
                             with(LocalDensity.current) { LocalTextStyle.current.fontSize.toDp() },

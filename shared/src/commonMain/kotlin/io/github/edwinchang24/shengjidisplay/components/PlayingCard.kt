@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -24,17 +25,14 @@ fun PlayingCard(
     textStyle: TextStyle = LocalTextStyle.current
 ) {
     Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
-        Text(
-            card.rank,
-            style = textStyle,
-            fontWeight = FontWeight.Bold,
-            color =
-                if (card.suit in setOf(Suit.HEARTS, Suit.DIAMONDS)) Color.Red
-                else if (isSystemInDarkTheme()) Color.White else Color.Black
-        )
+        val color =
+            if (card.suit in setOf(Suit.HEARTS, Suit.DIAMONDS)) Color.Red
+            else if (isSystemInDarkTheme()) Color.White else Color.Black
+        Text(card.rank, style = textStyle, fontWeight = FontWeight.Bold, color = color)
         Image(
             suitIconRes(card.suit.icon),
             null,
+            colorFilter = ColorFilter.tint(color),
             modifier = Modifier.size(with(LocalDensity.current) { textStyle.fontSize.toDp() })
         )
     }
