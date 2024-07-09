@@ -171,7 +171,7 @@ fun Teammates(
             visible = editing,
             enter = fadeIn() + scaleIn(spring(stiffness = Spring.StiffnessHigh)),
             exit = fadeOut() + scaleOut(spring(stiffness = Spring.StiffnessHigh)),
-            modifier = Modifier.align(Alignment.Center)
+            modifier = Modifier.align(Alignment.Center).zIndex(2f)
         ) {
             if (dragging.none { it.value } && !draggingNew) {
                 ActionButtons(
@@ -512,6 +512,11 @@ fun ActionButtons(
                     .copy(containerColor = MaterialTheme.colorScheme.surface)
         )
         Spacer(modifier = Modifier.height(mainButtonRadiusDp * 2 + 16.dp))
-        ButtonWithEmphasis(text = "Done", icon = iconRes(Res.drawable.ic_done), onClick = onDone)
+        ButtonWithEmphasis(
+            text = "Done",
+            icon = iconRes(Res.drawable.ic_done),
+            onClick = onDone,
+            elevation = ButtonDefaults.buttonElevation(6.dp, 6.dp, 6.dp, 8.dp, 6.dp)
+        )
     }
 }
