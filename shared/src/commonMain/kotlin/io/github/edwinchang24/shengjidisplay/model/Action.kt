@@ -89,7 +89,7 @@ sealed class Action {
         override val name = @Composable { "Scale" }
         override val icon = @Composable { Res.drawable.ic_fit_screen }
         override val description =
-            @Composable { """[NOT YET IMPLEMENTED] Change the display scale.""" }
+            @Composable { """Change the display scale for this display.""" }
         override val enabled = @Composable { true }
     }
 

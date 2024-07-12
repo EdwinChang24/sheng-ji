@@ -14,7 +14,9 @@ data class Settings(
     val contentRotation: ContentRotationSetting = ContentRotationSetting.Center,
     val autoSwitchSeconds: Int = 5,
     val showClock: Boolean = true,
-    val clockOrientation: Boolean = true
+    val clockOrientation: Boolean = true,
+    val mainDisplayScale: Float = 1f,
+    val possibleTrumpsDisplayScale: Float = 1f
 )
 
 @Serializable
