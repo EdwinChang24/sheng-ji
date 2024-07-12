@@ -87,6 +87,7 @@ fun AnimatedContentScope.PossibleTrumpsDisplay(
                 modifier =
                     modifier
                         .size(300.dp * scale * displayScale)
+                        .clip(MaterialTheme.shapes.large)
                         .clickableForEmphasis(
                             onClick = { navigator.navigate(Dialog.EditPossibleTrumps) }
                         )
@@ -97,7 +98,7 @@ fun AnimatedContentScope.PossibleTrumpsDisplay(
 }
 
 @Composable
-fun PossibleTrumps(
+private fun PossibleTrumps(
     possibleTrumps: Set<String>,
     displayScale: Float,
     modifier: Modifier = Modifier
