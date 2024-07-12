@@ -84,6 +84,8 @@ import kotlinx.datetime.format
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 @Composable
 fun DisplayPage(
@@ -92,7 +94,8 @@ fun DisplayPage(
     navigator: Navigator,
     state: AppState,
     setState: (AppState) -> Unit,
-    displayViewModel: DisplayViewModel = viewModel { DisplayViewModel() }
+    displayViewModel: DisplayViewModel =
+        viewModel(key = Json.encodeToString(displayScheme)) { DisplayViewModel() }
 ) {
     val windowSize = calculateWindowSize()
     val content by
