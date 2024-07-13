@@ -1,0 +1,47 @@
+The following is a list of third-party dependencies used in this project.
+
+- Kotlin
+    https://kotlinlang.org
+    License: Apache 2.0
+- Gradle
+    https://gradle.org
+    License: Apache 2.0
+- AndroidX Activity
+    https://developer.android.com/jetpack/androidx/releases/activity
+    License: Apache 2.0
+- AndroidX Core
+    https://developer.android.com/jetpack/androidx/releases/core
+    License: Apache 2.0
+- AndroidX Core Splashscreen
+    https://developer.android.com/jetpack/androidx/releases/core
+    License: Apache 2.0
+- kotlinx.serialization
+    https://github.com/Kotlin/kotlinx.serialization
+    License: Apache 2.0
+- kotlinx.datetime
+    https://github.com/Kotlin/kotlinx-datetime
+    License: Apache 2.0
+- AndroidX Lifecycle Runtime Compose
+    https://github.com/JetBrains/compose-multiplatform-core
+    License: Apache 2.0
+- AndroidX Lifecycle ViewModel Compose
+    https://github.com/JetBrains/compose-multiplatform-core
+    License: Apache 2.0
+- Kotlin Multiplatform UUID
+    https://github.com/benasher44/uuid
+    License: MIT
+- AndroidX Window
+    https://developer.android.com/jetpack/androidx/releases/window
+    License: Apache 2.0
+- BuildKonfig
+    https://github.com/yshrsmz/BuildKonfig
+    License: Apache 2.0
+- JetBrains Compose Gradle Plugin
+    https://github.com/JetBrains/compose-multiplatform
+    License: Apache 2.0
+- Compose Compiler Gradle Plugin
+    https://github.com/JetBrains/compose-multiplatform
+    License: Apache 2.0
+- Spotless
+    https://github.com/diffplug/spotless
+    License: Apache 2.0
