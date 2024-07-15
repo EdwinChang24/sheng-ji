@@ -44,8 +44,12 @@ fun TrumpDisplay(
                     textStyle = LocalTextStyle.current.copy(fontSize = 112.sp * displayScale),
                     modifier =
                         Modifier.clip(MaterialTheme.shapes.large)
-                            .clickableForEmphasis(
-                                onClick = { navigator.navigate(Dialog.EditTrump) }
+                            .then(
+                                if (state().settings.mainDisplay.tapTrumpToEdit)
+                                    Modifier.clickableForEmphasis(
+                                        onClick = { navigator.navigate(Dialog.EditTrump) }
+                                    )
+                                else Modifier
                             )
                             .padding(24.dp)
                             .pressEmphasis()

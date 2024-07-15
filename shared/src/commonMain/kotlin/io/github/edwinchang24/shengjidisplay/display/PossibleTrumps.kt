@@ -2,7 +2,6 @@ package io.github.edwinchang24.shengjidisplay.display
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.EnterExitState
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -43,7 +42,6 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun AnimatedContentScope.PossibleTrumpsDisplay(
     state: AppState.Prop,
@@ -88,8 +86,12 @@ fun AnimatedContentScope.PossibleTrumpsDisplay(
                     modifier
                         .size(300.dp * scale * displayScale)
                         .clip(MaterialTheme.shapes.large)
-                        .clickableForEmphasis(
-                            onClick = { navigator.navigate(Dialog.EditPossibleTrumps) }
+                        .then(
+                            if (state().settings.possibleTrumpsDisplay.tapToEdit)
+                                Modifier.clickableForEmphasis(
+                                    onClick = { navigator.navigate(Dialog.EditPossibleTrumps) }
+                                )
+                            else Modifier
                         )
                         .pressEmphasis()
             )

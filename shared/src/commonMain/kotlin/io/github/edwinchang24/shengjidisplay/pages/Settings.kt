@@ -62,8 +62,11 @@ import io.github.edwinchang24.shengjidisplay.model.contentRotation
 import io.github.edwinchang24.shengjidisplay.model.displayOrder
 import io.github.edwinchang24.shengjidisplay.model.general
 import io.github.edwinchang24.shengjidisplay.model.mainDisplay
+import io.github.edwinchang24.shengjidisplay.model.possibleTrumpsDisplay
 import io.github.edwinchang24.shengjidisplay.model.settings
 import io.github.edwinchang24.shengjidisplay.model.showClock
+import io.github.edwinchang24.shengjidisplay.model.tapToEdit
+import io.github.edwinchang24.shengjidisplay.model.tapTrumpToEdit
 import io.github.edwinchang24.shengjidisplay.navigation.Navigator
 import io.github.edwinchang24.shengjidisplay.resources.Res
 import io.github.edwinchang24.shengjidisplay.resources.ic_arrow_back
@@ -91,31 +94,6 @@ fun SettingsPage(navigator: Navigator, state: AppState.Prop, modifier: Modifier 
         }
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
             SectionHeader("General")
-            //            BooleanPicker(
-            //                value = state.settings.keepScreenOn,
-            //                setValue = {
-            //                    setState(state.copy(settings = state.settings.copy(keepScreenOn =
-            // it)))
-            //                }
-            //            ) {
-            //                Text("Keep screen on")
-            //            }
-            //            BooleanPicker(
-            //                value = state.settings.lockScreenOrientation,
-            //                setValue = {
-            //                    setState(state.copy(settings =
-            // state.settings.copy(lockScreenOrientation = it)))
-            //                }
-            //            ) {
-            //                Text("Lock screen orientation to portrait")
-            //            }
-            //            BooleanPicker(
-            //                value = state.settings.fullScreen,
-            //                setValue = { setState(state.copy(settings =
-            // state.settings.copy(fullScreen = it))) }
-            //            ) {
-            //                Text("Use fullscreen")
-            //            }
             ContentRotationPicker(
                 contentRotationSetting = state().settings.general.contentRotation,
                 setContentRotationSetting = {
@@ -149,6 +127,19 @@ fun SettingsPage(navigator: Navigator, state: AppState.Prop, modifier: Modifier 
                 setValue = { state { AppState.settings.mainDisplay.autoHideCalls set it } }
             ) {
                 Text("Hide calls when all are found")
+            }
+            BooleanPicker(
+                value = state().settings.mainDisplay.tapTrumpToEdit,
+                setValue = { state { AppState.settings.mainDisplay.tapTrumpToEdit set it } }
+            ) {
+                Text("Tap trump card in display to edit")
+            }
+            SectionHeader("Possible trumps display")
+            BooleanPicker(
+                value = state().settings.possibleTrumpsDisplay.tapToEdit,
+                setValue = { state { AppState.settings.possibleTrumpsDisplay.tapToEdit set it } }
+            ) {
+                Text("Tap display to edit")
             }
             PlatformSettings(
                 state,
