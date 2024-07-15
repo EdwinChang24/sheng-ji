@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -128,119 +127,111 @@ fun DisplayPage(
     KeepScreenOn(state)
     LockScreenOrientation(state)
     FullScreen(state)
-    Scaffold { padding ->
-        Column(modifier = Modifier.fillMaxSize()) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.weight(1f).fillMaxWidth()
-            ) {
-                DisplayContent(content, top = true, state, displayScheme, navigator)
-                DisplayLabel(
-                    content = content.displayContentPair.topContent,
-                    modifier =
-                        Modifier.background(
-                                Brush.verticalGradient(
-                                    0f to Color.Transparent,
-                                    1f to MaterialTheme.colorScheme.surface
-                                )
-                            )
-                            .align(Alignment.BottomCenter)
-                            .rotate(180f)
-                )
-            }
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
+    Column(modifier = Modifier.fillMaxSize()) {
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.weight(1f).fillMaxWidth()) {
+            DisplayContent(content, top = true, state, displayScheme, navigator)
+            DisplayLabel(
+                content = content.displayContentPair.topContent,
                 modifier =
-                    Modifier.fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.surfaceContainer)
-                        .padding(8.dp)
-            ) {
-                if (state().settings.general.showClock) {
-                    Clock(
-                        currentTimeMs,
-                        orientation = state().settings.general.clockOrientation,
-                        setOrientation = {
-                            state { AppState.settings.general.clockOrientation set it }
-                        },
-                        leftSide = true
-                    )
-                }
-                Box(contentAlignment = Alignment.CenterEnd, modifier = Modifier.weight(1f)) {
-                    if (windowSize != WindowSize.Small) {
-                        IconButtonWithEmphasis(onClick = { editingTeammates = true }) {
-                            Icon(iconRes(Res.drawable.ic_group), null)
-                        }
+                    Modifier.background(
+                            Brush.verticalGradient(
+                                0f to Color.Transparent,
+                                1f to MaterialTheme.colorScheme.surface
+                            )
+                        )
+                        .align(Alignment.BottomCenter)
+                        .rotate(180f)
+            )
+        }
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier =
+                Modifier.fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surfaceContainer)
+                    .padding(8.dp)
+        ) {
+            if (state().settings.general.showClock) {
+                Clock(
+                    currentTimeMs,
+                    orientation = state().settings.general.clockOrientation,
+                    setOrientation = {
+                        state { AppState.settings.general.clockOrientation set it }
+                    },
+                    leftSide = true
+                )
+            }
+            Box(contentAlignment = Alignment.CenterEnd, modifier = Modifier.weight(1f)) {
+                if (windowSize != WindowSize.Small) {
+                    IconButtonWithEmphasis(onClick = { editingTeammates = true }) {
+                        Icon(iconRes(Res.drawable.ic_group), null)
                     }
-                }
-                Spacer(modifier = Modifier.size(ActionMenuButtonSize))
-                Box(contentAlignment = Alignment.CenterStart, modifier = Modifier.weight(1f)) {
-                    if (windowSize != WindowSize.Small) {
-                        IconButtonWithEmphasis(onClick = { navigator.navigate(Screen.Home) }) {
-                            Icon(iconRes(Res.drawable.ic_close), null)
-                        }
-                    }
-                }
-                if (state().settings.general.showClock) {
-                    Clock(
-                        currentTimeMs,
-                        orientation = state().settings.general.clockOrientation,
-                        setOrientation = {
-                            state { AppState.settings.general.clockOrientation set it }
-                        },
-                        leftSide = false
-                    )
                 }
             }
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.weight(1f).fillMaxWidth()
-            ) {
-                DisplayContent(content, top = false, state, displayScheme, navigator)
-                DisplayLabel(
-                    content = content.displayContentPair.bottomContent,
-                    modifier =
-                        Modifier.background(
-                                Brush.verticalGradient(
-                                    0f to MaterialTheme.colorScheme.surface,
-                                    1f to Color.Transparent
-                                )
-                            )
-                            .align(Alignment.TopCenter)
+            Spacer(modifier = Modifier.size(ActionMenuButtonSize))
+            Box(contentAlignment = Alignment.CenterStart, modifier = Modifier.weight(1f)) {
+                if (windowSize != WindowSize.Small) {
+                    IconButtonWithEmphasis(onClick = { navigator.navigate(Screen.Home) }) {
+                        Icon(iconRes(Res.drawable.ic_close), null)
+                    }
+                }
+            }
+            if (state().settings.general.showClock) {
+                Clock(
+                    currentTimeMs,
+                    orientation = state().settings.general.clockOrientation,
+                    setOrientation = {
+                        state { AppState.settings.general.clockOrientation set it }
+                    },
+                    leftSide = false
                 )
             }
         }
-        Teammates(
-            editing = editingTeammates,
-            savedTeammatesRad = state().teammates,
-            setSavedTeammatesRad = { state { AppState.teammates set it } },
-            onDone = { editingTeammates = false }
-        )
-        ActionMenu(
-            onAction = { action ->
-                when (action) {
-                    is Action.PauseResume -> pause = !pause
-                    Action.Teammates -> editingTeammates = true
-                    Action.Settings -> navigator.toggleSettings()
-                    Action.Exit -> navigator.navigate(Screen.Home)
-                    Action.Rotate -> {}
-                    Action.Scale -> editingScale = true
-                }
-            },
-            canPause =
-                displayScheme.getPossibleContentPairs(state()).size > 1 ||
-                    state().settings.general.contentRotation.possibleRotations.size > 1,
-            pause = pause,
-            editingTeammates = editingTeammates
-        )
-        AnimatedVisibility(
-            visible = editingScale,
-            enter = fadeIn() + scaleIn(),
-            exit = fadeOut() + scaleOut(),
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Scale(state, displayScheme, { editingScale = false })
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.weight(1f).fillMaxWidth()) {
+            DisplayContent(content, top = false, state, displayScheme, navigator)
+            DisplayLabel(
+                content = content.displayContentPair.bottomContent,
+                modifier =
+                    Modifier.background(
+                            Brush.verticalGradient(
+                                0f to MaterialTheme.colorScheme.surface,
+                                1f to Color.Transparent
+                            )
+                        )
+                        .align(Alignment.TopCenter)
+            )
         }
+    }
+    Teammates(
+        editing = editingTeammates,
+        savedTeammatesRad = state().teammates,
+        setSavedTeammatesRad = { state { AppState.teammates set it } },
+        onDone = { editingTeammates = false }
+    )
+    ActionMenu(
+        onAction = { action ->
+            when (action) {
+                is Action.PauseResume -> pause = !pause
+                Action.Teammates -> editingTeammates = true
+                Action.Settings -> navigator.toggleSettings()
+                Action.Exit -> navigator.navigate(Screen.Home)
+                Action.Rotate -> {}
+                Action.Scale -> editingScale = true
+            }
+        },
+        canPause =
+            displayScheme.getPossibleContentPairs(state()).size > 1 ||
+                state().settings.general.contentRotation.possibleRotations.size > 1,
+        pause = pause,
+        editingTeammates = editingTeammates
+    )
+    AnimatedVisibility(
+        visible = editingScale,
+        enter = fadeIn() + scaleIn(),
+        exit = fadeOut() + scaleOut(),
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Scale(state, displayScheme, { editingScale = false })
     }
 }
 

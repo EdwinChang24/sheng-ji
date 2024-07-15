@@ -84,6 +84,7 @@ fun Teammates(
         Box(
             modifier =
                 Modifier.fillMaxSize()
+                    .zIndex(-3f)
                     .alpha(animateFloatAsState(if (editing) 0.75f else 0f).value)
                     .background(MaterialTheme.colorScheme.surface)
                     .then(if (editing) Modifier.pointerInput(true) {} else Modifier)
