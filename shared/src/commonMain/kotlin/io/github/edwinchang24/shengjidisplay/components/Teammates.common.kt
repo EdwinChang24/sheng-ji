@@ -81,6 +81,13 @@ fun Teammates(
     modifier: Modifier = Modifier
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+        Box(
+            modifier =
+                Modifier.fillMaxSize()
+                    .alpha(animateFloatAsState(if (editing) 0.75f else 0f).value)
+                    .background(MaterialTheme.colorScheme.surface)
+                    .then(if (editing) Modifier.pointerInput(true) {} else Modifier)
+        )
         val width = constraints.maxWidth.toFloat()
         val height = constraints.maxHeight.toFloat()
         val mainButtonRadiusPx = mainButtonRadiusPx

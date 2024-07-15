@@ -6,7 +6,6 @@ import androidx.compose.animation.EnterExitState
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -39,13 +38,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Constraints
@@ -213,19 +210,11 @@ fun DisplayPage(
                 )
             }
         }
-        Box(
-            modifier =
-                Modifier.fillMaxSize()
-                    .alpha(animateFloatAsState(if (editingTeammates) 0.75f else 0f).value)
-                    .background(MaterialTheme.colorScheme.surface)
-                    .then(if (editingTeammates) Modifier.pointerInput(true) {} else Modifier)
-        )
         Teammates(
             editing = editingTeammates,
             savedTeammatesRad = state().teammates,
             setSavedTeammatesRad = { state { AppState.teammates set it } },
-            onDone = { editingTeammates = false },
-            modifier = Modifier.padding(padding)
+            onDone = { editingTeammates = false }
         )
         ActionMenu(
             onAction = { action ->
@@ -242,8 +231,7 @@ fun DisplayPage(
                 displayScheme.getPossibleContentPairs(state()).size > 1 ||
                     state().settings.general.contentRotation.possibleRotations.size > 1,
             pause = pause,
-            editingTeammates = editingTeammates,
-            padding = padding
+            editingTeammates = editingTeammates
         )
         AnimatedVisibility(
             visible = editingScale,
