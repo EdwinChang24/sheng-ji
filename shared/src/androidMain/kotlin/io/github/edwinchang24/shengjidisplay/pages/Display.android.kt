@@ -12,13 +12,16 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import io.github.edwinchang24.shengjidisplay.model.AppState
+import io.github.edwinchang24.shengjidisplay.model.invoke
 
 fun Context.activity(): Activity? =
     this as? Activity ?: (this as? ContextWrapper)?.baseContext?.activity()
 
 @Composable
-actual fun KeepScreenOn(enabled: Boolean) {
+actual fun KeepScreenOn(state: AppState.Prop) {
     val context = LocalContext.current
+    val enabled = state().platformSettings().keepScreenOn
     DisposableEffect(enabled) {
         context.activity()?.window.let { window ->
             if (enabled) window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -29,8 +32,9 @@ actual fun KeepScreenOn(enabled: Boolean) {
 }
 
 @Composable
-actual fun LockScreenOrientation(enabled: Boolean) {
+actual fun LockScreenOrientation(state: AppState.Prop) {
     val context = LocalContext.current
+    val enabled = state().platformSettings().lockOrientation
     DisposableEffect(enabled) {
         context.activity().let { activity ->
             activity?.requestedOrientation =
@@ -44,9 +48,10 @@ actual fun LockScreenOrientation(enabled: Boolean) {
 }
 
 @Composable
-actual fun FullScreen(enabled: Boolean) {
+actual fun FullScreen(state: AppState.Prop) {
     val view = LocalView.current
     val context = LocalContext.current
+    val enabled = state().platformSettings().fullScreen
     DisposableEffect(enabled) {
         context.activity()?.window?.let { window ->
             WindowCompat.getInsetsController(window, view).run {

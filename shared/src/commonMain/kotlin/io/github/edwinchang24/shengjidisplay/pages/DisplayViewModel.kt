@@ -22,7 +22,7 @@ class DisplayViewModel : ViewModel() {
     private var possibleContentPairs = listOf<DisplayContentPair>()
     private var possibleRotations = listOf<ContentRotation>()
     private var pause = false
-    private var autoSwitchSeconds = Settings().autoSwitchSeconds
+    private var autoSwitchSeconds = Settings().general.autoSwitchSeconds
     val currentContent =
         MutableStateFlow(DisplayContent.None and DisplayContent.None with ContentRotation.Center)
 

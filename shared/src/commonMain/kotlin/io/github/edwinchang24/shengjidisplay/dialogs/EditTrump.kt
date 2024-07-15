@@ -27,6 +27,7 @@ import io.github.edwinchang24.shengjidisplay.components.RankPicker
 import io.github.edwinchang24.shengjidisplay.components.SuitPicker
 import io.github.edwinchang24.shengjidisplay.model.AppState
 import io.github.edwinchang24.shengjidisplay.model.PlayingCard
+import io.github.edwinchang24.shengjidisplay.model.trump
 import io.github.edwinchang24.shengjidisplay.navigation.Navigator
 import io.github.edwinchang24.shengjidisplay.resources.Res
 import io.github.edwinchang24.shengjidisplay.resources.ic_close
@@ -34,9 +35,9 @@ import io.github.edwinchang24.shengjidisplay.resources.ic_done
 import io.github.edwinchang24.shengjidisplay.util.iconRes
 
 @Composable
-fun EditTrumpDialog(navigator: Navigator, state: AppState, setState: (AppState) -> Unit) {
-    var rank by rememberSaveable { mutableStateOf(state.trump?.rank) }
-    var suit by rememberSaveable { mutableStateOf(state.trump?.suit) }
+fun EditTrumpDialog(navigator: Navigator, state: AppState.Prop) {
+    var rank by rememberSaveable { mutableStateOf(state().trump?.rank) }
+    var suit by rememberSaveable { mutableStateOf(state().trump?.suit) }
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier =
@@ -105,7 +106,7 @@ fun EditTrumpDialog(navigator: Navigator, state: AppState, setState: (AppState) 
                 onClick = {
                     rank?.let { r ->
                         suit?.let { s ->
-                            setState(state.copy(trump = PlayingCard(r, s)))
+                            state { AppState.trump set PlayingCard(r, s) }
                             navigator.closeDialog()
                         }
                     }

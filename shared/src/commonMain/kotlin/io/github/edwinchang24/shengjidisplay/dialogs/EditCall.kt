@@ -30,6 +30,7 @@ import io.github.edwinchang24.shengjidisplay.components.SuitPicker
 import io.github.edwinchang24.shengjidisplay.model.AppState
 import io.github.edwinchang24.shengjidisplay.model.Call
 import io.github.edwinchang24.shengjidisplay.model.PlayingCard
+import io.github.edwinchang24.shengjidisplay.model.calls
 import io.github.edwinchang24.shengjidisplay.navigation.Navigator
 import io.github.edwinchang24.shengjidisplay.resources.Res
 import io.github.edwinchang24.shengjidisplay.resources.ic_close
@@ -38,20 +39,17 @@ import io.github.edwinchang24.shengjidisplay.util.iconRes
 
 /** @param index index of call to edit; will create a new call if index is out of bounds */
 @Composable
-fun EditCallDialog(
-    index: Int,
-    navigator: Navigator,
-    state: AppState,
-    setState: (AppState) -> Unit
-) {
-    var rank by rememberSaveable { mutableStateOf(state.calls.getOrNull(index)?.card?.rank) }
-    var suit by rememberSaveable { mutableStateOf(state.calls.getOrNull(index)?.card?.suit) }
-    var number by rememberSaveable { mutableIntStateOf(state.calls.getOrNull(index)?.number ?: 1) }
+fun EditCallDialog(index: Int, navigator: Navigator, state: AppState.Prop) {
+    var rank by rememberSaveable { mutableStateOf(state().calls.getOrNull(index)?.card?.rank) }
+    var suit by rememberSaveable { mutableStateOf(state().calls.getOrNull(index)?.card?.suit) }
+    var number by rememberSaveable {
+        mutableIntStateOf(state().calls.getOrNull(index)?.number ?: 1)
+    }
     fun onDone() {
         rank?.let { r ->
             suit?.let { s ->
                 val calls =
-                    state.calls.toMutableList().apply {
+                    state().calls.toMutableList().apply {
                         if (index in indices) {
                             this[index] =
                                 this[index].copy(
@@ -64,7 +62,7 @@ fun EditCallDialog(
                             add(Call(PlayingCard(r, s), number, found = 0))
                         }
                     }
-                setState(state.copy(calls = calls))
+                state { AppState.calls set calls }
                 navigator.closeDialog()
             }
         }

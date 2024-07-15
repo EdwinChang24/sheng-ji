@@ -8,6 +8,8 @@ import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import arrow.optics.copy
+import io.github.edwinchang24.shengjidisplay.model.AppState
 
 class MainActivity : ComponentActivity() {
     private val viewModel: MainActivityViewModel by viewModels()
@@ -18,11 +20,8 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         viewModel.load(this)
         setContent {
-            val state by
-                viewModel.state.collectAsStateWithLifecycle(
-                    lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
-                )
-            App(state, setState = { viewModel.state.value = it })
+            val state by viewModel.state.collectAsStateWithLifecycle()
+            App(AppState.Prop(state) { copy -> viewModel.state.value = state.copy(copy) })
         }
     }
 }

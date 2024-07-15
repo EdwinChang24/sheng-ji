@@ -27,13 +27,13 @@ import io.github.edwinchang24.shengjidisplay.util.iconRes
 
 @Composable
 fun TrumpDisplay(
-    state: AppState,
+    state: AppState.Prop,
     navigator: Navigator,
     displayScale: Float,
     modifier: Modifier = Modifier
 ) {
     AnimatedContent(
-        targetState = state.trump,
+        targetState = state().trump,
         transitionSpec = { DefaultTransition using SizeTransform(clip = false) },
         modifier = modifier
     ) { targetTrump ->

@@ -67,6 +67,10 @@ import io.github.edwinchang24.shengjidisplay.display.PossibleTrumpsDisplay
 import io.github.edwinchang24.shengjidisplay.display.TrumpDisplay
 import io.github.edwinchang24.shengjidisplay.model.Action
 import io.github.edwinchang24.shengjidisplay.model.AppState
+import io.github.edwinchang24.shengjidisplay.model.clockOrientation
+import io.github.edwinchang24.shengjidisplay.model.general
+import io.github.edwinchang24.shengjidisplay.model.settings
+import io.github.edwinchang24.shengjidisplay.model.teammates
 import io.github.edwinchang24.shengjidisplay.navigation.Navigator
 import io.github.edwinchang24.shengjidisplay.navigation.Screen
 import io.github.edwinchang24.shengjidisplay.resources.Res
@@ -92,16 +96,12 @@ fun DisplayPage(
     displayScheme: DisplayScheme,
     editTeammates: Boolean = false,
     navigator: Navigator,
-    state: AppState,
-    setState: (AppState) -> Unit,
+    state: AppState.Prop,
     displayViewModel: DisplayViewModel =
         viewModel(key = Json.encodeToString(displayScheme)) { DisplayViewModel() }
 ) {
     val windowSize = calculateWindowSize()
-    val content by
-        displayViewModel.currentContent.collectAsStateWithLifecycle(
-            lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
-        )
+    val content by displayViewModel.currentContent.collectAsStateWithLifecycle()
     var currentTimeMs by rememberSaveable {
         mutableLongStateOf(Clock.System.now().toEpochMilliseconds())
     }
@@ -109,16 +109,16 @@ fun DisplayPage(
     var editingScale by rememberSaveable { mutableStateOf(false) }
     var pause by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(
-        displayScheme.getPossibleContentPairs(state),
-        state.settings.contentRotation.possibleRotations,
+        displayScheme.getPossibleContentPairs(state()),
+        state().settings.general.contentRotation.possibleRotations,
         pause,
-        state.settings.autoSwitchSeconds
+        state().settings.general.autoSwitchSeconds
     ) {
         displayViewModel.onStateUpdate(
-            newPossibleContentPairs = displayScheme.getPossibleContentPairs(state),
-            newPossibleRotations = state.settings.contentRotation.possibleRotations,
+            newPossibleContentPairs = displayScheme.getPossibleContentPairs(state()),
+            newPossibleRotations = state().settings.general.contentRotation.possibleRotations,
             newPause = pause,
-            newAutoSwitchSeconds = state.settings.autoSwitchSeconds
+            newAutoSwitchSeconds = state().settings.general.autoSwitchSeconds
         )
     }
     LaunchedEffect(true) {
@@ -128,16 +128,16 @@ fun DisplayPage(
             currentTimeMs = Clock.System.now().toEpochMilliseconds()
         }
     }
-    KeepScreenOn(enabled = state.settings.keepScreenOn)
-    LockScreenOrientation(enabled = state.settings.lockScreenOrientation)
-    FullScreen(enabled = state.settings.fullScreen)
+    KeepScreenOn(state)
+    LockScreenOrientation(state)
+    FullScreen(state)
     Scaffold { padding ->
         Column(modifier = Modifier.fillMaxSize()) {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.weight(1f).fillMaxWidth()
             ) {
-                DisplayContent(content, top = true, state, setState, displayScheme, navigator)
+                DisplayContent(content, top = true, state, displayScheme, navigator)
                 DisplayLabel(
                     content = content.displayContentPair.topContent,
                     modifier =
@@ -159,14 +159,12 @@ fun DisplayPage(
                         .background(MaterialTheme.colorScheme.surfaceContainer)
                         .padding(8.dp)
             ) {
-                if (state.settings.showClock) {
+                if (state().settings.general.showClock) {
                     Clock(
                         currentTimeMs,
-                        orientation = state.settings.clockOrientation,
+                        orientation = state().settings.general.clockOrientation,
                         setOrientation = {
-                            setState(
-                                state.copy(settings = state.settings.copy(clockOrientation = it))
-                            )
+                            state { AppState.settings.general.clockOrientation set it }
                         },
                         leftSide = true
                     )
@@ -186,14 +184,12 @@ fun DisplayPage(
                         }
                     }
                 }
-                if (state.settings.showClock) {
+                if (state().settings.general.showClock) {
                     Clock(
                         currentTimeMs,
-                        orientation = state.settings.clockOrientation,
+                        orientation = state().settings.general.clockOrientation,
                         setOrientation = {
-                            setState(
-                                state.copy(settings = state.settings.copy(clockOrientation = it))
-                            )
+                            state { AppState.settings.general.clockOrientation set it }
                         },
                         leftSide = false
                     )
@@ -203,7 +199,7 @@ fun DisplayPage(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.weight(1f).fillMaxWidth()
             ) {
-                DisplayContent(content, top = false, state, setState, displayScheme, navigator)
+                DisplayContent(content, top = false, state, displayScheme, navigator)
                 DisplayLabel(
                     content = content.displayContentPair.bottomContent,
                     modifier =
@@ -226,8 +222,8 @@ fun DisplayPage(
         )
         Teammates(
             editing = editingTeammates,
-            savedTeammatesRad = state.teammates,
-            setSavedTeammatesRad = { setState(state.copy(teammates = it)) },
+            savedTeammatesRad = state().teammates,
+            setSavedTeammatesRad = { state { AppState.teammates set it } },
             onDone = { editingTeammates = false },
             modifier = Modifier.padding(padding)
         )
@@ -243,8 +239,8 @@ fun DisplayPage(
                 }
             },
             canPause =
-                displayScheme.getPossibleContentPairs(state).size > 1 ||
-                    state.settings.contentRotation.possibleRotations.size > 1,
+                displayScheme.getPossibleContentPairs(state()).size > 1 ||
+                    state().settings.general.contentRotation.possibleRotations.size > 1,
             pause = pause,
             editingTeammates = editingTeammates,
             padding = padding
@@ -255,16 +251,16 @@ fun DisplayPage(
             exit = fadeOut() + scaleOut(),
             modifier = Modifier.fillMaxSize()
         ) {
-            Scale(state, setState, displayScheme, { editingScale = false })
+            Scale(state, displayScheme, { editingScale = false })
         }
     }
 }
 
-@Composable expect fun KeepScreenOn(enabled: Boolean)
+@Composable expect fun KeepScreenOn(state: AppState.Prop)
 
-@Composable expect fun LockScreenOrientation(enabled: Boolean)
+@Composable expect fun LockScreenOrientation(state: AppState.Prop)
 
-@Composable expect fun FullScreen(enabled: Boolean)
+@Composable expect fun FullScreen(state: AppState.Prop)
 
 @Composable
 private fun DisplayLabel(content: DisplayContent, modifier: Modifier = Modifier) {
@@ -320,8 +316,7 @@ private fun Clock(
 private fun DisplayContent(
     content: DisplayContentWithRotation,
     top: Boolean,
-    state: AppState,
-    setState: (AppState) -> Unit,
+    state: AppState.Prop,
     displayScheme: DisplayScheme,
     navigator: Navigator,
     modifier: Modifier = Modifier
@@ -345,16 +340,15 @@ private fun DisplayContent(
             }
         val displayScale =
             when (displayScheme) {
-                DisplayScheme.Main -> state.settings.mainDisplayScale
-                DisplayScheme.PossibleTrumps -> state.settings.possibleTrumpsDisplayScale
+                DisplayScheme.Main -> state().settings.mainDisplay.scale
+                DisplayScheme.PossibleTrumps -> state().settings.possibleTrumpsDisplay.scale
             }
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
             Layout(
                 content = {
                     when (displayContent) {
                         is DisplayContent.Trump -> TrumpDisplay(state, navigator, displayScale)
-                        is DisplayContent.Calls ->
-                            CallsDisplay(state, setState, navigator, displayScale)
+                        is DisplayContent.Calls -> CallsDisplay(state, navigator, displayScale)
                         is DisplayContent.PossibleTrumps ->
                             PossibleTrumpsDisplay(state, navigator, displayScale)
                         DisplayContent.None -> Box(Modifier)

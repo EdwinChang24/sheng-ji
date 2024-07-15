@@ -35,6 +35,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -54,7 +55,15 @@ import io.github.edwinchang24.shengjidisplay.components.IconButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
 import io.github.edwinchang24.shengjidisplay.model.AppState
 import io.github.edwinchang24.shengjidisplay.model.ContentRotationSetting
-import io.github.edwinchang24.shengjidisplay.model.VerticalOrder
+import io.github.edwinchang24.shengjidisplay.model.MainDisplayOrder
+import io.github.edwinchang24.shengjidisplay.model.autoHideCalls
+import io.github.edwinchang24.shengjidisplay.model.autoSwitchSeconds
+import io.github.edwinchang24.shengjidisplay.model.contentRotation
+import io.github.edwinchang24.shengjidisplay.model.displayOrder
+import io.github.edwinchang24.shengjidisplay.model.general
+import io.github.edwinchang24.shengjidisplay.model.mainDisplay
+import io.github.edwinchang24.shengjidisplay.model.settings
+import io.github.edwinchang24.shengjidisplay.model.showClock
 import io.github.edwinchang24.shengjidisplay.navigation.Navigator
 import io.github.edwinchang24.shengjidisplay.resources.Res
 import io.github.edwinchang24.shengjidisplay.resources.ic_arrow_back
@@ -62,12 +71,7 @@ import io.github.edwinchang24.shengjidisplay.resources.ic_timer
 import io.github.edwinchang24.shengjidisplay.util.iconRes
 
 @Composable
-fun SettingsPage(
-    navigator: Navigator,
-    state: AppState,
-    setState: (AppState) -> Unit,
-    modifier: Modifier = Modifier
-) {
+fun SettingsPage(navigator: Navigator, state: AppState.Prop, modifier: Modifier = Modifier) {
     Column(
         modifier =
             modifier
@@ -87,68 +91,83 @@ fun SettingsPage(
         }
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
             SectionHeader("General")
-            BooleanPicker(
-                value = state.settings.keepScreenOn,
-                setValue = {
-                    setState(state.copy(settings = state.settings.copy(keepScreenOn = it)))
-                }
-            ) {
-                Text("Keep screen on")
-            }
-            BooleanPicker(
-                value = state.settings.lockScreenOrientation,
-                setValue = {
-                    setState(state.copy(settings = state.settings.copy(lockScreenOrientation = it)))
-                }
-            ) {
-                Text("Lock screen orientation to portrait")
-            }
-            BooleanPicker(
-                value = state.settings.fullScreen,
-                setValue = { setState(state.copy(settings = state.settings.copy(fullScreen = it))) }
-            ) {
-                Text("Use fullscreen")
-            }
+            //            BooleanPicker(
+            //                value = state.settings.keepScreenOn,
+            //                setValue = {
+            //                    setState(state.copy(settings = state.settings.copy(keepScreenOn =
+            // it)))
+            //                }
+            //            ) {
+            //                Text("Keep screen on")
+            //            }
+            //            BooleanPicker(
+            //                value = state.settings.lockScreenOrientation,
+            //                setValue = {
+            //                    setState(state.copy(settings =
+            // state.settings.copy(lockScreenOrientation = it)))
+            //                }
+            //            ) {
+            //                Text("Lock screen orientation to portrait")
+            //            }
+            //            BooleanPicker(
+            //                value = state.settings.fullScreen,
+            //                setValue = { setState(state.copy(settings =
+            // state.settings.copy(fullScreen = it))) }
+            //            ) {
+            //                Text("Use fullscreen")
+            //            }
             ContentRotationPicker(
-                contentRotationSetting = state.settings.contentRotation,
+                contentRotationSetting = state().settings.general.contentRotation,
                 setContentRotationSetting = {
-                    setState(state.copy(settings = state.settings.copy(contentRotation = it)))
+                    state { AppState.settings.general.contentRotation set it }
                 }
             )
             AutoSwitchSecondsPicker(
-                autoSwitchSeconds = state.settings.autoSwitchSeconds,
+                autoSwitchSeconds = state().settings.general.autoSwitchSeconds,
                 setAutoSwitchSeconds = {
-                    setState(state.copy(settings = state.settings.copy(autoSwitchSeconds = it)))
+                    state { AppState.settings.general.autoSwitchSeconds set it }
                 },
                 enabled =
-                    state.settings.verticalOrder == VerticalOrder.Auto ||
-                        state.settings.contentRotation == ContentRotationSetting.Auto
+                    state().settings.mainDisplay.displayOrder == MainDisplayOrder.Auto ||
+                        state().settings.general.contentRotation == ContentRotationSetting.Auto
             )
             BooleanPicker(
-                value = state.settings.showClock,
-                setValue = { setState(state.copy(settings = state.settings.copy(showClock = it))) }
+                value = state().settings.general.showClock,
+                setValue = { state { AppState.settings.general.showClock set it } }
             ) {
                 Text("Show clock")
             }
             SectionHeader("Main display")
-            VerticalOrderPicker(
-                verticalOrder = state.settings.verticalOrder,
-                setVerticalOrder = {
-                    setState(state.copy(settings = state.settings.copy(verticalOrder = it)))
+            MainDisplayOrderPicker(
+                mainDisplayOrder = state().settings.mainDisplay.displayOrder,
+                setMainDisplayOrder = {
+                    state { AppState.settings.mainDisplay.displayOrder set it }
                 }
             )
             BooleanPicker(
-                value = state.settings.autoHideCalls,
-                setValue = {
-                    setState(state.copy(settings = state.settings.copy(autoHideCalls = it)))
-                }
+                value = state().settings.mainDisplay.autoHideCalls,
+                setValue = { state { AppState.settings.mainDisplay.autoHideCalls set it } }
             ) {
                 Text("Hide calls when all are found")
             }
+            PlatformSettings(
+                state,
+                { text, modifier1 -> SectionHeader(text, modifier1) },
+                { value, setValue, label -> BooleanPicker(value, setValue, label) }
+            )
             Spacer(modifier = Modifier.height(64.dp))
         }
     }
 }
+
+@Composable
+expect fun PlatformSettings(
+    state: AppState.Prop,
+    sectionHeader: @Composable (text: String, modifier: Modifier) -> Unit,
+    booleanPicker:
+        @Composable
+        (value: Boolean, setValue: (Boolean) -> Unit, label: @Composable () -> Unit) -> Unit
+)
 
 @Composable
 private fun SectionHeader(text: String, modifier: Modifier = Modifier) {
@@ -207,9 +226,9 @@ private fun RowScope.PickerCard(
 }
 
 @Composable
-private fun VerticalOrderPicker(
-    verticalOrder: VerticalOrder,
-    setVerticalOrder: (VerticalOrder) -> Unit
+private fun MainDisplayOrderPicker(
+    mainDisplayOrder: MainDisplayOrder,
+    setMainDisplayOrder: (MainDisplayOrder) -> Unit
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -222,8 +241,8 @@ private fun VerticalOrderPicker(
         ) {
             PressableWithEmphasis {
                 PickerCard(
-                    onClick = { setVerticalOrder(VerticalOrder.Auto) },
-                    selected = verticalOrder == VerticalOrder.Auto,
+                    onClick = { setMainDisplayOrder(MainDisplayOrder.Auto) },
+                    selected = mainDisplayOrder == MainDisplayOrder.Auto,
                     interactionSource = interactionSource
                 ) {
                     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
@@ -237,8 +256,8 @@ private fun VerticalOrderPicker(
             }
             PressableWithEmphasis {
                 PickerCard(
-                    onClick = { setVerticalOrder(VerticalOrder.TrumpOnTop) },
-                    selected = verticalOrder == VerticalOrder.TrumpOnTop,
+                    onClick = { setMainDisplayOrder(MainDisplayOrder.TrumpOnTop) },
+                    selected = mainDisplayOrder == MainDisplayOrder.TrumpOnTop,
                     interactionSource = interactionSource
                 ) {
                     Column(
@@ -258,8 +277,8 @@ private fun VerticalOrderPicker(
             }
             PressableWithEmphasis {
                 PickerCard(
-                    onClick = { setVerticalOrder(VerticalOrder.CallsOnTop) },
-                    selected = verticalOrder == VerticalOrder.CallsOnTop,
+                    onClick = { setMainDisplayOrder(MainDisplayOrder.CallsOnTop) },
+                    selected = mainDisplayOrder == MainDisplayOrder.CallsOnTop,
                     interactionSource = interactionSource
                 ) {
                     Column(
@@ -404,7 +423,7 @@ private fun AutoSwitchSecondsPicker(
                 leadingIcon = { Icon(iconRes(Res.drawable.ic_timer), null) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
                 colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
-                modifier = Modifier.menuAnchor()
+                modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable)
             )
             DropdownMenu(
                 expanded = expanded,

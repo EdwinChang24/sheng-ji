@@ -37,14 +37,17 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import io.github.edwinchang24.shengjidisplay.display.DisplayScheme
 import io.github.edwinchang24.shengjidisplay.model.AppState
+import io.github.edwinchang24.shengjidisplay.model.mainDisplay
+import io.github.edwinchang24.shengjidisplay.model.possibleTrumpsDisplay
+import io.github.edwinchang24.shengjidisplay.model.scale
+import io.github.edwinchang24.shengjidisplay.model.settings
 import io.github.edwinchang24.shengjidisplay.resources.Res
 import io.github.edwinchang24.shengjidisplay.resources.ic_done
 import io.github.edwinchang24.shengjidisplay.util.iconRes
 
 @Composable
 fun Scale(
-    appState: AppState,
-    setAppState: (AppState) -> Unit,
+    state: AppState.Prop,
     displayScheme: DisplayScheme,
     onDone: () -> Unit,
     modifier: Modifier = Modifier
@@ -88,30 +91,18 @@ fun Scale(
                         ) {
                             Slider(
                                 when (displayScheme) {
-                                    DisplayScheme.Main -> appState.settings.mainDisplayScale
+                                    DisplayScheme.Main -> state().settings.mainDisplay.scale
                                     DisplayScheme.PossibleTrumps ->
-                                        appState.settings.possibleTrumpsDisplayScale
+                                        state().settings.possibleTrumpsDisplay.scale
                                 },
                                 {
                                     when (displayScheme) {
                                         DisplayScheme.Main ->
-                                            setAppState(
-                                                appState.copy(
-                                                    settings =
-                                                        appState.settings.copy(
-                                                            mainDisplayScale = it
-                                                        )
-                                                )
-                                            )
+                                            state { AppState.settings.mainDisplay.scale set it }
                                         DisplayScheme.PossibleTrumps ->
-                                            setAppState(
-                                                appState.copy(
-                                                    settings =
-                                                        appState.settings.copy(
-                                                            possibleTrumpsDisplayScale = it
-                                                        )
-                                                )
-                                            )
+                                            state {
+                                                AppState.settings.possibleTrumpsDisplay.scale set it
+                                            }
                                     }
                                 },
                                 valueRange = 0.2f..4f,

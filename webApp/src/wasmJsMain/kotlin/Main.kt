@@ -2,6 +2,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.CanvasBasedWindow
+import arrow.optics.copy
 import io.github.edwinchang24.shengjidisplay.App
 import io.github.edwinchang24.shengjidisplay.model.AppState
 import kotlinx.browser.localStorage
@@ -21,8 +22,13 @@ fun main() {
     val storageKey = "state"
     val appState =
         MutableStateFlow(
-            localStorage.getItem(storageKey)?.let { data -> Json.decodeFromString(data) }
-                ?: AppState()
+            localStorage.getItem(storageKey)?.let { data ->
+                try {
+                    Json.decodeFromString(data)
+                } catch (e: IllegalArgumentException) {
+                    AppState()
+                }
+            } ?: AppState()
         )
     GlobalScope.launch {
         appState.collectLatest { state ->
@@ -32,6 +38,6 @@ fun main() {
     }
     CanvasBasedWindow(canvasElementId = "app") {
         val state by appState.collectAsState()
-        App(state, { appState.value = it })
+        App(AppState.Prop(state) { copy -> appState.value = state.copy(copy) })
     }
 }

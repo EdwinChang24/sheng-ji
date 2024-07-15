@@ -28,11 +28,14 @@ import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import arrow.optics.get
 import io.github.edwinchang24.shengjidisplay.components.CallFoundText
 import io.github.edwinchang24.shengjidisplay.components.PlayingCard
 import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
 import io.github.edwinchang24.shengjidisplay.model.AppState
 import io.github.edwinchang24.shengjidisplay.model.Call
+import io.github.edwinchang24.shengjidisplay.model.calls
+import io.github.edwinchang24.shengjidisplay.model.found
 import io.github.edwinchang24.shengjidisplay.navigation.Dialog
 import io.github.edwinchang24.shengjidisplay.navigation.Navigator
 import io.github.edwinchang24.shengjidisplay.resources.Res
@@ -45,14 +48,13 @@ const val MaxItemsPerRow = 2
 
 @Composable
 fun CallsDisplay(
-    state: AppState,
-    setState: (AppState) -> Unit,
+    state: AppState.Prop,
     navigator: Navigator,
     displayScale: Float,
     modifier: Modifier = Modifier
 ) {
     AnimatedContent(
-        targetState = state.calls,
+        targetState = state().calls,
         transitionSpec = { DefaultTransition using SizeTransform(clip = false) },
         contentKey = { it.isEmpty() },
         modifier = modifier
@@ -61,17 +63,8 @@ fun CallsDisplay(
             .takeIf { it.isNotEmpty() }
             ?.let {
                 CallsLayout(
-                    calls = state.calls,
-                    setFound = { index, found ->
-                        setState(
-                            state.copy(
-                                calls =
-                                    state.calls.toMutableList().also {
-                                        it[index] = it[index].copy(found = found)
-                                    }
-                            )
-                        )
-                    },
+                    calls = state().calls,
+                    setFound = { index, found -> state { AppState.calls[index].found set found } },
                     displayScale = displayScale
                 )
             }
@@ -82,14 +75,16 @@ fun CallsDisplay(
                     modifier =
                         Modifier.clip(MaterialTheme.shapes.large)
                             .clickableForEmphasis(
-                                onClick = { navigator.navigate(Dialog.EditCall(state.calls.size)) }
+                                onClick = {
+                                    navigator.navigate(Dialog.EditCall(state().calls.size))
+                                }
                             )
                             .padding(24.dp)
                             .pressEmphasis()
                 ) {
                     Text("No calls added")
                     OutlinedButton(
-                        onClick = { navigator.navigate(Dialog.EditCall(state.calls.size)) }
+                        onClick = { navigator.navigate(Dialog.EditCall(state().calls.size)) }
                     ) {
                         Icon(iconRes(Res.drawable.ic_add), null)
                         Spacer(modifier = Modifier.width(8.dp))

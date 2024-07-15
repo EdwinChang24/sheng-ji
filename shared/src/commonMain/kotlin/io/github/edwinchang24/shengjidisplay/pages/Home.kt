@@ -54,6 +54,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import arrow.optics.get
 import io.github.edwinchang24.shengjidisplay.components.AppName
 import io.github.edwinchang24.shengjidisplay.components.ButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.components.CallFoundText
@@ -69,6 +70,10 @@ import io.github.edwinchang24.shengjidisplay.model.AppState
 import io.github.edwinchang24.shengjidisplay.model.Call
 import io.github.edwinchang24.shengjidisplay.model.PlayingCard
 import io.github.edwinchang24.shengjidisplay.model.Suit
+import io.github.edwinchang24.shengjidisplay.model.calls
+import io.github.edwinchang24.shengjidisplay.model.found
+import io.github.edwinchang24.shengjidisplay.model.possibleTrumps
+import io.github.edwinchang24.shengjidisplay.model.trump
 import io.github.edwinchang24.shengjidisplay.navigation.Dialog
 import io.github.edwinchang24.shengjidisplay.navigation.Navigator
 import io.github.edwinchang24.shengjidisplay.navigation.Screen
@@ -87,7 +92,7 @@ import io.github.edwinchang24.shengjidisplay.util.iconRes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomePage(navigator: Navigator, state: AppState, setState: (AppState) -> Unit) {
+fun HomePage(navigator: Navigator, state: AppState.Prop) {
     val windowSize = calculateWindowSize()
     Scaffold(
         topBar = {
@@ -113,12 +118,12 @@ fun HomePage(navigator: Navigator, state: AppState, setState: (AppState) -> Unit
                 modifier = Modifier.fillMaxSize()
             ) {
                 var tempTrumpRank by
-                    rememberSaveable(state.trump) { mutableStateOf(state.trump?.rank) }
+                    rememberSaveable(state().trump) { mutableStateOf(state().trump?.rank) }
                 var tempTrumpSuit by
-                    rememberSaveable(state.trump) { mutableStateOf(state.trump?.suit) }
+                    rememberSaveable(state().trump) { mutableStateOf(state().trump?.suit) }
                 LaunchedEffect(tempTrumpRank, tempTrumpSuit) {
                     tempTrumpRank?.let { r ->
-                        tempTrumpSuit?.let { s -> setState(state.copy(trump = PlayingCard(r, s))) }
+                        tempTrumpSuit?.let { s -> state { AppState.trump set PlayingCard(r, s) } }
                     }
                 }
                 val cardColors =
@@ -133,7 +138,6 @@ fun HomePage(navigator: Navigator, state: AppState, setState: (AppState) -> Unit
                             windowSize,
                             navigator,
                             state,
-                            setState,
                             modifier = Modifier.padding(12.dp)
                         )
                         TrumpCardSelection(
@@ -145,14 +149,12 @@ fun HomePage(navigator: Navigator, state: AppState, setState: (AppState) -> Unit
                             windowSize,
                             navigator,
                             state,
-                            setState,
                             modifier = Modifier.padding(12.dp)
                         )
                         CallsSelection(
                             cardColors,
                             navigator,
                             state,
-                            setState,
                             modifier = Modifier.padding(12.dp).layoutId(callsLayoutId)
                         )
                         TeammatesSelection(
@@ -265,8 +267,7 @@ private fun PossibleTrumpsSelection(
     cardColors: CardColors,
     windowSize: WindowSize,
     navigator: Navigator,
-    state: AppState,
-    setState: (AppState) -> Unit,
+    state: AppState.Prop,
     modifier: Modifier = Modifier
 ) {
     val large = windowSize == WindowSize.Large
@@ -299,7 +300,7 @@ private fun PossibleTrumpsSelection(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp)
                 ) {
                     AnimatedContent(
-                        state.possibleTrumps,
+                        state().possibleTrumps,
                         modifier = Modifier.fillMaxWidth(),
                         transitionSpec = {
                             (fadeIn(animationSpec = tween(220, delayMillis = 90)) +
@@ -325,8 +326,8 @@ private fun PossibleTrumpsSelection(
                         }
                     }
                     PossibleTrumpsPicker(
-                        selected = state.possibleTrumps,
-                        setSelected = { setState(state.copy(possibleTrumps = it)) }
+                        selected = state().possibleTrumps,
+                        setSelected = { state { AppState.possibleTrumps set it } }
                     )
                 }
             } else {
@@ -335,7 +336,7 @@ private fun PossibleTrumpsSelection(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp)
                 ) {
                     AnimatedContent(
-                        state.possibleTrumps,
+                        state().possibleTrumps,
                         modifier = Modifier.weight(1f).padding(end = 16.dp)
                     ) { targetState ->
                         Text(
@@ -366,8 +367,7 @@ private fun TrumpCardSelection(
     setTempTrumpSuit: (Suit) -> Unit,
     windowSize: WindowSize,
     navigator: Navigator,
-    state: AppState,
-    setState: (AppState) -> Unit,
+    state: AppState.Prop,
     modifier: Modifier = Modifier
 ) {
     val large = windowSize == WindowSize.Large
@@ -396,7 +396,7 @@ private fun TrumpCardSelection(
             if (large) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     AnimatedContent(
-                        targetState = state.trump,
+                        targetState = state().trump,
                         modifier = Modifier.fillMaxWidth()
                     ) { targetTrump ->
                         Row(
@@ -411,7 +411,7 @@ private fun TrumpCardSelection(
                                     textStyle = LocalTextStyle.current.copy(fontSize = 32.sp)
                                 )
                                 IconButtonWithEmphasis(
-                                    onClick = { setState(state.copy(trump = null)) }
+                                    onClick = { state { AppState.trump set null } }
                                 ) {
                                     Icon(iconRes(Res.drawable.ic_close), null)
                                 }
@@ -448,7 +448,7 @@ private fun TrumpCardSelection(
                     }
                 }
             } else {
-                AnimatedContent(targetState = state.trump) { targetTrump ->
+                AnimatedContent(targetState = state().trump) { targetTrump ->
                     if (targetTrump != null) {
                         Box(
                             contentAlignment = Alignment.Center,
@@ -474,7 +474,7 @@ private fun TrumpCardSelection(
                                         modifier = Modifier.padding(8.dp).pressEmphasis()
                                     )
                                     IconButtonWithEmphasis(
-                                        onClick = { setState(state.copy(trump = null)) }
+                                        onClick = { state { AppState.trump set null } }
                                     ) {
                                         Icon(iconRes(Res.drawable.ic_close), null)
                                     }
@@ -510,8 +510,7 @@ private fun TrumpCardSelection(
 private fun CallsSelection(
     cardColors: CardColors,
     navigator: Navigator,
-    state: AppState,
-    setState: (AppState) -> Unit,
+    state: AppState.Prop,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -521,7 +520,7 @@ private fun CallsSelection(
                 .width(IntrinsicSize.Max)
                 .clip(CardDefaults.shape)
                 .then(
-                    if (state.calls.isEmpty())
+                    if (state().calls.isEmpty())
                         Modifier.clickable { navigator.navigate(Dialog.EditCall(0)) }
                     else Modifier
                 )
@@ -541,7 +540,7 @@ private fun CallsSelection(
                     overflow = TextOverflow.Ellipsis
                 )
                 AnimatedVisibility(
-                    visible = state.calls.isNotEmpty(),
+                    visible = state().calls.isNotEmpty(),
                     enter =
                         fadeIn() +
                             expandVertically(expandFrom = Alignment.CenterVertically, clip = false),
@@ -557,12 +556,12 @@ private fun CallsSelection(
                         OutlinedButtonWithEmphasis(
                             text = "Clear all",
                             icon = iconRes(Res.drawable.ic_clear_all),
-                            onClick = { setState(state.copy(calls = emptyList())) }
+                            onClick = { state { AppState.calls set emptyList() } }
                         )
                     }
                 }
             }
-            if (state.calls.isNotEmpty()) {
+            if (state().calls.isNotEmpty()) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -571,34 +570,24 @@ private fun CallsSelection(
                             .horizontalScroll(rememberScrollState())
                             .padding(horizontal = 24.dp, vertical = 8.dp)
                 ) {
-                    state.calls.forEachIndexed { index, call ->
+                    state().calls.forEachIndexed { index, call ->
                         CallCard(
                             call = call,
                             onEdit = { navigator.navigate(Dialog.EditCall(index)) },
-                            setFound = {
-                                setState(
-                                    state.copy(
-                                        calls =
-                                            state.calls.toMutableList().apply {
-                                                this[index] = this[index].copy(found = it)
-                                            }
-                                    )
-                                )
-                            },
+                            setFound = { state { AppState.calls[index].found set it } },
                             onDelete = {
-                                setState(
-                                    state.copy(
-                                        calls =
-                                            state.calls.toMutableList().apply { removeAt(index) }
-                                    )
-                                )
+                                state {
+                                    AppState.calls.transform {
+                                        it.toMutableList().apply { removeAt(index) }
+                                    }
+                                }
                             }
                         )
                     }
                     OutlinedButtonWithEmphasis(
                         text = "Add call",
                         icon = iconRes(Res.drawable.ic_add),
-                        onClick = { navigator.navigate(Dialog.EditCall(state.calls.size)) }
+                        onClick = { navigator.navigate(Dialog.EditCall(state().calls.size)) }
                     )
                 }
             } else {
@@ -688,7 +677,7 @@ private fun CallCard(
 private fun TeammatesSelection(
     cardColors: CardColors,
     navigator: Navigator,
-    state: AppState,
+    state: AppState.Prop,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -716,7 +705,7 @@ private fun TeammatesSelection(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp)
             ) {
                 Text(
-                    "${state.teammates.size} teammates added",
+                    "${state().teammates.size} teammates added",
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f).padding(end = 16.dp)

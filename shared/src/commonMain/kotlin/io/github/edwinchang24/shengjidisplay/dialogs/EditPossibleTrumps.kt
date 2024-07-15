@@ -26,6 +26,7 @@ import io.github.edwinchang24.shengjidisplay.components.ButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.components.OutlinedButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.components.PossibleTrumpsPicker
 import io.github.edwinchang24.shengjidisplay.model.AppState
+import io.github.edwinchang24.shengjidisplay.model.possibleTrumps
 import io.github.edwinchang24.shengjidisplay.navigation.Navigator
 import io.github.edwinchang24.shengjidisplay.resources.Res
 import io.github.edwinchang24.shengjidisplay.resources.ic_close
@@ -33,8 +34,8 @@ import io.github.edwinchang24.shengjidisplay.resources.ic_done
 import io.github.edwinchang24.shengjidisplay.util.iconRes
 
 @Composable
-fun EditPossibleTrumpsDialog(navigator: Navigator, state: AppState, setState: (AppState) -> Unit) {
-    var selected by rememberSaveable { mutableStateOf(state.possibleTrumps) }
+fun EditPossibleTrumpsDialog(navigator: Navigator, state: AppState.Prop) {
+    var selected by rememberSaveable { mutableStateOf(state().possibleTrumps) }
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier =
@@ -72,7 +73,7 @@ fun EditPossibleTrumpsDialog(navigator: Navigator, state: AppState, setState: (A
                 text = "Done",
                 icon = iconRes(Res.drawable.ic_done),
                 onClick = {
-                    setState(state.copy(possibleTrumps = selected))
+                    state { AppState.possibleTrumps set selected }
                     navigator.closeDialog()
                 }
             )

@@ -46,7 +46,7 @@ import kotlin.math.sin
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun AnimatedContentScope.PossibleTrumpsDisplay(
-    state: AppState,
+    state: AppState.Prop,
     navigator: Navigator,
     displayScale: Float,
     modifier: Modifier = Modifier
@@ -60,7 +60,7 @@ fun AnimatedContentScope.PossibleTrumpsDisplay(
             }
         }
     PressableWithEmphasis {
-        if (state.possibleTrumps.isEmpty()) {
+        if (state().possibleTrumps.isEmpty()) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -82,7 +82,7 @@ fun AnimatedContentScope.PossibleTrumpsDisplay(
             }
         } else {
             PossibleTrumps(
-                state.possibleTrumps,
+                state().possibleTrumps,
                 displayScale = displayScale,
                 modifier =
                     modifier

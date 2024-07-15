@@ -57,5 +57,6 @@ dependencies {
     implementation(compose.material3)
     implementation(libs.core.splashscreen)
     implementation(libs.kotlinx.serialization)
+    implementation(libs.arrow.optics)
     debugImplementation(compose.uiTooling)
 }

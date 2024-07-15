@@ -1,31 +1,67 @@
 package io.github.edwinchang24.shengjidisplay.model
 
+import arrow.optics.optics
 import io.github.edwinchang24.shengjidisplay.display.ContentRotation
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
+@optics
 data class Settings(
-    val keepScreenOn: Boolean = true,
-    val lockScreenOrientation: Boolean = true,
-    val fullScreen: Boolean = true,
-    val autoHideCalls: Boolean = true,
-    val verticalOrder: VerticalOrder = VerticalOrder.Auto,
-    val contentRotation: ContentRotationSetting = ContentRotationSetting.Center,
-    val autoSwitchSeconds: Int = 5,
-    val showClock: Boolean = true,
-    val clockOrientation: Boolean = true,
-    val mainDisplayScale: Float = 1f,
-    val possibleTrumpsDisplayScale: Float = 1f
-)
+    val general: General = General(),
+    val mainDisplay: MainDisplay = MainDisplay(),
+    val possibleTrumpsDisplay: PossibleTrumpsDisplay = PossibleTrumpsDisplay()
+) {
+    companion object {
+        @Serializable
+        @optics
+        data class General(
+            val theme: Theme = Theme.System,
+            val displayRotationVertical: Boolean = true,
+            val contentRotation: ContentRotationSetting = ContentRotationSetting.Center,
+            val autoSwitchSeconds: Int = 5,
+            val showClock: Boolean = true,
+            val clockOrientation: Boolean = true,
+            val underline6And9: Boolean = true
+        ) {
+            companion object
+        }
+
+        @Serializable
+        @optics
+        data class MainDisplay(
+            val scale: Float = 1f,
+            val autoHideCalls: Boolean = true,
+            val displayOrder: MainDisplayOrder = MainDisplayOrder.Auto,
+            val tapTrumpToEdit: Boolean = false
+        ) {
+            companion object
+        }
+
+        @Serializable
+        @optics
+        data class PossibleTrumpsDisplay(val scale: Float = 1f, val tapToEdit: Boolean = false) {
+            companion object
+        }
+    }
+}
 
 @Serializable
-sealed interface VerticalOrder {
-    @Serializable @SerialName("auto") data object Auto : VerticalOrder
+sealed interface Theme {
+    @Serializable @SerialName("system") data object System : Theme
 
-    @Serializable @SerialName("trumpOnTop") data object TrumpOnTop : VerticalOrder
+    @Serializable @SerialName("dark") data object Dark : Theme
 
-    @Serializable @SerialName("callsOnTop") data object CallsOnTop : VerticalOrder
+    @Serializable @SerialName("light") data object Light : Theme
+}
+
+@Serializable
+sealed interface MainDisplayOrder {
+    @Serializable @SerialName("auto") data object Auto : MainDisplayOrder
+
+    @Serializable @SerialName("trumpOnTop") data object TrumpOnTop : MainDisplayOrder
+
+    @Serializable @SerialName("callsOnTop") data object CallsOnTop : MainDisplayOrder
 }
 
 @Serializable

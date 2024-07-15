@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
@@ -40,6 +40,7 @@ kotlin {
                 implementation(compose.material3)
                 implementation(compose.components.resources)
                 implementation(libs.kotlinx.serialization)
+                implementation(libs.arrow.optics)
             }
         }
     }

@@ -1,5 +1,10 @@
 package io.github.edwinchang24.shengjidisplay.model
 
+import arrow.optics.optics
 import kotlinx.serialization.Serializable
 
-@Serializable data class Call(val card: PlayingCard, val number: Int, val found: Int)
+@Serializable
+@optics
+data class Call(val card: PlayingCard, val number: Int, val found: Int) {
+    companion object
+}

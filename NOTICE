@@ -45,3 +45,9 @@ The following is a list of third-party dependencies used in this project.
 - Spotless
     https://github.com/diffplug/spotless
     License: Apache 2.0
+- KSP
+    https://github.com/google/ksp
+    License: Apache 2.0
+- Arrow
+    https://arrow-kt.io
+    License: Apache 2.0

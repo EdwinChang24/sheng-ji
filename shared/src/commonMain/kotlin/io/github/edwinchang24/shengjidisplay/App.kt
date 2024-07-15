@@ -3,6 +3,7 @@ package io.github.edwinchang24.shengjidisplay
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.SpringSpec
+import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -63,7 +64,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun App(state: AppState, setState: (AppState) -> Unit, modifier: Modifier = Modifier) {
+fun App(state: AppState.Prop, modifier: Modifier = Modifier) {
     ShengJiDisplayTheme {
         Surface(
             color = MaterialTheme.colorScheme.background,
@@ -76,16 +77,18 @@ fun App(state: AppState, setState: (AppState) -> Unit, modifier: Modifier = Modi
                 rememberSaveable(
                     saver =
                         AnchoredDraggableState.Saver(
-                            animationSpec = SpringSpec(),
                             positionalThreshold = { it * 0.5f },
-                            velocityThreshold = { with(density) { 125.dp.toPx() } }
+                            velocityThreshold = { with(density) { 125.dp.toPx() } },
+                            snapAnimationSpec = SpringSpec(),
+                            decayAnimationSpec = exponentialDecay()
                         )
                 ) {
                     AnchoredDraggableState(
                         false,
                         positionalThreshold = { it * 0.5f },
                         velocityThreshold = { with(density) { 125.dp.toPx() } },
-                        animationSpec = SpringSpec()
+                        snapAnimationSpec = SpringSpec(),
+                        decayAnimationSpec = exponentialDecay()
                     )
                 }
             var currentDialog by
@@ -125,18 +128,17 @@ fun App(state: AppState, setState: (AppState) -> Unit, modifier: Modifier = Modi
                 modifier = Modifier.fillMaxSize()
             ) { targetScreen ->
                 when (targetScreen) {
-                    Screen.Home -> HomePage(navigator, state, setState)
+                    Screen.Home -> HomePage(navigator, state)
                     is Screen.Display ->
                         DisplayPage(
                             targetScreen.scheme,
                             targetScreen.editTeammates,
                             navigator,
-                            state,
-                            setState
+                            state
                         )
                 }
             }
-            SettingsPane(settingsDragState, navigator, state, setState)
+            SettingsPane(settingsDragState, navigator, state)
             AnimatedVisibility(
                 currentDialog != null,
                 enter = fadeIn(),
@@ -178,10 +180,10 @@ fun App(state: AppState, setState: (AppState) -> Unit, modifier: Modifier = Modi
                         ) {
                             when (targetDialog) {
                                 is Dialog.EditCall ->
-                                    EditCallDialog(targetDialog.index, navigator, state, setState)
+                                    EditCallDialog(targetDialog.index, navigator, state)
                                 Dialog.EditPossibleTrumps ->
-                                    EditPossibleTrumpsDialog(navigator, state, setState)
-                                Dialog.EditTrump -> EditTrumpDialog(navigator, state, setState)
+                                    EditPossibleTrumpsDialog(navigator, state)
+                                Dialog.EditTrump -> EditTrumpDialog(navigator, state)
                                 Dialog.About -> AboutDialog(navigator)
                             }
                         }
@@ -197,8 +199,7 @@ fun App(state: AppState, setState: (AppState) -> Unit, modifier: Modifier = Modi
 private fun SettingsPane(
     dragState: AnchoredDraggableState<Boolean>,
     navigator: Navigator,
-    state: AppState,
-    setState: (AppState) -> Unit
+    state: AppState.Prop
 ) {
     val coroutineScope = rememberCoroutineScope()
     val windowSize = calculateWindowSize()
@@ -260,7 +261,7 @@ private fun SettingsPane(
                                 .anchoredDraggable(state = dragState, Orientation.Horizontal)
                         )
             ) {
-                SettingsPage(navigator, state, setState)
+                SettingsPage(navigator, state)
             }
         }
     }
