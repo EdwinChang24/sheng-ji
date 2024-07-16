@@ -8,6 +8,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.style.TextOverflow
 import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
 
@@ -30,7 +32,8 @@ private fun RankButton(rank: String, setRank: (String) -> Unit, selected: Boolea
             colors =
                 if (selected) IconButtonDefaults.filledIconButtonColors()
                 else IconButtonDefaults.iconButtonColors(),
-            interactionSource = interactionSource
+            interactionSource = interactionSource,
+            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
         ) {
             Text(
                 rank,

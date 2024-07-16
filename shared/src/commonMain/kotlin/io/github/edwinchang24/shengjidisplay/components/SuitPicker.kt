@@ -16,6 +16,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
 import io.github.edwinchang24.shengjidisplay.model.Suit
@@ -47,7 +49,7 @@ fun SuitPicker(suit: Suit?, setSuit: (Suit) -> Unit, modifier: Modifier = Modifi
                                 else MaterialTheme.colorScheme.outlineVariant,
                         ),
                     interactionSource = interactionSource,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).pointerHoverIcon(PointerIcon.Hand)
                 ) {
                     Image(
                         suitIconRes(it.icon),

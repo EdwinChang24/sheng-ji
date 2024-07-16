@@ -41,6 +41,8 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -279,6 +281,7 @@ private fun Clock(
             modifier
                 .clip(MaterialTheme.shapes.small)
                 .clickable { setOrientation(!orientation) }
+                .pointerHoverIcon(PointerIcon.Hand)
                 .padding(8.dp)
     ) { targetOrientation ->
         Text(

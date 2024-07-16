@@ -15,6 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
@@ -34,7 +36,7 @@ fun ButtonWithEmphasis(
             enabled = enabled,
             elevation = elevation,
             interactionSource = interactionSource,
-            modifier = modifier
+            modifier = modifier.pointerHoverIcon(PointerIcon.Hand)
         ) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -63,7 +65,7 @@ fun OutlinedButtonWithEmphasis(
             enabled = enabled,
             colors = colors,
             interactionSource = interactionSource,
-            modifier = modifier
+            modifier = modifier.pointerHoverIcon(PointerIcon.Hand)
         ) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -89,7 +91,7 @@ fun IconButtonWithEmphasis(
             onClick = onClick,
             enabled = enabled,
             interactionSource = interactionSource,
-            modifier = modifier
+            modifier = modifier.pointerHoverIcon(PointerIcon.Hand)
         ) {
             Box(modifier = Modifier.pressEmphasis()) { content() }
         }

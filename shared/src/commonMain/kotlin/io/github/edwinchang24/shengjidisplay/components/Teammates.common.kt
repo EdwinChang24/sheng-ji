@@ -50,6 +50,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
@@ -379,6 +381,7 @@ private fun BoxWithConstraintsScope.Teammate(
                                         onTap = { pressed = false }
                                     )
                                 }
+                                .pointerHoverIcon(PointerIcon.Hand)
                         else Modifier
                     )
         ) {
@@ -470,6 +473,7 @@ private fun BoxWithConstraintsScope.MainButton(
                                     onTap = { onRelease() }
                                 )
                             }
+                            .pointerHoverIcon(PointerIcon.Hand)
                     } else Modifier
                 )
     ) {

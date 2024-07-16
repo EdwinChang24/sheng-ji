@@ -46,6 +46,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -278,7 +280,9 @@ private fun PossibleTrumpsSelection(
                 .width(IntrinsicSize.Max)
                 .clip(CardDefaults.shape)
                 .then(
-                    if (!large) Modifier.clickable { navigator.navigate(Dialog.EditPossibleTrumps) }
+                    if (!large)
+                        Modifier.clickable { navigator.navigate(Dialog.EditPossibleTrumps) }
+                            .pointerHoverIcon(PointerIcon.Hand)
                     else Modifier
                 )
     ) {
@@ -378,7 +382,9 @@ private fun TrumpCardSelection(
                 .width(IntrinsicSize.Max)
                 .clip(CardDefaults.shape)
                 .then(
-                    if (!large) Modifier.clickable { navigator.navigate(Dialog.EditTrump) }
+                    if (!large)
+                        Modifier.clickable { navigator.navigate(Dialog.EditTrump) }
+                            .pointerHoverIcon(PointerIcon.Hand)
                     else Modifier
                 )
     ) {
@@ -524,6 +530,7 @@ private fun CallsSelection(
                 .then(
                     if (state().calls.isEmpty())
                         Modifier.clickable { navigator.navigate(Dialog.EditCall(0)) }
+                            .pointerHoverIcon(PointerIcon.Hand)
                     else Modifier
                 )
     ) {
@@ -688,11 +695,15 @@ private fun TeammatesSelection(
     Card(
         colors = cardColors,
         modifier =
-            modifier.width(IntrinsicSize.Max).clip(CardDefaults.shape).clickable {
-                navigator.navigate(
-                    Screen.Display(scheme = DisplayScheme.Main, editTeammates = true)
-                )
-            }
+            modifier
+                .width(IntrinsicSize.Max)
+                .clip(CardDefaults.shape)
+                .clickable {
+                    navigator.navigate(
+                        Screen.Display(scheme = DisplayScheme.Main, editTeammates = true)
+                    )
+                }
+                .pointerHoverIcon(PointerIcon.Hand)
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),

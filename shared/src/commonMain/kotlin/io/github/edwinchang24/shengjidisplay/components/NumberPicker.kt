@@ -21,6 +21,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
 import io.github.edwinchang24.shengjidisplay.resources.Res
@@ -76,7 +78,7 @@ fun NumberPicker(
                 enabled = value + 1 in range,
                 onClick = { if (value + 1 in range) setValue(value + 1) },
                 interactionSource = interactionSource,
-                modifier = Modifier.fillMaxHeight().weight(2f)
+                modifier = Modifier.fillMaxHeight().weight(2f).pointerHoverIcon(PointerIcon.Hand)
             ) {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                     Icon(iconRes(Res.drawable.ic_add), null, modifier = Modifier.pressEmphasis())

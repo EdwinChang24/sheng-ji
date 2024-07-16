@@ -18,6 +18,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
 import io.github.edwinchang24.shengjidisplay.resources.Res
@@ -92,7 +94,8 @@ private fun RankButton(rank: String, toggleRank: (String) -> Unit, selected: Boo
             colors =
                 if (selected) IconButtonDefaults.filledIconButtonColors()
                 else IconButtonDefaults.iconButtonColors(),
-            interactionSource = interactionSource
+            interactionSource = interactionSource,
+            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
         ) {
             Text(rank, modifier = Modifier.pressEmphasis())
         }

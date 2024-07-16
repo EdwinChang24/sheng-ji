@@ -50,6 +50,8 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.isUnspecified
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
@@ -291,6 +293,7 @@ fun ActionMenu(
                                     )
                                 }
                                 .focusable(interactionSource = interactionSource)
+                                .pointerHoverIcon(PointerIcon.Hand)
                         }
                     )
         ) {
@@ -381,19 +384,20 @@ private fun ActionButton(
                     .then(
                         if (action.enabled() && menuState !is ActionMenuState.Closed)
                             Modifier.pointerInput(true) {
-                                detectTapGestures(
-                                    onPress = { offset ->
-                                        onPress()
-                                        pressed1 = true
-                                        val press = PressInteraction.Press(offset)
-                                        interactionSource.emit(press)
-                                        tryAwaitRelease()
-                                        pressed1 = false
-                                        interactionSource.emit(PressInteraction.Release(press))
-                                    },
-                                    onTap = { onClick() }
-                                )
-                            }
+                                    detectTapGestures(
+                                        onPress = { offset ->
+                                            onPress()
+                                            pressed1 = true
+                                            val press = PressInteraction.Press(offset)
+                                            interactionSource.emit(press)
+                                            tryAwaitRelease()
+                                            pressed1 = false
+                                            interactionSource.emit(PressInteraction.Release(press))
+                                        },
+                                        onTap = { onClick() }
+                                    )
+                                }
+                                .pointerHoverIcon(PointerIcon.Hand)
                         else Modifier
                     )
         ) {

@@ -8,6 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 @Composable
 expect fun PressableWithEmphasis(content: @Composable PressableWithEmphasisScope.() -> Unit)
@@ -22,10 +24,11 @@ class PressableWithEmphasisScope(
     fun Modifier.clickableForEmphasis(onLongClick: (() -> Unit)? = null, onClick: () -> Unit) =
         composed {
             this@composed.combinedClickable(
-                interactionSource = interactionSource,
-                indication = LocalIndication.current,
-                onClick = onClick,
-                onLongClick = onLongClick
-            )
+                    interactionSource = interactionSource,
+                    indication = LocalIndication.current,
+                    onClick = onClick,
+                    onLongClick = onLongClick
+                )
+                .pointerHoverIcon(PointerIcon.Hand)
         }
 }
