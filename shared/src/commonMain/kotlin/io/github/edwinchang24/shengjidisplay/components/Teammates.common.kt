@@ -109,8 +109,8 @@ fun Teammates(
             )
         }
         LaunchedEffect(
-            *if (teammateOffsets.isNotEmpty()) teammateOffsets.values.toTypedArray()
-            else arrayOf(Offset.Unspecified)
+            *(teammateOffsets.takeIf { it.isNotEmpty() }?.values?.toTypedArray()
+                ?: arrayOf(Offset.Unspecified))
         ) {
             setSavedTeammatesRad(teammateOffsets.mapValues { (_, offset) -> offset.atan2() })
         }
