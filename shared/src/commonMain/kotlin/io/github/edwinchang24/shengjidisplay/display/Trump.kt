@@ -41,7 +41,7 @@ fun TrumpDisplay(
             targetTrump?.let {
                 PlayingCard(
                     card = it,
-                    textStyle = LocalTextStyle.current.copy(fontSize = 112.sp * displayScale),
+                    state = state,
                     modifier =
                         Modifier.clip(MaterialTheme.shapes.large)
                             .then(
@@ -52,7 +52,8 @@ fun TrumpDisplay(
                                 else Modifier
                             )
                             .padding(24.dp)
-                            .pressEmphasis()
+                            .pressEmphasis(),
+                    textStyle = LocalTextStyle.current.copy(fontSize = 112.sp * displayScale)
                 )
             }
                 ?: Column(

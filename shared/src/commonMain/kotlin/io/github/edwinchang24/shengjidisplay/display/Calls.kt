@@ -65,6 +65,7 @@ fun CallsDisplay(
                 CallsLayout(
                     calls = state().calls,
                     setFound = { index, found -> state { AppState.calls[index].found set found } },
+                    state = state,
                     displayScale = displayScale
                 )
             }
@@ -100,6 +101,7 @@ private fun CallsCard(
     index: Int,
     call: Call,
     setFound: (index: Int, found: Int) -> Unit,
+    state: AppState.Prop,
     displayScale: Float
 ) {
     val color = MaterialTheme.colorScheme.outlineVariant
@@ -155,6 +157,7 @@ private fun CallsCard(
             ) {
                 PlayingCard(
                     call.card,
+                    state = state,
                     textStyle = LocalTextStyle.current.copy(fontSize = 48.sp * displayScale)
                 )
                 CallFoundText(
@@ -170,6 +173,7 @@ private fun CallsCard(
 private fun CallsLayout(
     calls: List<Call>,
     setFound: (index: Int, found: Int) -> Unit,
+    state: AppState.Prop,
     displayScale: Float,
     modifier: Modifier = Modifier
 ) {
@@ -187,6 +191,7 @@ private fun CallsLayout(
                                 rowIndex * MaxItemsPerRow + index,
                                 call,
                                 setFound,
+                                state,
                                 displayScale
                             )
                         }

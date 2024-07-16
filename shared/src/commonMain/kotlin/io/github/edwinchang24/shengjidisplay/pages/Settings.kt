@@ -67,6 +67,7 @@ import io.github.edwinchang24.shengjidisplay.model.settings
 import io.github.edwinchang24.shengjidisplay.model.showClock
 import io.github.edwinchang24.shengjidisplay.model.tapToEdit
 import io.github.edwinchang24.shengjidisplay.model.tapTrumpToEdit
+import io.github.edwinchang24.shengjidisplay.model.underline6And9
 import io.github.edwinchang24.shengjidisplay.navigation.Navigator
 import io.github.edwinchang24.shengjidisplay.resources.Res
 import io.github.edwinchang24.shengjidisplay.resources.ic_arrow_back
@@ -114,6 +115,12 @@ fun SettingsPage(navigator: Navigator, state: AppState.Prop, modifier: Modifier 
                 setValue = { state { AppState.settings.general.showClock set it } }
             ) {
                 Text("Show clock")
+            }
+            BooleanPicker(
+                value = state().settings.general.underline6And9,
+                setValue = { state { AppState.settings.general.underline6And9 set it } }
+            ) {
+                Text("Underline 6s and 9s")
             }
             SectionHeader("Main display")
             MainDisplayOrderPicker(

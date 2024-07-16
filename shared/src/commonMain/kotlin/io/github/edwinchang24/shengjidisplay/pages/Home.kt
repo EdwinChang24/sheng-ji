@@ -408,6 +408,7 @@ private fun TrumpCardSelection(
                             if (targetTrump != null) {
                                 PlayingCard(
                                     targetTrump,
+                                    state,
                                     textStyle = LocalTextStyle.current.copy(fontSize = 32.sp)
                                 )
                                 IconButtonWithEmphasis(
@@ -470,8 +471,9 @@ private fun TrumpCardSelection(
                                 ) {
                                     PlayingCard(
                                         targetTrump,
-                                        textStyle = LocalTextStyle.current.copy(fontSize = 32.sp),
-                                        modifier = Modifier.padding(8.dp).pressEmphasis()
+                                        state,
+                                        modifier = Modifier.padding(8.dp).pressEmphasis(),
+                                        textStyle = LocalTextStyle.current.copy(fontSize = 32.sp)
                                     )
                                     IconButtonWithEmphasis(
                                         onClick = { state { AppState.trump set null } }
@@ -581,7 +583,8 @@ private fun CallsSelection(
                                         it.toMutableList().apply { removeAt(index) }
                                     }
                                 }
-                            }
+                            },
+                            state = state
                         )
                     }
                     OutlinedButtonWithEmphasis(
@@ -618,6 +621,7 @@ private fun CallCard(
     onEdit: () -> Unit,
     setFound: (Int) -> Unit,
     onDelete: () -> Unit,
+    state: AppState.Prop,
     modifier: Modifier = Modifier
 ) {
     PressableWithEmphasis {
@@ -642,6 +646,7 @@ private fun CallCard(
                 ) {
                     PlayingCard(
                         call.card,
+                        state = state,
                         textStyle = LocalTextStyle.current.copy(fontSize = 32.sp)
                     )
                     Text(formatCallNumber(call.number))

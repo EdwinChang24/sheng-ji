@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.EnterExitState
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -16,15 +17,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
@@ -80,7 +87,7 @@ fun AnimatedContentScope.PossibleTrumpsDisplay(
             }
         } else {
             PossibleTrumps(
-                state().possibleTrumps,
+                state,
                 displayScale = displayScale,
                 modifier =
                     modifier
@@ -101,7 +108,7 @@ fun AnimatedContentScope.PossibleTrumpsDisplay(
 
 @Composable
 private fun PossibleTrumps(
-    possibleTrumps: Set<String>,
+    state: AppState.Prop,
     displayScale: Float,
     modifier: Modifier = Modifier
 ) {
@@ -116,19 +123,53 @@ private fun PossibleTrumps(
                 2f * PI.toFloat(),
                 animationSpec = infiniteRepeatable(animation = tween(7500, easing = LinearEasing))
             )
-        possibleTrumps.forEach { possibleTrump ->
+        state().possibleTrumps.forEach { possibleTrump ->
             val angle =
                 allRanks.indexOf(possibleTrump).toFloat() / allRanks.size * 2 * PI.toFloat() +
                     rotation
             Layout(
                 content = {
+                    var baseline: Float? by rememberSaveable { mutableStateOf(null) }
+                    val underlineLength by
+                        animateFloatAsState(
+                            if (
+                                state().settings.general.underline6And9 &&
+                                    possibleTrump in setOf("6", "9")
+                            )
+                                1f
+                            else 0f
+                        )
+                    val color = LocalContentColor.current
                     Text(
                         possibleTrump,
                         style =
                             LocalTextStyle.current.copy(
                                 fontSize = 56.sp * displayScale,
                                 fontWeight = FontWeight.Bold
-                            )
+                            ),
+                        onTextLayout = { baseline = it.lastBaseline },
+                        modifier =
+                            Modifier.drawBehind {
+                                if (underlineLength > 0f) {
+                                    baseline?.let { bl ->
+                                        drawLine(
+                                            color,
+                                            start =
+                                                Offset(
+                                                    size.width / 2 -
+                                                        (size.width / 4 * underlineLength),
+                                                    bl + size.height / 8
+                                                ),
+                                            end =
+                                                Offset(
+                                                    size.width / 2 +
+                                                        (size.width / 4 * underlineLength),
+                                                    bl + size.height / 8
+                                                )
+                                        )
+                                    }
+                                }
+                            }
                     )
                 },
                 modifier =
