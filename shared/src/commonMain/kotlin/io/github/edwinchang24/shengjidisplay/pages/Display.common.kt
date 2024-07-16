@@ -3,7 +3,6 @@ package io.github.edwinchang24.shengjidisplay.pages
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterExitState
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
@@ -44,6 +43,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -285,12 +285,13 @@ private fun Clock(
                     fontSize = 26.sp,
                     fontWeight = FontWeight.SemiBold
                 ),
+            maxLines = 1,
+            overflow = TextOverflow.Clip,
             modifier = Modifier.rotate(if (targetOrientation xor leftSide) 0f else 180f)
         )
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun DisplayContent(
     content: DisplayContentWithRotation,
