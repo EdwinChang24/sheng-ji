@@ -17,6 +17,7 @@ private fun ActionMenuPreview() {
                 onAction = {},
                 canPause = true,
                 pause = false,
+                showTeammates = true,
                 editingTeammates = false,
                 modifier = Modifier.fillMaxSize()
             )

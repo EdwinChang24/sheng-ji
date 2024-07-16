@@ -162,7 +162,7 @@ fun DisplayPage(
                 )
             }
             Box(contentAlignment = Alignment.CenterEnd, modifier = Modifier.weight(1f)) {
-                if (windowSize != WindowSize.Small) {
+                if (windowSize != WindowSize.Small && displayScheme.showTeammates) {
                     IconButtonWithEmphasis(onClick = { editingTeammates = true }) {
                         Icon(iconRes(Res.drawable.ic_group), null)
                     }
@@ -202,17 +202,19 @@ fun DisplayPage(
             )
         }
     }
-    Teammates(
-        editing = editingTeammates,
-        savedTeammatesRad = state().teammates,
-        setSavedTeammatesRad = { state { AppState.teammates set it } },
-        onDone = { editingTeammates = false }
-    )
+    if (displayScheme.showTeammates) {
+        Teammates(
+            editing = editingTeammates,
+            savedTeammatesRad = state().teammates,
+            setSavedTeammatesRad = { state { AppState.teammates set it } },
+            onDone = { editingTeammates = false }
+        )
+    }
     ActionMenu(
         onAction = { action ->
             when (action) {
                 is Action.PauseResume -> pause = !pause
-                Action.Teammates -> editingTeammates = true
+                is Action.Teammates -> editingTeammates = true
                 Action.Settings -> navigator.toggleSettings()
                 Action.Exit -> navigator.navigate(Screen.Home)
                 Action.Rotate -> {}
@@ -223,6 +225,7 @@ fun DisplayPage(
             displayScheme.getPossibleContentPairs(state()).size > 1 ||
                 state().settings.general.contentRotation.possibleRotations.size > 1,
         pause = pause,
+        showTeammates = displayScheme.showTeammates,
         editingTeammates = editingTeammates
     )
     AnimatedVisibility(

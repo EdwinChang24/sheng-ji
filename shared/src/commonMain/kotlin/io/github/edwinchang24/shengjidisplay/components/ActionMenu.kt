@@ -91,6 +91,7 @@ fun ActionMenu(
     onAction: (Action) -> Unit,
     canPause: Boolean,
     pause: Boolean,
+    showTeammates: Boolean,
     editingTeammates: Boolean,
     modifier: Modifier = Modifier
 ) {
@@ -122,7 +123,7 @@ fun ActionMenu(
             }
         val actionButtons =
             listOf(
-                ActionButtonDef(Action.Teammates, x = -ButtonSizeWithPadding),
+                ActionButtonDef(Action.Teammates(showTeammates), x = -ButtonSizeWithPadding),
                 ActionButtonDef(Action.Exit, x = ButtonSizeWithPadding),
                 ActionButtonDef(
                     Action.PauseResume(canPause, pause),
@@ -267,7 +268,7 @@ fun ActionMenu(
                                         }
                                     )
                                 }
-                                .pointerInput(canPause) {
+                                .pointerInput(canPause, showTeammates) {
                                     detectDragGestures(
                                         onDragEnd = {
                                             val dragSelection = getDragSelection()

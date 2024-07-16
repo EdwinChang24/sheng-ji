@@ -45,11 +45,13 @@ sealed class Action {
 
     @Serializable
     @SerialName("teammates")
-    data object Teammates : Action() {
+    data class Teammates(private val showTeammates: Boolean) : Action() {
         override val name = @Composable { "Teammates" }
-        override val icon = @Composable { Res.drawable.ic_group }
+        override val icon: @Composable () -> DrawableResource
+            get() = { Res.drawable.ic_group }
+
         override val description = @Composable { """Edit the positions of the teammate arrows.""" }
-        override val enabled = @Composable { true }
+        override val enabled = @Composable { showTeammates }
     }
 
     @Serializable
@@ -88,8 +90,7 @@ sealed class Action {
     data object Scale : Action() {
         override val name = @Composable { "Scale" }
         override val icon = @Composable { Res.drawable.ic_fit_screen }
-        override val description =
-            @Composable { """Change the display scale for this display.""" }
+        override val description = @Composable { """Change the display scale for this display.""" }
         override val enabled = @Composable { true }
     }
 

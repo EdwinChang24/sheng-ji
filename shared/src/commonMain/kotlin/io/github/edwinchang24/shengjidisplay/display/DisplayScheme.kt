@@ -7,11 +7,15 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed interface DisplayScheme {
+    val showTeammates: Boolean
+
     fun getPossibleContentPairs(state: AppState): List<DisplayContentPair>
 
     @SerialName("main")
     @Serializable
     data object Main : DisplayScheme {
+        override val showTeammates = true
+
         override fun getPossibleContentPairs(state: AppState): List<DisplayContentPair> {
             val showCalls =
                 !(state.settings.mainDisplay.autoHideCalls &&
@@ -37,6 +41,8 @@ sealed interface DisplayScheme {
     @SerialName("possibleTrumps")
     @Serializable
     data object PossibleTrumps : DisplayScheme {
+        override val showTeammates = false
+
         override fun getPossibleContentPairs(state: AppState) =
             listOf(DisplayContent.PossibleTrumps and DisplayContent.PossibleTrumps)
     }
