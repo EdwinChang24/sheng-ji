@@ -2,7 +2,6 @@ package io.github.edwinchang24.shengjidisplay.theme
 
 import android.app.Activity
 import android.os.Build
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -13,10 +12,11 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import io.github.edwinchang24.shengjidisplay.model.AppState
 
 @Composable
-actual fun ShengJiDisplayTheme(content: @Composable () -> Unit) {
-    val useDarkTheme = isSystemInDarkTheme()
+actual fun ShengJiDisplayTheme(state: AppState.Prop, content: @Composable () -> Unit) {
+    val useDarkTheme = state().settings.general.theme.computesToDark()
     val useDynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
     val colorScheme =
         if (useDynamicColor) {

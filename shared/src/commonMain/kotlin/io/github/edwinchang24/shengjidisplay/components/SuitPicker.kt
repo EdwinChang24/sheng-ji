@@ -3,7 +3,6 @@ package io.github.edwinchang24.shengjidisplay.components
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -20,11 +19,17 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
+import io.github.edwinchang24.shengjidisplay.model.AppState
 import io.github.edwinchang24.shengjidisplay.model.Suit
 import io.github.edwinchang24.shengjidisplay.util.suitIconRes
 
 @Composable
-fun SuitPicker(suit: Suit?, setSuit: (Suit) -> Unit, modifier: Modifier = Modifier) {
+fun SuitPicker(
+    suit: Suit?,
+    setSuit: (Suit) -> Unit,
+    state: AppState.Prop,
+    modifier: Modifier = Modifier
+) {
     Row(horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = modifier) {
         Suit.entries.forEach {
             PressableWithEmphasis {
@@ -57,7 +62,9 @@ fun SuitPicker(suit: Suit?, setSuit: (Suit) -> Unit, modifier: Modifier = Modifi
                         colorFilter =
                             ColorFilter.tint(
                                 if (it in setOf(Suit.HEARTS, Suit.DIAMONDS)) Color.Red
-                                else if (isSystemInDarkTheme()) Color.White else Color.Black
+                                else if (state().settings.general.theme.computesToDark())
+                                    Color.White
+                                else Color.Black
                             ),
                         modifier =
                             Modifier.pressEmphasis()

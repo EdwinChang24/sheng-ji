@@ -14,7 +14,7 @@ import io.github.edwinchang24.shengjidisplay.theme.ShengJiDisplayTheme
 @Preview
 @Composable
 private fun PlayingCardPreview() {
-    ShengJiDisplayTheme {
+    ShengJiDisplayTheme(AppState.Prop(AppState()) {}) {
         Surface {
             PlayingCard(
                 card = PlayingCard("A", Suit.SPADES),

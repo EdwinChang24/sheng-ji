@@ -2,7 +2,6 @@ package io.github.edwinchang24.shengjidisplay.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.LocalTextStyle
@@ -36,7 +35,7 @@ fun PlayingCard(
     Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
         val color =
             if (card.suit in setOf(Suit.HEARTS, Suit.DIAMONDS)) Color.Red
-            else if (isSystemInDarkTheme()) Color.White else Color.Black
+            else if (state().settings.general.theme.computesToDark()) Color.White else Color.Black
         var baseline: Float? by rememberSaveable { mutableStateOf(null) }
         val underlineLength by
             animateFloatAsState(

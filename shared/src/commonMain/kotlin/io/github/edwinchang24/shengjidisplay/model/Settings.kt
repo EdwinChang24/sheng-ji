@@ -1,9 +1,16 @@
 package io.github.edwinchang24.shengjidisplay.model
 
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.Composable
 import arrow.optics.optics
 import io.github.edwinchang24.shengjidisplay.display.ContentRotation
+import io.github.edwinchang24.shengjidisplay.resources.Res
+import io.github.edwinchang24.shengjidisplay.resources.ic_dark_mode
+import io.github.edwinchang24.shengjidisplay.resources.ic_light_mode
+import io.github.edwinchang24.shengjidisplay.resources.ic_palette
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.DrawableResource
 
 @Serializable
 @optics
@@ -48,11 +55,41 @@ data class Settings(
 
 @Serializable
 sealed interface Theme {
-    @Serializable @SerialName("system") data object System : Theme
+    val name: String
+    val readableName: String
+    val icon: DrawableResource
 
-    @Serializable @SerialName("dark") data object Dark : Theme
+    @Composable
+    fun computesToDark() =
+        when (this) {
+            System -> isSystemInDarkTheme()
+            Dark -> true
+            Light -> false
+        }
 
-    @Serializable @SerialName("light") data object Light : Theme
+    @Serializable
+    @SerialName("system")
+    data object System : Theme {
+        override val name = "system"
+        override val readableName = "Follow system"
+        override val icon = Res.drawable.ic_palette
+    }
+
+    @Serializable
+    @SerialName("dark")
+    data object Dark : Theme {
+        override val name = "dark"
+        override val readableName = "Dark"
+        override val icon = Res.drawable.ic_dark_mode
+    }
+
+    @Serializable
+    @SerialName("light")
+    data object Light : Theme {
+        override val name = "light"
+        override val readableName = "Light"
+        override val icon = Res.drawable.ic_light_mode
+    }
 }
 
 @Serializable

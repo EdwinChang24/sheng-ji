@@ -450,6 +450,7 @@ private fun TrumpCardSelection(
                         SuitPicker(
                             tempTrumpSuit,
                             setTempTrumpSuit,
+                            state,
                             modifier = Modifier.align(Alignment.CenterHorizontally)
                         )
                     }

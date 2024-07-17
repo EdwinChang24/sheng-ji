@@ -52,12 +52,14 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.edwinchang24.shengjidisplay.components.IconButtonWithEmphasis
 import io.github.edwinchang24.shengjidisplay.interaction.PressableWithEmphasis
 import io.github.edwinchang24.shengjidisplay.model.AppState
 import io.github.edwinchang24.shengjidisplay.model.ContentRotationSetting
 import io.github.edwinchang24.shengjidisplay.model.MainDisplayOrder
+import io.github.edwinchang24.shengjidisplay.model.Theme
 import io.github.edwinchang24.shengjidisplay.model.autoHideCalls
 import io.github.edwinchang24.shengjidisplay.model.autoSwitchSeconds
 import io.github.edwinchang24.shengjidisplay.model.contentRotation
@@ -69,6 +71,7 @@ import io.github.edwinchang24.shengjidisplay.model.settings
 import io.github.edwinchang24.shengjidisplay.model.showClock
 import io.github.edwinchang24.shengjidisplay.model.tapToEdit
 import io.github.edwinchang24.shengjidisplay.model.tapTrumpToEdit
+import io.github.edwinchang24.shengjidisplay.model.theme
 import io.github.edwinchang24.shengjidisplay.model.underline6And9
 import io.github.edwinchang24.shengjidisplay.navigation.Navigator
 import io.github.edwinchang24.shengjidisplay.resources.Res
@@ -97,6 +100,10 @@ fun SettingsPage(navigator: Navigator, state: AppState.Prop, modifier: Modifier 
         }
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
             SectionHeader("General")
+            ThemePicker(
+                theme = state().settings.general.theme,
+                setTheme = { state { AppState.settings.general.theme set it } }
+            )
             ContentRotationPicker(
                 contentRotationSetting = state().settings.general.contentRotation,
                 setContentRotationSetting = {
@@ -175,6 +182,8 @@ private fun SectionHeader(text: String, modifier: Modifier = Modifier) {
         text,
         style = MaterialTheme.typography.titleSmall,
         color = MaterialTheme.colorScheme.primary,
+        maxLines = 2,
+        overflow = TextOverflow.Ellipsis,
         modifier = modifier.padding(start = 24.dp, end = 24.dp, top = 24.dp, bottom = 12.dp)
     )
 }
@@ -224,6 +233,60 @@ private fun RowScope.PickerCard(
         modifier = Modifier.weight(1f).fillMaxHeight(),
         content = content
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ThemePicker(theme: Theme, setTheme: (Theme) -> Unit) {
+    val focusManager = LocalFocusManager.current
+    Column(
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
+    ) {
+        Text("Theme", maxLines = 1, overflow = TextOverflow.Ellipsis)
+        var expanded by rememberSaveable { mutableStateOf(false) }
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = it },
+            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand, overrideDescendants = true)
+        ) {
+            OutlinedTextField(
+                value = theme.readableName,
+                onValueChange = {},
+                readOnly = true,
+                leadingIcon = { Icon(iconRes(theme.icon), null) },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
+                colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+                modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable)
+            )
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = {
+                    expanded = false
+                    focusManager.clearFocus()
+                },
+                modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
+            ) {
+                for (themeSelection in listOf(Theme.System, Theme.Dark, Theme.Light)) {
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                themeSelection.readableName,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        },
+                        leadingIcon = { Icon(iconRes(themeSelection.icon), null) },
+                        onClick = {
+                            setTheme(themeSelection)
+                            expanded = false
+                            focusManager.clearFocus()
+                        }
+                    )
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -412,7 +475,9 @@ private fun AutoSwitchSecondsPicker(
     ) {
         Text(
             "Auto switch interval",
-            color = LocalContentColor.current.copy(alpha = if (enabled) 1f else 0.5f)
+            color = LocalContentColor.current.copy(alpha = if (enabled) 1f else 0.5f),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
         var expanded by rememberSaveable { mutableStateOf(false) }
         ExposedDropdownMenuBox(
@@ -440,7 +505,7 @@ private fun AutoSwitchSecondsPicker(
             ) {
                 autoSwitchIntervals.forEach { (seconds, name) ->
                     DropdownMenuItem(
-                        text = { Text(name) },
+                        text = { Text(name, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                         onClick = {
                             setAutoSwitchSeconds(seconds)
                             expanded = false

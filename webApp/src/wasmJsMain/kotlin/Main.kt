@@ -6,23 +6,25 @@ import arrow.optics.copy
 import io.github.edwinchang24.shengjidisplay.App
 import io.github.edwinchang24.shengjidisplay.model.AppState
 import kotlinx.browser.localStorage
+import kotlinx.browser.window
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.jetbrains.compose.resources.configureWebResources
+import org.w3c.dom.StorageEvent
 
 @OptIn(ExperimentalComposeUiApi::class, DelicateCoroutinesApi::class)
 fun main() {
     configureWebResources { resourcePathMapping { path -> "./$path" } }
-    val storageKey = "state"
+    val stateStorageKey = "shengjidisplay.state"
+    val themeStorageKey = "shengjidisplay.theme"
     val appState =
         MutableStateFlow(
-            localStorage.getItem(storageKey)?.let { data ->
+            localStorage.getItem(stateStorageKey)?.let { data ->
                 try {
                     Json.decodeFromString(data)
                 } catch (e: IllegalArgumentException) {
@@ -30,10 +32,25 @@ fun main() {
                 }
             } ?: AppState()
         )
+    window.addEventListener("storage") { e ->
+        (e as? StorageEvent)?.let {
+            if (it.key == stateStorageKey)
+                appState.value =
+                    localStorage.getItem(stateStorageKey)?.let { data ->
+                        try {
+                            Json.decodeFromString(data)
+                        } catch (e: IllegalArgumentException) {
+                            AppState()
+                        }
+                    } ?: AppState()
+            else if (it.key == themeStorageKey) updateTheme()
+        }
+    }
     GlobalScope.launch {
         appState.collectLatest { state ->
-            delay(100)
-            localStorage.setItem(storageKey, Json.encodeToString(state))
+            localStorage.setItem(themeStorageKey, state.settings.general.theme.name)
+            localStorage.setItem(stateStorageKey, Json.encodeToString(state))
+            updateTheme()
         }
     }
     CanvasBasedWindow(canvasElementId = "app") {
@@ -41,3 +58,5 @@ fun main() {
         App(AppState.Prop(state) { copy -> appState.value = state.copy(copy) })
     }
 }
+
+external fun updateTheme()

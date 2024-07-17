@@ -65,7 +65,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun App(state: AppState.Prop, modifier: Modifier = Modifier) {
-    ShengJiDisplayTheme {
+    ShengJiDisplayTheme(state) {
         Surface(
             color = MaterialTheme.colorScheme.background,
             modifier = modifier.fillMaxSize().windowInsetsPadding(WindowInsets(0))

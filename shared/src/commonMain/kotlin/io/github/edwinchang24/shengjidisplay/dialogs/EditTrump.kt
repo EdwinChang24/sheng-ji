@@ -84,6 +84,7 @@ fun EditTrumpDialog(navigator: Navigator, state: AppState.Prop) {
                 SuitPicker(
                     suit,
                     { suit = it },
+                    state,
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
             }

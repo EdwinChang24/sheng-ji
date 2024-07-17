@@ -8,16 +8,17 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
 import io.github.edwinchang24.shengjidisplay.components.SuitPicker
+import io.github.edwinchang24.shengjidisplay.model.AppState
 import io.github.edwinchang24.shengjidisplay.model.Suit
 import io.github.edwinchang24.shengjidisplay.theme.ShengJiDisplayTheme
 
 @Preview
 @Composable
 private fun SuitPickerPreview() {
-    ShengJiDisplayTheme {
+    ShengJiDisplayTheme(AppState.Prop(AppState()) {}) {
         Surface {
             var suit: Suit? by rememberSaveable { mutableStateOf(null) }
-            SuitPicker(suit = suit, { suit = it })
+            SuitPicker(suit = suit, { suit = it }, AppState.Prop(AppState()) {})
         }
     }
 }

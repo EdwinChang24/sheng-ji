@@ -4,13 +4,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import io.github.edwinchang24.shengjidisplay.components.Teammates
+import io.github.edwinchang24.shengjidisplay.model.AppState
 import io.github.edwinchang24.shengjidisplay.theme.ShengJiDisplayTheme
 import kotlin.math.PI
 
 @Preview
 @Composable
 private fun TeammatesPreview() {
-    ShengJiDisplayTheme {
+    ShengJiDisplayTheme(AppState.Prop(AppState()) {}) {
         Surface {
             Teammates(
                 editing = false,
