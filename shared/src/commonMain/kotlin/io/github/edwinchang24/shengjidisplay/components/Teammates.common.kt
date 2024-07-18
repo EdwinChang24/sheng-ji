@@ -108,10 +108,7 @@ fun Teammates(
                     .toTypedArray()
             )
         }
-        LaunchedEffect(
-            *(teammateOffsets.takeIf { it.isNotEmpty() }?.values?.toTypedArray()
-                ?: arrayOf(Offset.Unspecified))
-        ) {
+        LaunchedEffect(teammateOffsets.toMap()) {
             setSavedTeammatesRad(teammateOffsets.mapValues { (_, offset) -> offset.atan2() })
         }
         val getRestingOffset = { offset: Offset ->
@@ -151,10 +148,8 @@ fun Teammates(
             }
         }
         var recentlyCleared: Map<String, Float>? by rememberSaveable { mutableStateOf(null) }
-        LaunchedEffect(
-            *if (teammateOffsets.isNotEmpty()) teammateOffsets.values.toTypedArray()
-            else arrayOf(Offset.Unspecified)
-        ) {
+
+        LaunchedEffect(teammateOffsets.toMap()) {
             if (teammateOffsets.isNotEmpty()) recentlyCleared = null
         }
         val onPressClear = {
