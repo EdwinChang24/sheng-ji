@@ -35,6 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -94,20 +95,22 @@ fun Teammates(
         val width = constraints.maxWidth.toFloat()
         val height = constraints.maxHeight.toFloat()
         val mainButtonRadiusPx = mainButtonRadiusPx
-        val teammateOffsets = remember {
-            mutableStateMapOf(
-                *savedTeammatesRad
-                    .map { (id, angleRad) ->
-                        id to
-                            calculateRestingOffset(
-                                angleRad,
-                                (width / 2 - mainButtonRadiusPx) / 2 + mainButtonRadiusPx,
-                                (height / 2 - mainButtonRadiusPx) / 2 + mainButtonRadiusPx,
-                            )
-                    }
-                    .toTypedArray()
-            )
-        }
+        var teammateOffsetsKey by rememberSaveable { mutableIntStateOf(0) }
+        val teammateOffsets =
+            remember(teammateOffsetsKey) {
+                mutableStateMapOf(
+                    *savedTeammatesRad
+                        .map { (id, angleRad) ->
+                            id to
+                                calculateRestingOffset(
+                                    angleRad,
+                                    (width / 2 - mainButtonRadiusPx) / 2 + mainButtonRadiusPx,
+                                    (height / 2 - mainButtonRadiusPx) / 2 + mainButtonRadiusPx,
+                                )
+                        }
+                        .toTypedArray()
+                )
+            }
         LaunchedEffect(teammateOffsets.toMap()) {
             setSavedTeammatesRad(teammateOffsets.mapValues { (_, offset) -> offset.atan2() })
         }
@@ -122,6 +125,11 @@ fun Teammates(
             mutableStateMapOf(*savedTeammatesRad.map { (id, _) -> id to false }.toTypedArray())
         }
         var draggingNew by remember { mutableStateOf(false) }
+        LaunchedEffect(savedTeammatesRad) {
+            if (dragging.none { it.value } && !draggingNew) {
+                teammateOffsetsKey++
+            }
+        }
         MainButton(
             editing = editing,
             dragging = dragging.values.any { it } || draggingNew,
@@ -148,7 +156,6 @@ fun Teammates(
             }
         }
         var recentlyCleared: Map<String, Float>? by rememberSaveable { mutableStateOf(null) }
-
         LaunchedEffect(teammateOffsets.toMap()) {
             if (teammateOffsets.isNotEmpty()) recentlyCleared = null
         }
@@ -228,6 +235,7 @@ private fun BoxWithConstraintsScope.Teammate(
     val sizePx = with(LocalDensity.current) { sizeDp.roundToPx() }
     var offsetLocal by remember { mutableStateOf(offset) }
     LaunchedEffect(offsetLocal) { if (!new) onOffsetChange(offsetLocal) }
+    LaunchedEffect(offset) { if (!isDragging) offsetLocal = offset }
     LaunchedEffect(isDragging) {
         if (!isDragging) {
             setDragging(false)
