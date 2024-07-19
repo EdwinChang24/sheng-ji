@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -66,6 +67,7 @@ import io.github.edwinchang24.shengjidisplay.display.TrumpDisplay
 import io.github.edwinchang24.shengjidisplay.model.Action
 import io.github.edwinchang24.shengjidisplay.model.AppState
 import io.github.edwinchang24.shengjidisplay.model.clockOrientation
+import io.github.edwinchang24.shengjidisplay.model.displayRotationVertical
 import io.github.edwinchang24.shengjidisplay.model.general
 import io.github.edwinchang24.shengjidisplay.model.settings
 import io.github.edwinchang24.shengjidisplay.model.teammates
@@ -77,6 +79,7 @@ import io.github.edwinchang24.shengjidisplay.resources.ic_group
 import io.github.edwinchang24.shengjidisplay.util.WindowSize
 import io.github.edwinchang24.shengjidisplay.util.calculateWindowSize
 import io.github.edwinchang24.shengjidisplay.util.iconRes
+import io.github.edwinchang24.shengjidisplay.util.rotate90
 import kotlinx.coroutines.delay
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -129,78 +132,29 @@ fun DisplayPage(
     KeepScreenOn(state)
     LockScreenOrientation(state)
     FullScreen(state)
-    Column(modifier = Modifier.fillMaxSize()) {
-        Box(contentAlignment = Alignment.Center, modifier = Modifier.weight(1f).fillMaxWidth()) {
-            DisplayContent(content, top = true, state, displayScheme, navigator)
-            DisplayLabel(
-                content = content.displayContentPair.topContent,
-                modifier =
-                    Modifier.background(
-                            Brush.verticalGradient(
-                                0f to Color.Transparent,
-                                1f to MaterialTheme.colorScheme.surface
-                            )
-                        )
-                        .align(Alignment.BottomCenter)
-                        .rotate(180f)
+    AnimatedContent(
+        targetState = state().settings.general.displayRotationVertical,
+        transitionSpec = { fadeIn(tween(200, delayMillis = 200)) togetherWith fadeOut(tween(200)) },
+        modifier = Modifier.fillMaxSize()
+    ) { displayRotationVertical ->
+        if (displayRotationVertical) {
+            DisplayVertical(
+                content,
+                displayScheme,
+                navigator,
+                state,
+                windowSize,
+                currentTimeMs,
+                { editingTeammates = true }
             )
-        }
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            modifier =
-                Modifier.fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surfaceContainer)
-                    .padding(8.dp)
-        ) {
-            if (state().settings.general.showClock) {
-                Clock(
-                    currentTimeMs,
-                    orientation = state().settings.general.clockOrientation,
-                    setOrientation = {
-                        state { AppState.settings.general.clockOrientation set it }
-                    },
-                    leftSide = true
-                )
-            }
-            Box(contentAlignment = Alignment.CenterEnd, modifier = Modifier.weight(1f)) {
-                if (windowSize != WindowSize.Small && displayScheme.showTeammates) {
-                    IconButtonWithEmphasis(onClick = { editingTeammates = true }) {
-                        Icon(iconRes(Res.drawable.ic_group), null)
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.size(ActionMenuButtonSize))
-            Box(contentAlignment = Alignment.CenterStart, modifier = Modifier.weight(1f)) {
-                if (windowSize != WindowSize.Small) {
-                    IconButtonWithEmphasis(onClick = { navigator.navigate(Screen.Home) }) {
-                        Icon(iconRes(Res.drawable.ic_close), null)
-                    }
-                }
-            }
-            if (state().settings.general.showClock) {
-                Clock(
-                    currentTimeMs,
-                    orientation = state().settings.general.clockOrientation,
-                    setOrientation = {
-                        state { AppState.settings.general.clockOrientation set it }
-                    },
-                    leftSide = false
-                )
-            }
-        }
-        Box(contentAlignment = Alignment.Center, modifier = Modifier.weight(1f).fillMaxWidth()) {
-            DisplayContent(content, top = false, state, displayScheme, navigator)
-            DisplayLabel(
-                content = content.displayContentPair.bottomContent,
-                modifier =
-                    Modifier.background(
-                            Brush.verticalGradient(
-                                0f to MaterialTheme.colorScheme.surface,
-                                1f to Color.Transparent
-                            )
-                        )
-                        .align(Alignment.TopCenter)
+        } else {
+            DisplayHorizontal(
+                content,
+                displayScheme,
+                navigator,
+                state,
+                currentTimeMs,
+                { editingTeammates = true }
             )
         }
     }
@@ -219,7 +173,8 @@ fun DisplayPage(
                 is Action.Teammates -> editingTeammates = true
                 Action.Settings -> navigator.toggleSettings()
                 Action.Exit -> navigator.navigate(Screen.Home)
-                Action.Rotate -> {}
+                Action.Rotate ->
+                    state { AppState.settings.general.displayRotationVertical transform { !it } }
                 Action.Scale -> editingScale = true
             }
         },
@@ -247,10 +202,232 @@ fun DisplayPage(
 @Composable expect fun FullScreen(state: AppState.Prop)
 
 @Composable
-private fun DisplayLabel(content: DisplayContent, modifier: Modifier = Modifier) {
+private fun DisplayLabel(
+    content: DisplayContent,
+    vertical: Boolean,
+    modifier: Modifier = Modifier
+) {
     AnimatedContent(content.name, modifier = modifier) { label ->
-        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth().padding(8.dp)) {
-            Text(label, style = MaterialTheme.typography.labelLarge)
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier =
+                Modifier.then(if (vertical) Modifier.fillMaxWidth() else Modifier.fillMaxHeight())
+                    .padding(8.dp)
+        ) {
+            Text(
+                label,
+                style = MaterialTheme.typography.labelLarge,
+                modifier = if (vertical) Modifier else Modifier.rotate90(negative = true)
+            )
+        }
+    }
+}
+
+@Composable
+private fun DisplayVertical(
+    content: DisplayContentWithRotation,
+    displayScheme: DisplayScheme,
+    navigator: Navigator,
+    state: AppState.Prop,
+    windowSize: WindowSize,
+    currentTimeMs: Long,
+    onEditTeammates: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier.fillMaxSize()) {
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.weight(1f).fillMaxWidth()) {
+            DisplayContent(
+                content,
+                top = true,
+                displayRotationVertical = true,
+                state,
+                displayScheme,
+                navigator
+            )
+            DisplayLabel(
+                content = content.displayContentPair.topContent,
+                vertical = true,
+                modifier =
+                    Modifier.background(
+                            Brush.verticalGradient(
+                                0f to Color.Transparent,
+                                1f to MaterialTheme.colorScheme.surface
+                            )
+                        )
+                        .align(Alignment.BottomCenter)
+                        .rotate(180f)
+            )
+        }
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier =
+                Modifier.fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surfaceContainer)
+                    .padding(8.dp)
+        ) {
+            if (state().settings.general.showClock) {
+                Clock(
+                    currentTimeMs,
+                    orientation = state().settings.general.clockOrientation,
+                    setOrientation = {
+                        state { AppState.settings.general.clockOrientation set it }
+                    },
+                    displayVertical = true,
+                    leftSide = true
+                )
+            }
+            Box(contentAlignment = Alignment.CenterEnd, modifier = Modifier.weight(1f)) {
+                if (windowSize != WindowSize.Small && displayScheme.showTeammates) {
+                    IconButtonWithEmphasis(onClick = onEditTeammates) {
+                        Icon(iconRes(Res.drawable.ic_group), null)
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.size(ActionMenuButtonSize))
+            Box(contentAlignment = Alignment.CenterStart, modifier = Modifier.weight(1f)) {
+                if (windowSize != WindowSize.Small) {
+                    IconButtonWithEmphasis(onClick = { navigator.navigate(Screen.Home) }) {
+                        Icon(iconRes(Res.drawable.ic_close), null)
+                    }
+                }
+            }
+            if (state().settings.general.showClock) {
+                Clock(
+                    currentTimeMs,
+                    orientation = state().settings.general.clockOrientation,
+                    setOrientation = {
+                        state { AppState.settings.general.clockOrientation set it }
+                    },
+                    displayVertical = true,
+                    leftSide = false
+                )
+            }
+        }
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.weight(1f).fillMaxWidth()) {
+            DisplayContent(
+                content,
+                top = false,
+                displayRotationVertical = true,
+                state,
+                displayScheme,
+                navigator
+            )
+            DisplayLabel(
+                content = content.displayContentPair.bottomContent,
+                vertical = true,
+                modifier =
+                    Modifier.background(
+                            Brush.verticalGradient(
+                                0f to MaterialTheme.colorScheme.surface,
+                                1f to Color.Transparent
+                            )
+                        )
+                        .align(Alignment.TopCenter)
+            )
+        }
+    }
+}
+
+@Composable
+private fun DisplayHorizontal(
+    content: DisplayContentWithRotation,
+    displayScheme: DisplayScheme,
+    navigator: Navigator,
+    state: AppState.Prop,
+    currentTimeMs: Long,
+    onEditTeammates: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(modifier = modifier.fillMaxSize()) {
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.weight(1f).fillMaxHeight()) {
+            DisplayContent(
+                content,
+                top = true,
+                displayRotationVertical = false,
+                state,
+                displayScheme,
+                navigator
+            )
+            DisplayLabel(
+                content = content.displayContentPair.topContent,
+                vertical = false,
+                modifier =
+                    Modifier.background(
+                            Brush.horizontalGradient(
+                                0f to Color.Transparent,
+                                1f to MaterialTheme.colorScheme.surface
+                            )
+                        )
+                        .align(Alignment.CenterEnd)
+                        .rotate(180f)
+            )
+        }
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier =
+                Modifier.fillMaxHeight()
+                    .background(MaterialTheme.colorScheme.surfaceContainer)
+                    .padding(8.dp)
+        ) {
+            if (state().settings.general.showClock) {
+                Clock(
+                    currentTimeMs,
+                    orientation = state().settings.general.clockOrientation,
+                    setOrientation = {
+                        state { AppState.settings.general.clockOrientation set it }
+                    },
+                    displayVertical = false,
+                    leftSide = true
+                )
+            }
+            Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier.weight(1f)) {
+                if (displayScheme.showTeammates) {
+                    IconButtonWithEmphasis(onClick = onEditTeammates) {
+                        Icon(iconRes(Res.drawable.ic_group), null)
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.size(ActionMenuButtonSize))
+            Box(contentAlignment = Alignment.TopCenter, modifier = Modifier.weight(1f)) {
+                IconButtonWithEmphasis(onClick = { navigator.navigate(Screen.Home) }) {
+                    Icon(iconRes(Res.drawable.ic_close), null)
+                }
+            }
+            if (state().settings.general.showClock) {
+                Clock(
+                    currentTimeMs,
+                    orientation = state().settings.general.clockOrientation,
+                    setOrientation = {
+                        state { AppState.settings.general.clockOrientation set it }
+                    },
+                    displayVertical = false,
+                    leftSide = false
+                )
+            }
+        }
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.weight(1f).fillMaxHeight()) {
+            DisplayContent(
+                content,
+                top = false,
+                displayRotationVertical = false,
+                state,
+                displayScheme,
+                navigator
+            )
+            DisplayLabel(
+                content = content.displayContentPair.bottomContent,
+                vertical = false,
+                modifier =
+                    Modifier.background(
+                            Brush.horizontalGradient(
+                                0f to MaterialTheme.colorScheme.surface,
+                                1f to Color.Transparent
+                            )
+                        )
+                        .align(Alignment.CenterStart)
+            )
         }
     }
 }
@@ -261,6 +438,7 @@ private fun Clock(
     orientation: Boolean,
     setOrientation: (Boolean) -> Unit,
     leftSide: Boolean,
+    displayVertical: Boolean,
     modifier: Modifier = Modifier
 ) {
     val timeFormat =
@@ -293,7 +471,9 @@ private fun Clock(
                 ),
             maxLines = 1,
             overflow = TextOverflow.Clip,
-            modifier = Modifier.rotate(if (targetOrientation xor leftSide) 0f else 180f)
+            modifier =
+                Modifier.rotate((if (targetOrientation xor leftSide) 0f else 180f))
+                    .then(if (displayVertical) Modifier else Modifier.rotate90())
         )
     }
 }
@@ -302,6 +482,7 @@ private fun Clock(
 private fun DisplayContent(
     content: DisplayContentWithRotation,
     top: Boolean,
+    displayRotationVertical: Boolean,
     state: AppState.Prop,
     displayScheme: DisplayScheme,
     navigator: Navigator,
@@ -346,7 +527,7 @@ private fun DisplayContent(
                                 ContentRotation.Center -> if (top) 180f else 0f
                                 ContentRotation.TopTowardsRight -> if (top) -90f else 90f
                                 ContentRotation.BottomTowardsRight -> if (top) 90f else -90f
-                            }
+                            } + if (displayRotationVertical) 0f else -90f
                         )
                         .offset(
                             y =

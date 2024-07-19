@@ -39,6 +39,7 @@ import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -78,6 +79,7 @@ import io.github.edwinchang24.shengjidisplay.resources.Res
 import io.github.edwinchang24.shengjidisplay.resources.ic_arrow_back
 import io.github.edwinchang24.shengjidisplay.resources.ic_timer
 import io.github.edwinchang24.shengjidisplay.util.iconRes
+import io.github.edwinchang24.shengjidisplay.util.rotate90
 
 @Composable
 fun SettingsPage(navigator: Navigator, state: AppState.Prop, modifier: Modifier = Modifier) {
@@ -104,12 +106,7 @@ fun SettingsPage(navigator: Navigator, state: AppState.Prop, modifier: Modifier 
                 theme = state().settings.general.theme,
                 setTheme = { state { AppState.settings.general.theme set it } }
             )
-            ContentRotationPicker(
-                contentRotationSetting = state().settings.general.contentRotation,
-                setContentRotationSetting = {
-                    state { AppState.settings.general.contentRotation set it }
-                }
-            )
+            ContentRotationPicker(state)
             AutoSwitchSecondsPicker(
                 autoSwitchSeconds = state().settings.general.autoSwitchSeconds,
                 setAutoSwitchSeconds = {
@@ -132,12 +129,7 @@ fun SettingsPage(navigator: Navigator, state: AppState.Prop, modifier: Modifier 
                 Text("Underline 6s and 9s")
             }
             SectionHeader("Main display")
-            MainDisplayOrderPicker(
-                mainDisplayOrder = state().settings.mainDisplay.displayOrder,
-                setMainDisplayOrder = {
-                    state { AppState.settings.mainDisplay.displayOrder set it }
-                }
-            )
+            MainDisplayOrderPicker(state)
             BooleanPicker(
                 value = state().settings.mainDisplay.autoHideCalls,
                 setValue = { state { AppState.settings.mainDisplay.autoHideCalls set it } }
@@ -290,73 +282,134 @@ private fun ThemePicker(theme: Theme, setTheme: (Theme) -> Unit) {
 }
 
 @Composable
-private fun MainDisplayOrderPicker(
-    mainDisplayOrder: MainDisplayOrder,
-    setMainDisplayOrder: (MainDisplayOrder) -> Unit
-) {
+private fun MainDisplayOrderPicker(state: AppState.Prop) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
     ) {
-        Text("Vertical ordering")
+        Text("Display order")
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Max)
         ) {
             PressableWithEmphasis {
                 PickerCard(
-                    onClick = { setMainDisplayOrder(MainDisplayOrder.Auto) },
-                    selected = mainDisplayOrder == MainDisplayOrder.Auto,
+                    onClick = {
+                        state {
+                            AppState.settings.mainDisplay.displayOrder set MainDisplayOrder.Auto
+                        }
+                    },
+                    selected = state().settings.mainDisplay.displayOrder == MainDisplayOrder.Auto,
                     interactionSource = interactionSource
                 ) {
                     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                         Text(
                             "Auto switch",
                             textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(8.dp).pressEmphasis()
+                            modifier = Modifier.padding(16.dp).pressEmphasis()
                         )
                     }
                 }
             }
             PressableWithEmphasis {
                 PickerCard(
-                    onClick = { setMainDisplayOrder(MainDisplayOrder.TrumpOnTop) },
-                    selected = mainDisplayOrder == MainDisplayOrder.TrumpOnTop,
+                    onClick = {
+                        state {
+                            AppState.settings.mainDisplay.displayOrder set
+                                MainDisplayOrder.TrumpOnTop
+                        }
+                    },
+                    selected =
+                        state().settings.mainDisplay.displayOrder == MainDisplayOrder.TrumpOnTop,
                     interactionSource = interactionSource
                 ) {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.fillMaxSize().padding(16.dp).pressEmphasis()
-                    ) {
-                        Text(
-                            "Trump",
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.rotate(180f)
-                        )
-                        HorizontalDivider()
-                        Text("Calls", textAlign = TextAlign.Center)
+                    if (state().settings.general.displayRotationVertical) {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxSize().padding(16.dp).pressEmphasis()
+                        ) {
+                            Text(
+                                "Trump",
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.weight(1f).rotate(180f)
+                            )
+                            HorizontalDivider()
+                            Text(
+                                "Calls",
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    } else {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxSize().padding(16.dp).pressEmphasis()
+                        ) {
+                            Text(
+                                "Trump",
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.weight(1f).rotate90()
+                            )
+                            VerticalDivider()
+                            Text(
+                                "Calls",
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.weight(1f).rotate90(negative = true)
+                            )
+                        }
                     }
                 }
             }
             PressableWithEmphasis {
                 PickerCard(
-                    onClick = { setMainDisplayOrder(MainDisplayOrder.CallsOnTop) },
-                    selected = mainDisplayOrder == MainDisplayOrder.CallsOnTop,
+                    onClick = {
+                        state {
+                            AppState.settings.mainDisplay.displayOrder set
+                                MainDisplayOrder.CallsOnTop
+                        }
+                    },
+                    selected =
+                        state().settings.mainDisplay.displayOrder == MainDisplayOrder.CallsOnTop,
                     interactionSource = interactionSource
                 ) {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.fillMaxSize().padding(16.dp).pressEmphasis()
-                    ) {
-                        Text(
-                            "Calls",
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.rotate(180f)
-                        )
-                        HorizontalDivider()
-                        Text("Trump", textAlign = TextAlign.Center)
+                    if (state().settings.general.displayRotationVertical) {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxSize().padding(16.dp).pressEmphasis()
+                        ) {
+                            Text(
+                                "Calls",
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.weight(1f).rotate(180f)
+                            )
+                            HorizontalDivider()
+                            Text(
+                                "Trump",
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    } else {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxSize().padding(16.dp).pressEmphasis()
+                        ) {
+                            Text(
+                                "Calls",
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.weight(1f).rotate90()
+                            )
+                            VerticalDivider()
+                            Text(
+                                "Trump",
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.weight(1f).rotate90(negative = true)
+                            )
+                        }
                     }
                 }
             }
@@ -365,10 +418,7 @@ private fun MainDisplayOrderPicker(
 }
 
 @Composable
-private fun ContentRotationPicker(
-    contentRotationSetting: ContentRotationSetting,
-    setContentRotationSetting: (ContentRotationSetting) -> Unit
-) {
+private fun ContentRotationPicker(state: AppState.Prop) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
@@ -380,69 +430,174 @@ private fun ContentRotationPicker(
         ) {
             PressableWithEmphasis {
                 PickerCard(
-                    onClick = { setContentRotationSetting(ContentRotationSetting.Auto) },
-                    selected = contentRotationSetting == ContentRotationSetting.Auto,
+                    onClick = {
+                        state {
+                            AppState.settings.general.contentRotation set
+                                ContentRotationSetting.Auto
+                        }
+                    },
+                    selected =
+                        state().settings.general.contentRotation == ContentRotationSetting.Auto,
                     interactionSource = interactionSource
                 ) {
                     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                         Text(
                             "Auto switch",
                             textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(8.dp).pressEmphasis()
+                            modifier = Modifier.padding(16.dp).pressEmphasis()
                         )
                     }
                 }
             }
             PressableWithEmphasis {
                 PickerCard(
-                    onClick = { setContentRotationSetting(ContentRotationSetting.Center) },
-                    selected = contentRotationSetting == ContentRotationSetting.Center,
+                    onClick = {
+                        state {
+                            AppState.settings.general.contentRotation set
+                                ContentRotationSetting.Center
+                        }
+                    },
+                    selected =
+                        state().settings.general.contentRotation == ContentRotationSetting.Center,
                     interactionSource = interactionSource
                 ) {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.fillMaxSize().padding(16.dp).pressEmphasis()
-                    ) {
-                        Text("Aa", textAlign = TextAlign.Center, modifier = Modifier.rotate(180f))
-                        HorizontalDivider()
-                        Text("Aa", textAlign = TextAlign.Center)
-                    }
-                }
-            }
-            PressableWithEmphasis {
-                PickerCard(
-                    onClick = { setContentRotationSetting(ContentRotationSetting.TopTowardsRight) },
-                    selected = contentRotationSetting == ContentRotationSetting.TopTowardsRight,
-                    interactionSource = interactionSource
-                ) {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.fillMaxSize().padding(16.dp).pressEmphasis()
-                    ) {
-                        Text("Aa", textAlign = TextAlign.Center, modifier = Modifier.rotate(-90f))
-                        HorizontalDivider()
-                        Text("Aa", textAlign = TextAlign.Center, modifier = Modifier.rotate(90f))
+                    if (state().settings.general.displayRotationVertical) {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxSize().padding(16.dp).pressEmphasis()
+                        ) {
+                            Text(
+                                "Aa",
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.weight(1f).rotate(180f)
+                            )
+                            HorizontalDivider()
+                            Text("Aa", textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
+                        }
+                    } else {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier =
+                                Modifier.fillMaxSize()
+                                    .padding(horizontal = 16.dp, vertical = 32.dp)
+                                    .pressEmphasis()
+                        ) {
+                            Text(
+                                "Aa",
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.weight(1f).rotate90()
+                            )
+                            VerticalDivider()
+                            Text(
+                                "Aa",
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.weight(1f).rotate90(negative = true)
+                            )
+                        }
                     }
                 }
             }
             PressableWithEmphasis {
                 PickerCard(
                     onClick = {
-                        setContentRotationSetting(ContentRotationSetting.BottomTowardsRight)
+                        state {
+                            AppState.settings.general.contentRotation set
+                                ContentRotationSetting.TopTowardsRight
+                        }
                     },
-                    selected = contentRotationSetting == ContentRotationSetting.BottomTowardsRight,
+                    selected =
+                        state().settings.general.contentRotation ==
+                            ContentRotationSetting.TopTowardsRight,
                     interactionSource = interactionSource
                 ) {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.fillMaxSize().padding(16.dp).pressEmphasis()
-                    ) {
-                        Text("Aa", textAlign = TextAlign.Center, modifier = Modifier.rotate(90f))
-                        HorizontalDivider()
-                        Text("Aa", textAlign = TextAlign.Center, modifier = Modifier.rotate(-90f))
+                    if (state().settings.general.displayRotationVertical) {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxSize().padding(16.dp).pressEmphasis()
+                        ) {
+                            Text(
+                                "Aa",
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.weight(1f).rotate90(negative = true)
+                            )
+                            HorizontalDivider()
+                            Text(
+                                "Aa",
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.weight(1f).rotate90()
+                            )
+                        }
+                    } else {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier =
+                                Modifier.fillMaxSize()
+                                    .padding(horizontal = 16.dp, vertical = 32.dp)
+                                    .pressEmphasis()
+                        ) {
+                            Text(
+                                "Aa",
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.weight(1f).rotate(180f)
+                            )
+                            VerticalDivider()
+                            Text("Aa", textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
+                        }
+                    }
+                }
+            }
+            PressableWithEmphasis {
+                PickerCard(
+                    onClick = {
+                        state {
+                            AppState.settings.general.contentRotation set
+                                ContentRotationSetting.BottomTowardsRight
+                        }
+                    },
+                    selected =
+                        state().settings.general.contentRotation ==
+                            ContentRotationSetting.BottomTowardsRight,
+                    interactionSource = interactionSource
+                ) {
+                    if (state().settings.general.displayRotationVertical) {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxSize().padding(16.dp).pressEmphasis()
+                        ) {
+                            Text(
+                                "Aa",
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.weight(1f).rotate90()
+                            )
+                            HorizontalDivider()
+                            Text(
+                                "Aa",
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.weight(1f).rotate90(negative = true)
+                            )
+                        }
+                    } else {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier =
+                                Modifier.fillMaxSize()
+                                    .padding(horizontal = 16.dp, vertical = 32.dp)
+                                    .pressEmphasis()
+                        ) {
+                            Text("Aa", textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
+                            VerticalDivider()
+                            Text(
+                                "Aa",
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.weight(1f).rotate(180f)
+                            )
+                        }
                     }
                 }
             }

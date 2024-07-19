@@ -80,7 +80,7 @@ sealed class Action {
         override val icon = @Composable { Res.drawable.ic_screen_rotation }
         override val description =
             @Composable {
-                """[NOT YET IMPLEMENTED] Rotate the display towards the perpendicular direction."""
+                """Rotate the display between horizontal and vertical."""
             }
         override val enabled = @Composable { true }
     }
