@@ -17,7 +17,15 @@ fun Modifier.rotate90(negative: Boolean = false) =
                     measurable: Measurable,
                     constraints: Constraints
                 ): MeasureResult {
-                    val placeable = measurable.measure(constraints)
+                    val placeable =
+                        measurable.measure(
+                            Constraints(
+                                minWidth = constraints.minHeight,
+                                maxWidth = constraints.maxHeight,
+                                minHeight = constraints.minWidth,
+                                maxHeight = constraints.maxWidth
+                            )
+                        )
                     return layout(width = placeable.height, height = placeable.width) {
                         placeable.place(
                             x = -(placeable.width - placeable.height) / 2,
