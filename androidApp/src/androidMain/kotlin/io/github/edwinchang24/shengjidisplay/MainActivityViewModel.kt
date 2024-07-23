@@ -3,7 +3,6 @@ package io.github.edwinchang24.shengjidisplay
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.github.edwinchang24.shengjidisplay.model.AppState
 import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -12,6 +11,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import model.AppState
 
 class MainActivityViewModel : ViewModel() {
     var state = MutableStateFlow(AppState())

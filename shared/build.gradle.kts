@@ -53,7 +53,7 @@ tasks.withType(KotlinCompilationTask::class) {
     if (name != kspTaskName) dependsOn(kspTaskName)
 }
 
-compose.resources { packageOfResClass = "io.github.edwinchang24.shengjidisplay.resources" }
+compose.resources { packageOfResClass = "resources" }
 
 android {
     compileSdk = 34
@@ -67,7 +67,7 @@ android {
 }
 
 buildkonfig {
-    packageName = "io.github.edwinchang24.shengjidisplay"
+    packageName = "versionconfig"
     exposeObjectWithName = "VersionConfig"
     defaultConfigs {
         val file = File(project.rootDir, "version.properties")

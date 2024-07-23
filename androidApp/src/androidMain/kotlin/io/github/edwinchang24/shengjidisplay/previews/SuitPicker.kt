@@ -7,10 +7,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
-import io.github.edwinchang24.shengjidisplay.components.SuitPicker
-import io.github.edwinchang24.shengjidisplay.model.AppState
-import io.github.edwinchang24.shengjidisplay.model.Suit
-import io.github.edwinchang24.shengjidisplay.theme.ShengJiDisplayTheme
+import components.SuitPicker
+import model.AppState
+import model.Suit
+import theme.ShengJiDisplayTheme
 
 @Preview
 @Composable

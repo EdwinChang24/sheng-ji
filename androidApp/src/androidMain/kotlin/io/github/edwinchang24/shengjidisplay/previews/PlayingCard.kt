@@ -5,11 +5,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import io.github.edwinchang24.shengjidisplay.components.PlayingCard
-import io.github.edwinchang24.shengjidisplay.model.AppState
-import io.github.edwinchang24.shengjidisplay.model.PlayingCard
-import io.github.edwinchang24.shengjidisplay.model.Suit
-import io.github.edwinchang24.shengjidisplay.theme.ShengJiDisplayTheme
+import components.PlayingCard
+import model.AppState
+import model.PlayingCard
+import model.Suit
+import theme.ShengJiDisplayTheme
 
 @Preview
 @Composable

@@ -3,8 +3,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.CanvasBasedWindow
 import arrow.optics.copy
-import io.github.edwinchang24.shengjidisplay.App
-import io.github.edwinchang24.shengjidisplay.model.AppState
 import kotlinx.browser.localStorage
 import kotlinx.browser.window
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -14,6 +12,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import model.AppState
 import org.jetbrains.compose.resources.configureWebResources
 import org.w3c.dom.StorageEvent
 

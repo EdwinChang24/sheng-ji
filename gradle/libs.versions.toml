@@ -9,8 +9,8 @@ core-splashscreen = "1.0.1"
 # https://youtrack.jetbrains.com/issue/KT-69876
 #noinspection GradleDependency
 kotlin = "2.0.20-Beta2-48"
-kotlinx-serialization = "1.7.1"
 kotlinx-datetime = "0.6.0"
+kotlinx-serialization = "1.7.1"
 ksp = "2.0.20-Beta2-1.0.23"
 lifecycle = "2.8.0"
 spotless = "7.0.0.BETA1"
@@ -23,8 +23,8 @@ arrow-optics = { group = "io.arrow-kt", name = "arrow-optics", version.ref = "ar
 arrow-optics-ksp = { group = "io.arrow-kt", name = "arrow-optics-ksp-plugin", version.ref = "arrow" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
 core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "core-splashscreen" }
-kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinx-datetime" }
+kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
 lifecycle-viewmodel-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 uuid = { group = "com.benasher44", name = "uuid", version.ref = "uuid" }

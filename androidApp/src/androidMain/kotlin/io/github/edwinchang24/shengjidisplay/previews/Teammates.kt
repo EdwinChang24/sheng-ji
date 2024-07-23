@@ -3,10 +3,10 @@ package io.github.edwinchang24.shengjidisplay.previews
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import io.github.edwinchang24.shengjidisplay.components.Teammates
-import io.github.edwinchang24.shengjidisplay.model.AppState
-import io.github.edwinchang24.shengjidisplay.theme.ShengJiDisplayTheme
 import kotlin.math.PI
+import model.AppState
+import teammates.Teammates
+import theme.ShengJiDisplayTheme
 
 @Preview
 @Composable
