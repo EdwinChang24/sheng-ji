@@ -33,7 +33,6 @@ import navigation.Dialog
 import navigation.Navigator
 import resources.Res
 import resources.ic_edit
-import util.ExpandHeights
 import util.ExpandWidths
 import util.WeightRow
 import util.WindowSize
@@ -109,39 +108,27 @@ fun PossibleTrumpsSelection(
                         )
                     }
                 } else {
-                    ExpandHeights {
-                        WeightRow(
-                            modifier =
-                                Modifier.expandWidth().padding(horizontal = 24.dp, vertical = 8.dp)
-                        ) {
-                            AnimatedContent(
-                                state().possibleTrumps,
-                                modifier = Modifier.weight().padding(end = 16.dp)
-                            ) { targetState ->
-                                Box(
-                                    contentAlignment = Alignment.CenterStart,
-                                    modifier = Modifier.expandHeight()
-                                ) {
-                                    Text(
-                                        if (targetState.isEmpty()) "None selected"
-                                        else targetState.joinToString(),
-                                        maxLines = 2,
-                                        overflow = TextOverflow.Ellipsis,
-                                        modifier = Modifier.padding(end = 16.dp)
-                                    )
-                                }
-                            }
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier.expandHeight()
-                            ) {
-                                OutlinedButtonWithEmphasis(
-                                    text = "Edit",
-                                    icon = iconRes(Res.drawable.ic_edit),
-                                    onClick = { navigator.navigate(Dialog.EditPossibleTrumps) }
-                                )
-                            }
+                    WeightRow(
+                        modifier =
+                            Modifier.expandWidth().padding(horizontal = 24.dp, vertical = 8.dp)
+                    ) {
+                        AnimatedContent(
+                            state().possibleTrumps,
+                            modifier = Modifier.weight().padding(end = 16.dp)
+                        ) { targetState ->
+                            Text(
+                                if (targetState.isEmpty()) "None selected"
+                                else targetState.joinToString(),
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.padding(end = 16.dp)
+                            )
                         }
+                        OutlinedButtonWithEmphasis(
+                            text = "Edit",
+                            icon = iconRes(Res.drawable.ic_edit),
+                            onClick = { navigator.navigate(Dialog.EditPossibleTrumps) }
+                        )
                     }
                 }
             }

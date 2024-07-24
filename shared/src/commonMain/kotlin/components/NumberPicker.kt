@@ -57,10 +57,7 @@ fun NumberPicker(
                         }
                     }
                 }
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.expandHeight().weight()
-                ) {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.weight()) {
                     AnimatedContent(
                         targetState = value,
                         transitionSpec = {
@@ -72,8 +69,7 @@ fun NumberPicker(
                                         fadeOut() + slideOutVertically { -it }
                                 }
                                 .using(SizeTransform(clip = false))
-                        },
-                        label = ""
+                        }
                     ) { target ->
                         Text(target.toString())
                     }

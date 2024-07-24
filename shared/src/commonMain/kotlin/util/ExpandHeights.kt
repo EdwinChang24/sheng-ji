@@ -80,11 +80,11 @@ fun ExpandHeightsScope.WeightColumn(
                 finalPlaceables[y] = placeable
                 y += placeable.height + spacingPx
             }
-            layout(
-                width = finalPlaceables.values.maxOf { it.width },
-                height = constraints.maxHeight
-            ) {
-                finalPlaceables.forEach { (position, placeable) -> placeable.place(0, position) }
+            val width = finalPlaceables.values.maxOf { it.width }
+            layout(width = width, height = constraints.maxHeight) {
+                finalPlaceables.forEach { (position, placeable) ->
+                    placeable.place((width - placeable.width) / 2, position)
+                }
             }
         } else {
             val measurables =

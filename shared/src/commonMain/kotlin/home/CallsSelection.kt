@@ -1,6 +1,5 @@
 package home
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -49,7 +48,6 @@ import resources.Res
 import resources.ic_add
 import resources.ic_clear_all
 import resources.ic_close
-import util.ExpandHeights
 import util.ExpandWidths
 import util.WeightRow
 import util.formatCallNumber
@@ -78,20 +76,15 @@ fun CallsSelection(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.padding(vertical = 24.dp)
             ) {
-                ExpandHeights {
-                    WeightRow(modifier = Modifier.expandWidth().padding(horizontal = 24.dp)) {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier.expandHeight()
-                        ) {
-                            Text(
-                                "Calls",
-                                style = MaterialTheme.typography.titleLarge,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
-                        AnimatedVisibility(
+                WeightRow(modifier = Modifier.expandWidth().padding(horizontal = 24.dp)) {
+                    Text(
+                        "Calls",
+                        style = MaterialTheme.typography.titleLarge,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Box(contentAlignment = Alignment.CenterEnd, modifier = Modifier.weight()) {
+                        androidx.compose.animation.AnimatedVisibility(
                             visible = state().calls.isNotEmpty(),
                             enter =
                                 fadeIn() +
@@ -104,19 +97,13 @@ fun CallsSelection(
                                     shrinkVertically(
                                         shrinkTowards = Alignment.CenterVertically,
                                         clip = false
-                                    ),
-                            modifier = Modifier.weight().expandHeight()
+                                    )
                         ) {
-                            Box(
-                                contentAlignment = Alignment.CenterEnd,
-                                modifier = Modifier.expandHeight()
-                            ) {
-                                OutlinedButtonWithEmphasis(
-                                    text = "Clear all",
-                                    icon = iconRes(Res.drawable.ic_clear_all),
-                                    onClick = { state { AppState.calls set emptyList() } }
-                                )
-                            }
+                            OutlinedButtonWithEmphasis(
+                                text = "Clear all",
+                                icon = iconRes(Res.drawable.ic_clear_all),
+                                onClick = { state { AppState.calls set emptyList() } }
+                            )
                         }
                     }
                 }
@@ -151,33 +138,22 @@ fun CallsSelection(
                         )
                     }
                 } else {
-                    ExpandHeights {
-                        WeightRow(
-                            modifier =
-                                Modifier.expandWidth().padding(horizontal = 24.dp, vertical = 8.dp)
+                    WeightRow(
+                        modifier =
+                            Modifier.expandWidth().padding(horizontal = 24.dp, vertical = 8.dp)
+                    ) {
+                        Box(
+                            contentAlignment = Alignment.CenterStart,
+                            modifier = Modifier.weight().padding(end = 16.dp)
                         ) {
-                            Box(
-                                contentAlignment = Alignment.CenterStart,
-                                modifier = Modifier.expandHeight().weight().padding(end = 16.dp)
-                            ) {
-                                Text(
-                                    "No calls added",
-                                    maxLines = 2,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier.expandHeight()
-                            ) {
-                                ButtonWithEmphasis(
-                                    text = "Add",
-                                    icon = iconRes(Res.drawable.ic_add),
-                                    onClick = { navigator.navigate(Dialog.EditCall(0)) }
-                                )
-                            }
+                            Text("No calls added", maxLines = 2, overflow = TextOverflow.Ellipsis)
                         }
+                        Spacer(modifier = Modifier.width(16.dp))
+                        ButtonWithEmphasis(
+                            text = "Add",
+                            icon = iconRes(Res.drawable.ic_add),
+                            onClick = { navigator.navigate(Dialog.EditCall(0)) }
+                        )
                     }
                 }
             }

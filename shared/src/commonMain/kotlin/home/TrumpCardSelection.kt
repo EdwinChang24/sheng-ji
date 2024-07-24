@@ -37,7 +37,6 @@ import navigation.Navigator
 import resources.Res
 import resources.ic_add
 import resources.ic_close
-import util.ExpandHeights
 import util.ExpandWidths
 import util.WeightRow
 import util.WindowSize
@@ -175,34 +174,22 @@ fun TrumpCardSelection(
                                 }
                             }
                         } else {
-                            ExpandHeights {
-                                WeightRow(
-                                    modifier =
-                                        Modifier.expandWidth()
-                                            .padding(horizontal = 24.dp, vertical = 8.dp)
-                                ) {
-                                    Box(
-                                        contentAlignment = Alignment.CenterStart,
-                                        modifier = Modifier.expandHeight().weight()
-                                    ) {
-                                        Text(
-                                            "No trump card selected",
-                                            maxLines = 2,
-                                            overflow = TextOverflow.Ellipsis,
-                                            modifier = Modifier.padding(end = 16.dp)
-                                        )
-                                    }
-                                    Box(
-                                        contentAlignment = Alignment.Center,
-                                        modifier = Modifier.expandHeight().weight()
-                                    ) {
-                                        ButtonWithEmphasis(
-                                            text = "Add",
-                                            icon = iconRes(Res.drawable.ic_add),
-                                            onClick = { navigator.navigate(Dialog.EditTrump) }
-                                        )
-                                    }
-                                }
+                            WeightRow(
+                                modifier =
+                                    Modifier.expandWidth()
+                                        .padding(horizontal = 24.dp, vertical = 8.dp)
+                            ) {
+                                Text(
+                                    "No trump card selected",
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.weight().padding(end = 16.dp)
+                                )
+                                ButtonWithEmphasis(
+                                    text = "Add",
+                                    icon = iconRes(Res.drawable.ic_add),
+                                    onClick = { navigator.navigate(Dialog.EditTrump) }
+                                )
                             }
                         }
                     }

@@ -78,11 +78,11 @@ fun ExpandWidthsScope.WeightRow(
                 finalPlaceables[x] = placeable
                 x += placeable.width + spacingPx
             }
-            layout(
-                width = constraints.maxWidth,
-                height = finalPlaceables.values.maxOf { it.height }
-            ) {
-                finalPlaceables.forEach { (position, placeable) -> placeable.place(position, 0) }
+            val height = finalPlaceables.values.maxOf { it.height }
+            layout(width = constraints.maxWidth, height = height) {
+                finalPlaceables.forEach { (position, placeable) ->
+                    placeable.place(position, (height - placeable.height) / 2)
+                }
             }
         } else {
             val measurables = subcompose(0) { ExpandWidthsScope.WeightRowScope(false).content() }
