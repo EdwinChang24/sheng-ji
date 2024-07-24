@@ -7,13 +7,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
@@ -28,6 +22,9 @@ import interaction.PressableWithEmphasis
 import resources.Res
 import resources.ic_add
 import resources.ic_remove
+import util.ExpandHeights
+import util.ExpandWidths
+import util.WeightRow
 import util.iconRes
 
 @Composable
@@ -38,50 +35,68 @@ fun NumberPicker(
     range: IntRange = 1..Int.MAX_VALUE
 ) {
     LaunchedEffect(value) { if (value !in range) setValue(value.coerceIn(range)) }
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.height(IntrinsicSize.Max)
-    ) {
-        PressableWithEmphasis {
-            OutlinedCard(
-                enabled = value - 1 in range,
-                onClick = { if (value - 1 in range) setValue(value - 1) },
-                interactionSource = interactionSource,
-                modifier = Modifier.fillMaxHeight().weight(2f)
-            ) {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                    Icon(iconRes(Res.drawable.ic_remove), null, modifier = Modifier.pressEmphasis())
-                }
-            }
-        }
-        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxHeight().weight(1f)) {
-            AnimatedContent(
-                targetState = value,
-                transitionSpec = {
-                    if (targetState > initialState) {
-                            fadeIn() + slideInVertically { -it } togetherWith
-                                fadeOut() + slideOutVertically { it }
-                        } else {
-                            fadeIn() + slideInVertically { it } togetherWith
-                                fadeOut() + slideOutVertically { -it }
+    ExpandWidths {
+        ExpandHeights(modifier = modifier) {
+            WeightRow(spacing = 16.dp) {
+                PressableWithEmphasis {
+                    OutlinedCard(
+                        enabled = value - 1 in range,
+                        onClick = { if (value - 1 in range) setValue(value - 1) },
+                        interactionSource = interactionSource,
+                        modifier = Modifier.expandHeight().weight()
+                    ) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.expandHeight().expandWidth()
+                        ) {
+                            Icon(
+                                iconRes(Res.drawable.ic_remove),
+                                null,
+                                modifier = Modifier.pressEmphasis()
+                            )
                         }
-                        .using(SizeTransform(clip = false))
-                },
-                label = ""
-            ) { target ->
-                Text(target.toString())
-            }
-        }
-        PressableWithEmphasis {
-            OutlinedCard(
-                enabled = value + 1 in range,
-                onClick = { if (value + 1 in range) setValue(value + 1) },
-                interactionSource = interactionSource,
-                modifier = Modifier.fillMaxHeight().weight(2f).pointerHoverIcon(PointerIcon.Hand)
-            ) {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                    Icon(iconRes(Res.drawable.ic_add), null, modifier = Modifier.pressEmphasis())
+                    }
+                }
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.expandHeight().weight()
+                ) {
+                    AnimatedContent(
+                        targetState = value,
+                        transitionSpec = {
+                            if (targetState > initialState) {
+                                    fadeIn() + slideInVertically { -it } togetherWith
+                                        fadeOut() + slideOutVertically { it }
+                                } else {
+                                    fadeIn() + slideInVertically { it } togetherWith
+                                        fadeOut() + slideOutVertically { -it }
+                                }
+                                .using(SizeTransform(clip = false))
+                        },
+                        label = ""
+                    ) { target ->
+                        Text(target.toString())
+                    }
+                }
+                PressableWithEmphasis {
+                    OutlinedCard(
+                        enabled = value + 1 in range,
+                        onClick = { if (value + 1 in range) setValue(value + 1) },
+                        interactionSource = interactionSource,
+                        modifier =
+                            Modifier.expandHeight().weight().pointerHoverIcon(PointerIcon.Hand)
+                    ) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.expandHeight().expandWidth()
+                        ) {
+                            Icon(
+                                iconRes(Res.drawable.ic_add),
+                                null,
+                                modifier = Modifier.pressEmphasis()
+                            )
+                        }
+                    }
                 }
             }
         }

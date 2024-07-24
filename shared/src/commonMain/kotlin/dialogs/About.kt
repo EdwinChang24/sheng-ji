@@ -3,12 +3,9 @@ package dialogs
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.LocalTextStyle
@@ -37,6 +34,7 @@ import resources.hearts
 import resources.ic_code
 import resources.ic_done
 import resources.ic_license
+import util.ExpandWidths
 import util.PlatformName
 import util.WindowSize
 import util.calculateWindowSize
@@ -46,99 +44,103 @@ import versionconfig.VersionConfig
 
 @Composable
 fun AboutDialog(navigator: Navigator, modifier: Modifier = Modifier) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(24.dp),
-        modifier =
-            modifier.width(IntrinsicSize.Max).verticalScroll(rememberScrollState()).padding(24.dp)
-    ) {
-        Text(
-            "About",
-            style = MaterialTheme.typography.headlineMedium,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
+    ExpandWidths {
         Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+            verticalArrangement = Arrangement.spacedBy(24.dp),
+            modifier = modifier.verticalScroll(rememberScrollState()).padding(24.dp)
         ) {
-            ProvideTextStyle(MaterialTheme.typography.titleLarge) { AppName() }
             Text(
-                "Version ${VersionConfig.version} for $PlatformName",
-                style = MaterialTheme.typography.titleMedium,
-                maxLines = 2,
+                "About",
+                style = MaterialTheme.typography.headlineMedium,
+                maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-        }
-        val links =
-            @Composable {
-                val uriHandler = LocalUriHandler.current
-                OutlinedButtonWithEmphasis(
-                    text = "Source code",
-                    icon = iconRes(Res.drawable.ic_code),
-                    onClick = {
-                        uriHandler.openUri("https://github.com/EdwinChang24/sheng-ji-display")
-                    }
-                )
-                OutlinedButtonWithEmphasis(
-                    text = "License",
-                    icon = iconRes(Res.drawable.ic_license),
-                    onClick = {
-                        uriHandler.openUri(
-                            "https://github.com/EdwinChang24/sheng-ji-display/blob/-/LICENSE"
-                        )
-                    }
-                )
-            }
-        val windowSize = calculateWindowSize()
-        if (windowSize == WindowSize.Small) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.expandWidth().padding(horizontal = 16.dp)
             ) {
-                links()
-            }
-        } else {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp)
-            ) {
-                links()
-            }
-        }
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            ProvideTextStyle(MaterialTheme.typography.bodySmall) {
-                Text("Made with ", maxLines = 1, overflow = TextOverflow.Ellipsis)
-                Image(
-                    suitIconRes(Res.drawable.hearts),
-                    null,
-                    colorFilter = ColorFilter.tint(Color.Red),
-                    modifier =
-                        Modifier.height(
-                            with(LocalDensity.current) { LocalTextStyle.current.fontSize.toDp() }
-                        )
-                )
+                ProvideTextStyle(MaterialTheme.typography.titleLarge) { AppName() }
                 Text(
-                    buildAnnotatedString {
-                        append(" by ")
-                        withStyle(SpanStyle(fontWeight = FontWeight.Medium)) { append("Edwin") }
-                    },
-                    maxLines = 1,
+                    "Version ${VersionConfig.version} for $PlatformName",
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
             }
+            val links =
+                @Composable {
+                    val uriHandler = LocalUriHandler.current
+                    OutlinedButtonWithEmphasis(
+                        text = "Source code",
+                        icon = iconRes(Res.drawable.ic_code),
+                        onClick = {
+                            uriHandler.openUri("https://github.com/EdwinChang24/sheng-ji-display")
+                        }
+                    )
+                    OutlinedButtonWithEmphasis(
+                        text = "License",
+                        icon = iconRes(Res.drawable.ic_license),
+                        onClick = {
+                            uriHandler.openUri(
+                                "https://github.com/EdwinChang24/sheng-ji-display/blob/-/LICENSE"
+                            )
+                        }
+                    )
+                }
+            val windowSize = calculateWindowSize()
+            if (windowSize == WindowSize.Small) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.expandWidth()
+                ) {
+                    links()
+                }
+            } else {
+                Row(
+                    horizontalArrangement =
+                        Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.expandWidth().padding(horizontal = 24.dp)
+                ) {
+                    links()
+                }
+            }
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.expandWidth()
+            ) {
+                ProvideTextStyle(MaterialTheme.typography.bodySmall) {
+                    Text("Made with ", maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    Image(
+                        suitIconRes(Res.drawable.hearts),
+                        null,
+                        colorFilter = ColorFilter.tint(Color.Red),
+                        modifier =
+                            Modifier.height(
+                                with(LocalDensity.current) {
+                                    LocalTextStyle.current.fontSize.toDp()
+                                }
+                            )
+                    )
+                    Text(
+                        buildAnnotatedString {
+                            append(" by ")
+                            withStyle(SpanStyle(fontWeight = FontWeight.Medium)) { append("Edwin") }
+                        },
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+            ButtonWithEmphasis(
+                text = "Done",
+                icon = iconRes(Res.drawable.ic_done),
+                onClick = { navigator.closeDialog() },
+                modifier = Modifier.align(Alignment.End)
+            )
         }
-        ButtonWithEmphasis(
-            text = "Done",
-            icon = iconRes(Res.drawable.ic_done),
-            onClick = { navigator.closeDialog() },
-            modifier = Modifier.align(Alignment.End)
-        )
     }
 }

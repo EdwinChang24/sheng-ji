@@ -8,7 +8,6 @@ import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.node.ParentDataModifierNode
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -52,12 +51,14 @@ fun ExpandWidthsScope.WeightRow(
                 measurables.sumOf {
                     if (it.parentData == ExpandWidthsScope.Weight) 0
                     else
-                        it.measure(constraints.copy(minWidth = 0, maxWidth = Constraints.Infinity))
+                        it.measure(constraints.copy(minWidth = 0, maxWidth = constraints.maxWidth))
                             .width
                 } + spacingPx * (measurables.size - 1)
             val weightedWidth =
                 ((constraints.maxWidth - widthWithoutWeighted) /
-                        measurables.count { it.parentData == ExpandWidthsScope.Weight })
+                        (measurables
+                            .count { it.parentData == ExpandWidthsScope.Weight }
+                            .takeIf { it != 0 } ?: 1))
                     .coerceAtLeast(0)
             val finalMeasurables =
                 subcompose(1) { ExpandWidthsScope.WeightRowScope(true).content() }
@@ -87,10 +88,10 @@ fun ExpandWidthsScope.WeightRow(
             val measurables = subcompose(0) { ExpandWidthsScope.WeightRowScope(false).content() }
             val placeables =
                 measurables.map {
-                    it.measure(constraints.copy(minWidth = 0, maxWidth = Constraints.Infinity))
+                    it.measure(constraints.copy(minWidth = 0, maxWidth = constraints.maxWidth))
                 }
             val weightedWidth =
-                placeables.filter { it.parentData == ExpandWidthsScope.Weight }.maxOf { it.width }
+                placeables.maxOf { if (it.parentData == ExpandWidthsScope.Weight) it.width else 0 }
             val totalWidth =
                 placeables.sumOf {
                     if (it.parentData == ExpandWidthsScope.Weight) weightedWidth else it.width
@@ -99,7 +100,7 @@ fun ExpandWidthsScope.WeightRow(
                 val weightedCount = placeables.count { it.parentData == ExpandWidthsScope.Weight }
                 val newWeightedWidth =
                     ((constraints.maxWidth - (totalWidth - weightedWidth * weightedCount)) /
-                            weightedCount)
+                            (weightedCount.takeIf { it != 0 } ?: 1))
                         .coerceAtLeast(0)
                 val finalMeasurables =
                     subcompose(1) { ExpandWidthsScope.WeightRowScope(false).content() }
@@ -140,7 +141,7 @@ fun ExpandWidthsScope.WeightRow(
                                         minWidth = weightedWidth,
                                         maxWidth = weightedWidth
                                     )
-                                else constraints.copy(minWidth = 0, maxWidth = Constraints.Infinity)
+                                else constraints.copy(minWidth = 0, maxWidth = constraints.maxWidth)
                             )
                         }
                 layout(

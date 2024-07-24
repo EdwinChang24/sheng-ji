@@ -8,7 +8,6 @@ import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.node.ParentDataModifierNode
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -53,13 +52,15 @@ fun ExpandHeightsScope.WeightColumn(
                     if (it.parentData == ExpandHeightsScope.Weight) 0
                     else
                         it.measure(
-                                constraints.copy(minHeight = 0, maxHeight = Constraints.Infinity)
+                                constraints.copy(minHeight = 0, maxHeight = constraints.maxHeight)
                             )
                             .height
                 } + spacingPx * (measurables.size - 1)
             val weightedHeight =
                 ((constraints.maxHeight - heightWithoutWeighted) /
-                        measurables.count { it.parentData == ExpandHeightsScope.Weight })
+                        (measurables
+                            .count { it.parentData == ExpandHeightsScope.Weight }
+                            .takeIf { it != 0 } ?: 1))
                     .coerceAtLeast(0)
             val finalMeasurables =
                 subcompose(1) { ExpandHeightsScope.WeightColumnScope(true).content() }
@@ -90,10 +91,12 @@ fun ExpandHeightsScope.WeightColumn(
                 subcompose(0) { ExpandHeightsScope.WeightColumnScope(false).content() }
             val placeables =
                 measurables.map {
-                    it.measure(constraints.copy(minHeight = 0, maxHeight = Constraints.Infinity))
+                    it.measure(constraints.copy(minHeight = 0, maxHeight = constraints.maxHeight))
                 }
             val weightedHeight =
-                placeables.filter { it.parentData == ExpandHeightsScope.Weight }.maxOf { it.height }
+                placeables.maxOf {
+                    if (it.parentData == ExpandHeightsScope.Weight) it.height else 0
+                }
             val totalHeight =
                 placeables.sumOf {
                     if (it.parentData == ExpandHeightsScope.Weight) weightedHeight else it.height
@@ -102,7 +105,7 @@ fun ExpandHeightsScope.WeightColumn(
                 val weightedCount = placeables.count { it.parentData == ExpandHeightsScope.Weight }
                 val newWeightedHeight =
                     ((constraints.maxHeight - (totalHeight - weightedHeight * weightedCount)) /
-                            weightedCount)
+                            (weightedCount.takeIf { it != 0 } ?: 1))
                         .coerceAtLeast(0)
                 val finalMeasurables =
                     subcompose(1) { ExpandHeightsScope.WeightColumnScope(false).content() }
@@ -146,7 +149,7 @@ fun ExpandHeightsScope.WeightColumn(
                                 else
                                     constraints.copy(
                                         minHeight = 0,
-                                        maxHeight = Constraints.Infinity
+                                        maxHeight = constraints.maxHeight
                                     )
                             )
                         }

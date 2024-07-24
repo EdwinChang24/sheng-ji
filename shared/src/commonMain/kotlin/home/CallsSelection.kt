@@ -10,13 +10,10 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
@@ -52,6 +49,9 @@ import resources.Res
 import resources.ic_add
 import resources.ic_clear_all
 import resources.ic_close
+import util.ExpandHeights
+import util.ExpandWidths
+import util.WeightRow
 import util.formatCallNumber
 import util.iconRes
 
@@ -62,101 +62,123 @@ fun CallsSelection(
     state: AppState.Prop,
     modifier: Modifier = Modifier
 ) {
-    Card(
-        colors = cardColors,
-        modifier =
-            modifier
-                .width(IntrinsicSize.Max)
-                .clip(CardDefaults.shape)
-                .then(
-                    if (state().calls.isEmpty())
-                        Modifier.clickable { navigator.navigate(Dialog.EditCall(0)) }
-                            .pointerHoverIcon(PointerIcon.Hand)
-                    else Modifier
-                )
-    ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.padding(vertical = 24.dp)
+    ExpandWidths(modifier = modifier) {
+        Card(
+            colors = cardColors,
+            modifier =
+                Modifier.clip(CardDefaults.shape)
+                    .then(
+                        if (state().calls.isEmpty())
+                            Modifier.clickable { navigator.navigate(Dialog.EditCall(0)) }
+                                .pointerHoverIcon(PointerIcon.Hand)
+                        else Modifier
+                    )
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp)
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(vertical = 24.dp)
             ) {
-                Text(
-                    "Calls",
-                    style = MaterialTheme.typography.titleLarge,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-                AnimatedVisibility(
-                    visible = state().calls.isNotEmpty(),
-                    enter =
-                        fadeIn() +
-                            expandVertically(expandFrom = Alignment.CenterVertically, clip = false),
-                    exit =
-                        fadeOut() +
-                            shrinkVertically(
-                                shrinkTowards = Alignment.CenterVertically,
-                                clip = false
-                            ),
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Box(contentAlignment = Alignment.CenterEnd) {
-                        OutlinedButtonWithEmphasis(
-                            text = "Clear all",
-                            icon = iconRes(Res.drawable.ic_clear_all),
-                            onClick = { state { AppState.calls set emptyList() } }
-                        )
+                ExpandHeights {
+                    WeightRow(modifier = Modifier.expandWidth().padding(horizontal = 24.dp)) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.expandHeight()
+                        ) {
+                            Text(
+                                "Calls",
+                                style = MaterialTheme.typography.titleLarge,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                        AnimatedVisibility(
+                            visible = state().calls.isNotEmpty(),
+                            enter =
+                                fadeIn() +
+                                    expandVertically(
+                                        expandFrom = Alignment.CenterVertically,
+                                        clip = false
+                                    ),
+                            exit =
+                                fadeOut() +
+                                    shrinkVertically(
+                                        shrinkTowards = Alignment.CenterVertically,
+                                        clip = false
+                                    ),
+                            modifier = Modifier.weight().expandHeight()
+                        ) {
+                            Box(
+                                contentAlignment = Alignment.CenterEnd,
+                                modifier = Modifier.expandHeight()
+                            ) {
+                                OutlinedButtonWithEmphasis(
+                                    text = "Clear all",
+                                    icon = iconRes(Res.drawable.ic_clear_all),
+                                    onClick = { state { AppState.calls set emptyList() } }
+                                )
+                            }
+                        }
                     }
                 }
-            }
-            if (state().calls.isNotEmpty()) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier =
-                        Modifier.padding(bottom = 8.dp)
-                            .horizontalScroll(rememberScrollState())
-                            .padding(horizontal = 24.dp, vertical = 8.dp)
-                ) {
-                    state().calls.forEachIndexed { index, call ->
-                        CallCard(
-                            call = call,
-                            onEdit = { navigator.navigate(Dialog.EditCall(index)) },
-                            setFound = { state { AppState.calls[index].found set it } },
-                            onDelete = {
-                                state {
-                                    AppState.calls.transform {
-                                        it.toMutableList().apply { removeAt(index) }
+                if (state().calls.isNotEmpty()) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier =
+                            Modifier.padding(bottom = 8.dp)
+                                .horizontalScroll(rememberScrollState())
+                                .padding(horizontal = 24.dp, vertical = 8.dp)
+                    ) {
+                        state().calls.forEachIndexed { index, call ->
+                            CallCard(
+                                call = call,
+                                onEdit = { navigator.navigate(Dialog.EditCall(index)) },
+                                setFound = { state { AppState.calls[index].found set it } },
+                                onDelete = {
+                                    state {
+                                        AppState.calls.transform {
+                                            it.toMutableList().apply { removeAt(index) }
+                                        }
                                     }
-                                }
-                            },
-                            state = state
+                                },
+                                state = state
+                            )
+                        }
+                        OutlinedButtonWithEmphasis(
+                            text = "Add call",
+                            icon = iconRes(Res.drawable.ic_add),
+                            onClick = { navigator.navigate(Dialog.EditCall(state().calls.size)) }
                         )
                     }
-                    OutlinedButtonWithEmphasis(
-                        text = "Add call",
-                        icon = iconRes(Res.drawable.ic_add),
-                        onClick = { navigator.navigate(Dialog.EditCall(state().calls.size)) }
-                    )
-                }
-            } else {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp)
-                ) {
-                    Text(
-                        "No calls added",
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.weight(1f).padding(end = 16.dp)
-                    )
-                    ButtonWithEmphasis(
-                        text = "Add",
-                        icon = iconRes(Res.drawable.ic_add),
-                        onClick = { navigator.navigate(Dialog.EditCall(0)) }
-                    )
+                } else {
+                    ExpandHeights {
+                        WeightRow(
+                            modifier =
+                                Modifier.expandWidth().padding(horizontal = 24.dp, vertical = 8.dp)
+                        ) {
+                            Box(
+                                contentAlignment = Alignment.CenterStart,
+                                modifier = Modifier.expandHeight().weight().padding(end = 16.dp)
+                            ) {
+                                Text(
+                                    "No calls added",
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier.expandHeight()
+                            ) {
+                                ButtonWithEmphasis(
+                                    text = "Add",
+                                    icon = iconRes(Res.drawable.ic_add),
+                                    onClick = { navigator.navigate(Dialog.EditCall(0)) }
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -182,44 +204,46 @@ private fun CallCard(
             interactionSource = interactionSource,
             modifier = modifier
         ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.wrapContentWidth().padding(8.dp)
-            ) {
+            ExpandWidths {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxWidth().pressEmphasis()
+                    modifier = Modifier.padding(8.dp)
                 ) {
-                    PlayingCard(
-                        call.card,
-                        state = state,
-                        textStyle = LocalTextStyle.current.copy(fontSize = 32.sp)
-                    )
-                    Text(formatCallNumber(call.number))
-                }
-                PressableWithEmphasis {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier =
-                            Modifier.clip(MaterialTheme.shapes.small)
-                                .clickableForEmphasis(
-                                    onLongClick = {
-                                        setFound((call.found + call.number) % (call.number + 1))
-                                    },
-                                    onClick = { setFound((call.found + 1) % (call.number + 1)) }
-                                )
-                                .padding(8.dp)
-                                .pressEmphasis()
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.expandWidth().pressEmphasis()
                     ) {
-                        Text("Found:")
-                        Spacer(modifier = Modifier.width(8.dp))
-                        CallFoundText(call = call)
+                        PlayingCard(
+                            call.card,
+                            state = state,
+                            textStyle = LocalTextStyle.current.copy(fontSize = 32.sp)
+                        )
+                        Text(formatCallNumber(call.number))
                     }
-                }
-                IconButtonWithEmphasis(onClick = onDelete) {
-                    Icon(iconRes(Res.drawable.ic_close), null)
+                    PressableWithEmphasis {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier =
+                                Modifier.clip(MaterialTheme.shapes.small)
+                                    .clickableForEmphasis(
+                                        onLongClick = {
+                                            setFound((call.found + call.number) % (call.number + 1))
+                                        },
+                                        onClick = { setFound((call.found + 1) % (call.number + 1)) }
+                                    )
+                                    .padding(8.dp)
+                                    .pressEmphasis()
+                        ) {
+                            Text("Found:")
+                            Spacer(modifier = Modifier.width(8.dp))
+                            CallFoundText(call = call)
+                        }
+                    }
+                    IconButtonWithEmphasis(onClick = onDelete) {
+                        Icon(iconRes(Res.drawable.ic_close), null)
+                    }
                 }
             }
         }

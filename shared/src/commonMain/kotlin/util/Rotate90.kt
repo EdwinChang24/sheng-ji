@@ -2,8 +2,6 @@ package util
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.layout.IntrinsicMeasurable
-import androidx.compose.ui.layout.IntrinsicMeasureScope
 import androidx.compose.ui.layout.LayoutModifier
 import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.MeasureResult
@@ -33,25 +31,5 @@ fun Modifier.rotate90(negative: Boolean = false) =
                         )
                     }
                 }
-
-                override fun IntrinsicMeasureScope.maxIntrinsicHeight(
-                    measurable: IntrinsicMeasurable,
-                    width: Int
-                ) = measurable.maxIntrinsicWidth(height = width)
-
-                override fun IntrinsicMeasureScope.maxIntrinsicWidth(
-                    measurable: IntrinsicMeasurable,
-                    height: Int
-                ) = measurable.maxIntrinsicHeight(width = height)
-
-                override fun IntrinsicMeasureScope.minIntrinsicHeight(
-                    measurable: IntrinsicMeasurable,
-                    width: Int
-                ) = measurable.minIntrinsicWidth(height = width)
-
-                override fun IntrinsicMeasureScope.minIntrinsicWidth(
-                    measurable: IntrinsicMeasurable,
-                    height: Int
-                ) = measurable.minIntrinsicHeight(width = height)
             }
             .rotate(if (negative) -90f else 90f)

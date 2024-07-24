@@ -3,10 +3,7 @@ package components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
@@ -25,6 +22,7 @@ import interaction.PressableWithEmphasis
 import resources.Res
 import resources.ic_clear_all
 import resources.ic_undo
+import util.ExpandWidths
 import util.allRanks
 import util.iconRes
 
@@ -45,43 +43,46 @@ fun PossibleTrumpsPicker(
                 .toSet()
         )
     }
-    Column(
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = modifier.width(IntrinsicSize.Max)
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Row {
-                (2..6).map { it.toString() }.forEach { RankButton(it, toggleRank, it in selected) }
-            }
-            Row {
-                ((7..10).map { it.toString() } + "J").forEach {
-                    RankButton(it, toggleRank, it in selected)
+    ExpandWidths(modifier = modifier) {
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.expandWidth()
+            ) {
+                Row {
+                    (2..6)
+                        .map { it.toString() }
+                        .forEach { RankButton(it, toggleRank, it in selected) }
                 }
-            }
-            Row { listOf("Q", "K", "A").forEach { RankButton(it, toggleRank, it in selected) } }
-        }
-        Box(modifier = Modifier.fillMaxWidth()) {
-            OutlinedButtonWithEmphasis(
-                text = if (selected.isNotEmpty() || saved == null) "Clear" else "Undo",
-                icon =
-                    iconRes(
-                        if (selected.isNotEmpty() || saved == null) Res.drawable.ic_clear_all
-                        else Res.drawable.ic_undo
-                    ),
-                onClick = {
-                    if (saved != null) {
-                        saved?.let { setSelected(it.sortedBy { r -> allRanks.indexOf(r) }.toSet()) }
-                    } else {
-                        saved = selected
-                        setSelected(emptySet())
+                Row {
+                    ((7..10).map { it.toString() } + "J").forEach {
+                        RankButton(it, toggleRank, it in selected)
                     }
-                },
-                enabled = (selected.isEmpty() && saved != null) || selected.isNotEmpty(),
-                modifier = Modifier.align(Alignment.Center)
-            )
+                }
+                Row { listOf("Q", "K", "A").forEach { RankButton(it, toggleRank, it in selected) } }
+            }
+            Box(modifier = Modifier.expandWidth()) {
+                OutlinedButtonWithEmphasis(
+                    text = if (selected.isNotEmpty() || saved == null) "Clear" else "Undo",
+                    icon =
+                        iconRes(
+                            if (selected.isNotEmpty() || saved == null) Res.drawable.ic_clear_all
+                            else Res.drawable.ic_undo
+                        ),
+                    onClick = {
+                        if (saved != null) {
+                            saved?.let {
+                                setSelected(it.sortedBy { r -> allRanks.indexOf(r) }.toSet())
+                            }
+                        } else {
+                            saved = selected
+                            setSelected(emptySet())
+                        }
+                    },
+                    enabled = (selected.isEmpty() && saved != null) || selected.isNotEmpty(),
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
         }
     }
 }

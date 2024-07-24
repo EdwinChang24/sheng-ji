@@ -3,11 +3,8 @@ package dialogs
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +32,7 @@ import navigation.Navigator
 import resources.Res
 import resources.ic_close
 import resources.ic_done
+import util.ExpandWidths
 import util.iconRes
 
 /** @param index index of call to edit; will create a new call if index is out of bounds */
@@ -67,87 +65,81 @@ fun EditCallDialog(index: Int, navigator: Navigator, state: AppState.Prop) {
             }
         }
     }
-    Column(
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier =
-            Modifier.width(IntrinsicSize.Max)
-                .verticalScroll(rememberScrollState())
-                .padding(vertical = 24.dp)
-    ) {
+    ExpandWidths {
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.padding(horizontal = 24.dp)
+            modifier = Modifier.verticalScroll(rememberScrollState()).padding(vertical = 24.dp)
         ) {
-            Text(
-                "Edit call",
-                style = MaterialTheme.typography.headlineMedium,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
             Column(
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.fillMaxWidth()
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.padding(horizontal = 24.dp)
             ) {
                 Text(
-                    "Rank",
-                    style = MaterialTheme.typography.labelMedium,
-                    maxLines = 1,
+                    "Edit call",
+                    style = MaterialTheme.typography.headlineMedium,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
-                RankPicker(
-                    rank,
-                    { rank = it },
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.expandWidth()
+                ) {
+                    Text(
+                        "Rank",
+                        style = MaterialTheme.typography.labelMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    RankPicker(
+                        rank,
+                        { rank = it },
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+                }
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.expandWidth()
+                ) {
+                    Text(
+                        "Suit",
+                        style = MaterialTheme.typography.labelMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    SuitPicker(suit, { suit = it }, state, modifier = Modifier.expandWidth())
+                }
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.expandWidth()
+                ) {
+                    Text(
+                        "Number",
+                        style = MaterialTheme.typography.labelMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    NumberPicker(number, { number = it }, modifier = Modifier.expandWidth())
+                }
             }
-            Column(
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.fillMaxWidth()
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.End),
+                modifier =
+                    Modifier.expandWidth()
+                        .horizontalScroll(rememberScrollState(), reverseScrolling = true)
+                        .padding(horizontal = 24.dp)
             ) {
-                Text(
-                    "Suit",
-                    style = MaterialTheme.typography.labelMedium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                OutlinedButtonWithEmphasis(
+                    text = "Cancel",
+                    icon = iconRes(Res.drawable.ic_close),
+                    onClick = navigator::closeDialog
                 )
-                SuitPicker(
-                    suit,
-                    { suit = it },
-                    state,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                ButtonWithEmphasis(
+                    text = "Done",
+                    icon = iconRes(Res.drawable.ic_done),
+                    onClick = { onDone() },
+                    enabled = rank != null && suit != null
                 )
             }
-            Column(
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    "Number",
-                    style = MaterialTheme.typography.labelMedium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                NumberPicker(number, { number = it })
-            }
-        }
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.End),
-            modifier =
-                Modifier.fillMaxWidth()
-                    .horizontalScroll(rememberScrollState(), reverseScrolling = true)
-                    .padding(horizontal = 24.dp)
-        ) {
-            OutlinedButtonWithEmphasis(
-                text = "Cancel",
-                icon = iconRes(Res.drawable.ic_close),
-                onClick = navigator::closeDialog
-            )
-            ButtonWithEmphasis(
-                text = "Done",
-                icon = iconRes(Res.drawable.ic_done),
-                onClick = { onDone() },
-                enabled = rank != null && suit != null
-            )
         }
     }
 }
