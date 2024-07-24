@@ -2,10 +2,12 @@ package home
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CardDefaults
@@ -35,9 +37,6 @@ import navigation.Navigator
 import resources.Res
 import resources.ic_info
 import resources.ic_settings
-import util.ExpandHeights
-import util.ExpandWidths
-import util.WeightRow
 import util.WindowSize
 import util.calculateWindowSize
 import util.iconRes
@@ -65,120 +64,111 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
             val large = windowSize == WindowSize.Large
             var startButtonsHeight by rememberSaveable { mutableStateOf(0) }
             val startButtonsHeightDp = with(LocalDensity.current) { startButtonsHeight.toDp() }
-            ExpandWidths(modifier = Modifier.fillMaxHeight().align(Alignment.TopCenter)) {
-                WeightRow {
-                    var tempTrumpRank by
-                        rememberSaveable(state().trump) { mutableStateOf(state().trump?.rank) }
-                    var tempTrumpSuit by
-                        rememberSaveable(state().trump) { mutableStateOf(state().trump?.suit) }
-                    LaunchedEffect(tempTrumpRank, tempTrumpSuit) {
-                        tempTrumpRank?.let { r ->
-                            tempTrumpSuit?.let { s ->
-                                state { AppState.trump set PlayingCard(r, s) }
-                            }
-                        }
-                    }
-                    val cardColors =
-                        CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainer
-                        )
-                    if (windowSize == WindowSize.Small) {
+            var tempTrumpRank by
+                rememberSaveable(state().trump) { mutableStateOf(state().trump?.rank) }
+            var tempTrumpSuit by
+                rememberSaveable(state().trump) { mutableStateOf(state().trump?.suit) }
+            LaunchedEffect(tempTrumpRank, tempTrumpSuit) {
+                tempTrumpRank?.let { r ->
+                    tempTrumpSuit?.let { s -> state { AppState.trump set PlayingCard(r, s) } }
+                }
+            }
+            val cardColors =
+                CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+            if (windowSize == WindowSize.Small) {
+                Column(
+                    modifier =
+                        Modifier.verticalScroll(rememberScrollState())
+                            .padding(12.dp)
+                            .padding(bottom = startButtonsHeightDp)
+                ) {
+                    PossibleTrumpsSelection(
+                        cardColors,
+                        windowSize,
+                        navigator,
+                        state,
+                        modifier = Modifier.fillMaxWidth().padding(12.dp)
+                    )
+                    TrumpCardSelection(
+                        cardColors,
+                        tempTrumpRank,
+                        { tempTrumpRank = it },
+                        tempTrumpSuit,
+                        { tempTrumpSuit = it },
+                        windowSize,
+                        navigator,
+                        state,
+                        modifier = Modifier.fillMaxWidth().padding(12.dp)
+                    )
+                    CallsSelection(
+                        cardColors,
+                        navigator,
+                        state,
+                        modifier = Modifier.fillMaxWidth().padding(12.dp)
+                    )
+                    TeammatesSelection(
+                        cardColors,
+                        navigator,
+                        state,
+                        modifier = Modifier.fillMaxWidth().padding(12.dp)
+                    )
+                }
+            } else {
+                Row(modifier = Modifier.fillMaxSize()) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.verticalScroll(rememberScrollState()).weight(2f)
+                    ) {
                         Column(
                             modifier =
-                                Modifier.weight()
-                                    .verticalScroll(rememberScrollState())
-                                    .padding(12.dp)
-                                    .padding(bottom = startButtonsHeightDp)
-                        ) {
-                            PossibleTrumpsSelection(
-                                cardColors,
-                                windowSize,
-                                navigator,
-                                state,
-                                modifier = Modifier.fillMaxWidth().padding(12.dp)
-                            )
-                            TrumpCardSelection(
-                                cardColors,
-                                tempTrumpRank,
-                                { tempTrumpRank = it },
-                                tempTrumpSuit,
-                                { tempTrumpSuit = it },
-                                windowSize,
-                                navigator,
-                                state,
-                                modifier = Modifier.fillMaxWidth().padding(12.dp)
-                            )
-                            CallsSelection(
-                                cardColors,
-                                navigator,
-                                state,
-                                modifier = Modifier.fillMaxWidth().padding(12.dp)
-                            )
-                            TeammatesSelection(
-                                cardColors,
-                                navigator,
-                                state,
-                                modifier = Modifier.fillMaxWidth().padding(12.dp)
-                            )
-                        }
-                    } else {
-                        ExpandWidths(
-                            modifier =
-                                Modifier.weight()
-                                    .verticalScroll(rememberScrollState())
+                                Modifier.widthIn(
+                                        0.dp,
+                                        (WindowSize.Medium.breakpoint +
+                                            WindowSize.Large.breakpoint) / 2
+                                    )
                                     .padding(12.dp)
                                     .padding(bottom = if (!large) startButtonsHeightDp else 0.dp)
                         ) {
-                            Column {
-                                ExpandHeights {
-                                    WeightRow {
-                                        PossibleTrumpsSelection(
-                                            cardColors,
-                                            windowSize,
-                                            navigator,
-                                            state,
-                                            modifier =
-                                                Modifier.expandHeight().weight().padding(12.dp)
-                                        )
-                                        TrumpCardSelection(
-                                            cardColors,
-                                            tempTrumpRank,
-                                            { tempTrumpRank = it },
-                                            tempTrumpSuit,
-                                            { tempTrumpSuit = it },
-                                            windowSize,
-                                            navigator,
-                                            state,
-                                            modifier =
-                                                Modifier.expandHeight().weight().padding(12.dp)
-                                        )
-                                    }
-                                }
-                                ExpandHeights {
-                                    WeightRow {
-                                        CallsSelection(
-                                            cardColors,
-                                            navigator,
-                                            state,
-                                            modifier =
-                                                Modifier.expandHeight().weight().padding(12.dp)
-                                        )
-                                        TeammatesSelection(
-                                            cardColors,
-                                            navigator,
-                                            state,
-                                            modifier =
-                                                Modifier.expandHeight().weight().padding(12.dp)
-                                        )
-                                    }
-                                }
+                            Row {
+                                PossibleTrumpsSelection(
+                                    cardColors,
+                                    windowSize,
+                                    navigator,
+                                    state,
+                                    modifier = Modifier.weight(1f).padding(12.dp)
+                                )
+                                TrumpCardSelection(
+                                    cardColors,
+                                    tempTrumpRank,
+                                    { tempTrumpRank = it },
+                                    tempTrumpSuit,
+                                    { tempTrumpSuit = it },
+                                    windowSize,
+                                    navigator,
+                                    state,
+                                    modifier = Modifier.weight(1f).padding(12.dp)
+                                )
+                            }
+                            Row {
+                                CallsSelection(
+                                    cardColors,
+                                    navigator,
+                                    state,
+                                    modifier = Modifier.weight(1f).padding(12.dp)
+                                )
+                                TeammatesSelection(
+                                    cardColors,
+                                    navigator,
+                                    state,
+                                    modifier = Modifier.weight(1f).padding(12.dp)
+                                )
                             }
                         }
                     }
                     if (large) {
                         Box(
                             contentAlignment = Alignment.Center,
-                            modifier = Modifier.fillMaxHeight().padding(24.dp)
+                            modifier = Modifier.fillMaxHeight().weight(1f).padding(24.dp)
                         ) {
                             StartButtons(navigator)
                         }
