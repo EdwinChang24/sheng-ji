@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import resources.Res
+import resources.ic_done
 import resources.ic_timer
 import util.iconRes
 
@@ -73,6 +74,10 @@ fun SettingsAutoSwitchSecondsPicker(
                 autoSwitchIntervals.forEach { (seconds, name) ->
                     DropdownMenuItem(
                         text = { Text(name, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                        trailingIcon = {
+                            if (seconds == autoSwitchSeconds)
+                                Icon(iconRes(Res.drawable.ic_done), null)
+                        },
                         onClick = {
                             setAutoSwitchSeconds(seconds)
                             expanded = false

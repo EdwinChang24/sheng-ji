@@ -23,6 +23,8 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import resources.Res
+import resources.ic_done
 import settings.ThemeSetting
 import util.iconRes
 
@@ -69,6 +71,9 @@ fun SettingsThemePicker(theme: ThemeSetting, setTheme: (ThemeSetting) -> Unit) {
                             )
                         },
                         leadingIcon = { Icon(iconRes(themeSelection.icon), null) },
+                        trailingIcon = {
+                            if (themeSelection == theme) Icon(iconRes(Res.drawable.ic_done), null)
+                        },
                         onClick = {
                             setTheme(themeSelection)
                             expanded = false
