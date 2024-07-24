@@ -109,7 +109,7 @@ fun ExpandHeightsScope.WeightColumn(
                         .coerceAtLeast(0)
                 val finalMeasurables =
                     subcompose(1) { ExpandHeightsScope.WeightColumnScope(false).content() }
-                val finalPlaceables = mutableMapOf<Int, Placeable>()
+                var maxWidth = 0
                 var y = 0
                 for (measurable in finalMeasurables) {
                     val placeable =
@@ -125,17 +125,11 @@ fun ExpandHeightsScope.WeightColumn(
                                     maxHeight = (constraints.maxHeight - y).coerceAtLeast(0)
                                 )
                         )
-                    finalPlaceables[y] = placeable
+                    maxWidth = maxOf(placeable.width, maxWidth)
                     y += placeable.height + spacingPx
+                    if (y >= constraints.maxHeight) break
                 }
-                layout(
-                    width = finalPlaceables.values.maxOf { it.width },
-                    height = constraints.maxHeight
-                ) {
-                    finalPlaceables.forEach { (position, placeable) ->
-                        placeable.place(0, position)
-                    }
-                }
+                layout(width = maxWidth, height = constraints.maxHeight) {}
             } else {
                 val finalPlaceables =
                     subcompose(1) { ExpandHeightsScope.WeightColumnScope(false).content() }
@@ -157,13 +151,7 @@ fun ExpandHeightsScope.WeightColumn(
                     width = finalPlaceables.maxOf { it.width },
                     height =
                         finalPlaceables.sumOf { it.height } + spacingPx * (finalPlaceables.size - 1)
-                ) {
-                    var y = 0
-                    finalPlaceables.forEach { placeable ->
-                        placeable.place(0, y)
-                        y += placeable.height + spacingPx
-                    }
-                }
+                ) {}
             }
         }
     }

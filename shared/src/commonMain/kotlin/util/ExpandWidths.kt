@@ -104,7 +104,7 @@ fun ExpandWidthsScope.WeightRow(
                         .coerceAtLeast(0)
                 val finalMeasurables =
                     subcompose(1) { ExpandWidthsScope.WeightRowScope(false).content() }
-                val finalPlaceables = mutableMapOf<Int, Placeable>()
+                var maxHeight = 0
                 var x = 0
                 for (measurable in finalMeasurables) {
                     val placeable =
@@ -120,17 +120,11 @@ fun ExpandWidthsScope.WeightRow(
                                     maxWidth = (constraints.maxWidth - x).coerceAtLeast(0)
                                 )
                         )
-                    finalPlaceables[x] = placeable
+                    maxHeight = maxOf(placeable.height, maxHeight)
                     x += placeable.width + spacingPx
+                    if (x >= constraints.maxWidth) break
                 }
-                layout(
-                    width = constraints.maxWidth,
-                    height = finalPlaceables.values.maxOf { it.height }
-                ) {
-                    finalPlaceables.forEach { (position, placeable) ->
-                        placeable.place(position, 0)
-                    }
-                }
+                layout(width = constraints.maxWidth, height = maxHeight) {}
             } else {
                 val finalPlaceables =
                     subcompose(1) { ExpandWidthsScope.WeightRowScope(false).content() }
@@ -148,13 +142,7 @@ fun ExpandWidthsScope.WeightRow(
                     width =
                         finalPlaceables.sumOf { it.width } + spacingPx * (finalPlaceables.size - 1),
                     height = finalPlaceables.maxOf { it.height }
-                ) {
-                    var x = 0
-                    finalPlaceables.forEach { placeable ->
-                        placeable.place(x, 0)
-                        x += placeable.width + spacingPx
-                    }
-                }
+                ) {}
             }
         }
     }
