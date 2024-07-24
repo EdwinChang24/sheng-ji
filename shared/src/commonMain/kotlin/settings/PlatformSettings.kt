@@ -18,7 +18,12 @@ sealed interface PlatformSettings {
         companion object
     }
 
-    @Serializable @SerialName("web") data object Web : PlatformSettings
+    @Serializable
+    @SerialName("web")
+    @optics
+    data class Web(val keepScreenOn: Boolean = true) : PlatformSettings {
+        companion object
+    }
 
     companion object
 }
