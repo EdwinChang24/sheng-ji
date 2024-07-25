@@ -11,6 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -28,12 +29,15 @@ import navigation.Navigator
 import resources.Res
 import resources.ic_close
 import resources.ic_done
+import util.ClearableState
 import util.ExpandWidths
 import util.iconRes
 
 @Composable
 fun EditPossibleTrumpsDialog(navigator: Navigator, state: AppState.Prop) {
     var selected by rememberSaveable { mutableStateOf(state().possibleTrumps) }
+    var recentlyCleared: Set<String>? by rememberSaveable { mutableStateOf(null) }
+    LaunchedEffect(selected) { if (selected.isNotEmpty()) recentlyCleared = null }
     ExpandWidths {
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -50,7 +54,21 @@ fun EditPossibleTrumpsDialog(navigator: Navigator, state: AppState.Prop) {
                     overflow = TextOverflow.Ellipsis
                 )
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.expandWidth()) {
-                    PossibleTrumpsPicker(selected, { selected = it })
+                    PossibleTrumpsPicker(
+                        ClearableState(
+                            value = selected,
+                            setValue = { selected = it },
+                            clearValue = {
+                                recentlyCleared = selected
+                                selected = emptySet()
+                            },
+                            canUndoClear = selected.isEmpty() && recentlyCleared != null,
+                            undoClearValue = {
+                                recentlyCleared?.let { selected = it }
+                                recentlyCleared = null
+                            }
+                        )
+                    )
                 }
             }
             Row(

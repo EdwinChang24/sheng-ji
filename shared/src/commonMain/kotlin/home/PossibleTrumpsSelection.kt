@@ -27,12 +27,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import components.OutlinedButtonWithEmphasis
 import components.PossibleTrumpsPicker
-import model.AppState
-import model.possibleTrumps
 import navigation.Dialog
 import navigation.Navigator
 import resources.Res
 import resources.ic_edit
+import util.ClearableState
 import util.ExpandWidths
 import util.WeightRow
 import util.WindowSize
@@ -40,10 +39,10 @@ import util.iconRes
 
 @Composable
 fun PossibleTrumpsSelection(
+    possibleTrumpsState: ClearableState<Set<String>>,
     cardColors: CardColors,
     windowSize: WindowSize,
     navigator: Navigator,
-    state: AppState.Prop,
     modifier: Modifier = Modifier
 ) {
     val large = windowSize == WindowSize.Large
@@ -77,7 +76,7 @@ fun PossibleTrumpsSelection(
                         modifier = Modifier.expandWidth().padding(horizontal = 24.dp)
                     ) {
                         AnimatedContent(
-                            state().possibleTrumps,
+                            possibleTrumpsState.value,
                             modifier = Modifier.expandWidth(),
                             transitionSpec = {
                                 (fadeIn(animationSpec = tween(220, delayMillis = 90)) +
@@ -102,10 +101,7 @@ fun PossibleTrumpsSelection(
                                 )
                             }
                         }
-                        PossibleTrumpsPicker(
-                            selected = state().possibleTrumps,
-                            setSelected = { state { AppState.possibleTrumps set it } }
-                        )
+                        PossibleTrumpsPicker(possibleTrumpsState)
                     }
                 } else {
                     WeightRow(
@@ -113,7 +109,7 @@ fun PossibleTrumpsSelection(
                             Modifier.expandWidth().padding(horizontal = 24.dp, vertical = 8.dp)
                     ) {
                         AnimatedContent(
-                            state().possibleTrumps,
+                            possibleTrumpsState.value,
                             modifier = Modifier.weight().padding(end = 16.dp)
                         ) { targetState ->
                             Text(

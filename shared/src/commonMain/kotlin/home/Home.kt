@@ -31,12 +31,15 @@ import components.AppName
 import components.IconButtonWithEmphasis
 import model.AppState
 import model.PlayingCard
+import model.possibleTrumps
+import model.teammates
 import model.trump
 import navigation.Dialog
 import navigation.Navigator
 import resources.Res
 import resources.ic_info
 import resources.ic_settings
+import util.ClearableState
 import util.WindowSize
 import util.calculateWindowSize
 import util.iconRes
@@ -64,6 +67,29 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
             val large = windowSize == WindowSize.Large
             var startButtonsHeight by rememberSaveable { mutableStateOf(0) }
             val startButtonsHeightDp = with(LocalDensity.current) { startButtonsHeight.toDp() }
+            var recentlyClearedPossibleTrumps: Set<String>? by rememberSaveable {
+                mutableStateOf(null)
+            }
+            LaunchedEffect(state().possibleTrumps) {
+                if (state().possibleTrumps.isNotEmpty()) recentlyClearedPossibleTrumps = null
+            }
+            val possibleTrumpsState =
+                ClearableState(
+                    value = state().possibleTrumps,
+                    setValue = { state { AppState.possibleTrumps set it } },
+                    clearValue = {
+                        recentlyClearedPossibleTrumps = state().possibleTrumps
+                        state { AppState.possibleTrumps set emptySet() }
+                    },
+                    canUndoClear =
+                        state().possibleTrumps.isEmpty() && recentlyClearedPossibleTrumps != null,
+                    undoClearValue = {
+                        recentlyClearedPossibleTrumps?.let {
+                            state { AppState.possibleTrumps set it }
+                        }
+                        recentlyClearedPossibleTrumps = null
+                    }
+                )
             var tempTrumpRank by
                 rememberSaveable(state().trump) { mutableStateOf(state().trump?.rank) }
             var tempTrumpSuit by
@@ -73,6 +99,26 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
                     tempTrumpSuit?.let { s -> state { AppState.trump set PlayingCard(r, s) } }
                 }
             }
+            var recentlyClearedTeammates: Map<String, Float>? by rememberSaveable {
+                mutableStateOf(null)
+            }
+            LaunchedEffect(state().teammates) {
+                if (state().teammates.isNotEmpty()) recentlyClearedTeammates = null
+            }
+            val teammatesState =
+                ClearableState(
+                    value = state().teammates,
+                    setValue = { state { AppState.teammates set it } },
+                    clearValue = {
+                        recentlyClearedTeammates = state().teammates
+                        state { AppState.teammates set emptyMap() }
+                    },
+                    canUndoClear = state().teammates.isEmpty() && recentlyClearedTeammates != null,
+                    undoClearValue = {
+                        recentlyClearedTeammates?.let { state { AppState.teammates set it } }
+                        recentlyClearedTeammates = null
+                    }
+                )
             val cardColors =
                 CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
             if (windowSize == WindowSize.Small) {
@@ -83,10 +129,10 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
                             .padding(bottom = startButtonsHeightDp)
                 ) {
                     PossibleTrumpsSelection(
+                        possibleTrumpsState,
                         cardColors,
                         windowSize,
                         navigator,
-                        state,
                         modifier = Modifier.fillMaxWidth().padding(12.dp)
                     )
                     TrumpCardSelection(
@@ -107,9 +153,9 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
                         modifier = Modifier.fillMaxWidth().padding(12.dp)
                     )
                     TeammatesSelection(
+                        teammatesState,
                         cardColors,
                         navigator,
-                        state,
                         modifier = Modifier.fillMaxWidth().padding(12.dp)
                     )
                 }
@@ -131,10 +177,10 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
                         ) {
                             Row {
                                 PossibleTrumpsSelection(
+                                    possibleTrumpsState,
                                     cardColors,
                                     windowSize,
                                     navigator,
-                                    state,
                                     modifier = Modifier.weight(1f).padding(12.dp)
                                 )
                                 TrumpCardSelection(
@@ -157,9 +203,9 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
                                     modifier = Modifier.weight(1f).padding(12.dp)
                                 )
                                 TeammatesSelection(
+                                    teammatesState,
                                     cardColors,
                                     navigator,
-                                    state,
                                     modifier = Modifier.weight(1f).padding(12.dp)
                                 )
                             }

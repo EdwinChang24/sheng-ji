@@ -8,11 +8,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerIcon
@@ -22,25 +17,23 @@ import interaction.PressableWithEmphasis
 import resources.Res
 import resources.ic_clear_all
 import resources.ic_undo
+import util.ClearableState
 import util.ExpandWidths
 import util.allRanks
 import util.iconRes
 
 @Composable
 fun PossibleTrumpsPicker(
-    selected: Set<String>,
-    setSelected: (Set<String>) -> Unit,
+    possibleTrumpsState: ClearableState<Set<String>>,
     modifier: Modifier = Modifier
 ) {
-    var saved: Set<String>? by rememberSaveable { mutableStateOf(null) }
-    LaunchedEffect(selected) { if (selected.isNotEmpty()) saved = null }
     val toggleRank = { rank: String ->
-        setSelected(
-            selected
+        possibleTrumpsState.setValue(
+            possibleTrumpsState.value
                 .toMutableSet()
                 .apply { if (rank in this) remove(rank) else add(rank) }
                 .sortedBy { allRanks.indexOf(it) }
-                .toSet()
+                .toSet().also { println(it) }
         )
     }
     ExpandWidths(modifier = modifier) {
@@ -52,34 +45,33 @@ fun PossibleTrumpsPicker(
                 Row {
                     (2..6)
                         .map { it.toString() }
-                        .forEach { RankButton(it, toggleRank, it in selected) }
+                        .forEach { RankButton(it, toggleRank, it in possibleTrumpsState.value) }
                 }
                 Row {
                     ((7..10).map { it.toString() } + "J").forEach {
-                        RankButton(it, toggleRank, it in selected)
+                        RankButton(it, toggleRank, it in possibleTrumpsState.value)
                     }
                 }
-                Row { listOf("Q", "K", "A").forEach { RankButton(it, toggleRank, it in selected) } }
+                Row {
+                    listOf("Q", "K", "A").forEach {
+                        RankButton(it, toggleRank, it in possibleTrumpsState.value)
+                    }
+                }
             }
             Box(modifier = Modifier.expandWidth()) {
                 OutlinedButtonWithEmphasis(
-                    text = if (selected.isNotEmpty() || saved == null) "Clear" else "Undo",
+                    text = if (!possibleTrumpsState.canUndoClear) "Clear" else "Undo clear",
                     icon =
                         iconRes(
-                            if (selected.isNotEmpty() || saved == null) Res.drawable.ic_clear_all
+                            if (!possibleTrumpsState.canUndoClear) Res.drawable.ic_clear_all
                             else Res.drawable.ic_undo
                         ),
                     onClick = {
-                        if (saved != null) {
-                            saved?.let {
-                                setSelected(it.sortedBy { r -> allRanks.indexOf(r) }.toSet())
-                            }
-                        } else {
-                            saved = selected
-                            setSelected(emptySet())
-                        }
+                        if (possibleTrumpsState.canUndoClear) possibleTrumpsState.undoClearValue()
+                        else possibleTrumpsState.clearValue()
                     },
-                    enabled = (selected.isEmpty() && saved != null) || selected.isNotEmpty(),
+                    enabled =
+                        possibleTrumpsState.canUndoClear || possibleTrumpsState.value.isNotEmpty(),
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
