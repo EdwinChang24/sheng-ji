@@ -51,6 +51,9 @@ fun BoxWithConstraintsScope.TeammatesMainButton(
     var new: Pair<String, Offset>? by remember { mutableStateOf(null) }
     val mainButtonRadiusPx = mainButtonRadiusPx
     val onRelease = {
+        if (new?.second?.getDistanceSquared()?.let { it <= mainButtonRadiusPx.pow(2) } == true) {
+            new = null
+        }
         new?.let { n ->
             new = null
             addNewTeammate(n)
@@ -127,6 +130,7 @@ fun BoxWithConstraintsScope.TeammatesMainButton(
             Teammate(
                 editing = true,
                 offset,
+                { new = id to offset + it },
                 { new = id to it },
                 getRestingOffset,
                 draggingOthers = false,

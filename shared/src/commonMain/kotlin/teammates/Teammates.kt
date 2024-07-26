@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,24 +56,19 @@ fun Teammates(
         val width = constraints.maxWidth.toFloat()
         val height = constraints.maxHeight.toFloat()
         val mainButtonRadiusPx = mainButtonRadiusPx
-        var teammateOffsetsKey by rememberSaveable { mutableIntStateOf(0) }
-        val teammateOffsets =
-            remember(teammateOffsetsKey) {
-                mutableStateMapOf(
-                    *savedTeammatesRad
-                        .map { (id, angleRad) ->
-                            id to
-                                calculateRestingOffset(
-                                    angleRad,
-                                    (width / 2 - mainButtonRadiusPx) / 2 + mainButtonRadiusPx,
-                                    (height / 2 - mainButtonRadiusPx) / 2 + mainButtonRadiusPx
-                                )
-                        }
-                        .toTypedArray()
-                )
-            }
-        LaunchedEffect(teammateOffsets.toMap()) {
-            setSavedTeammatesRad(teammateOffsets.mapValues { (_, offset) -> offset.atan2() })
+        val teammateOffsets = remember {
+            mutableStateMapOf(
+                *savedTeammatesRad
+                    .map { (id, angleRad) ->
+                        id to
+                            calculateRestingOffset(
+                                angleRad,
+                                (width / 2 - mainButtonRadiusPx) / 2 + mainButtonRadiusPx,
+                                (height / 2 - mainButtonRadiusPx) / 2 + mainButtonRadiusPx
+                            )
+                    }
+                    .toTypedArray()
+            )
         }
         val getRestingOffset = { offset: Offset ->
             calculateRestingOffset(
@@ -88,8 +82,23 @@ fun Teammates(
         }
         var draggingNew by remember { mutableStateOf(false) }
         LaunchedEffect(savedTeammatesRad) {
+            savedTeammatesRad.forEach { (id, rad) ->
+                if (dragging[id] != true) {
+                    teammateOffsets[id] =
+                        calculateRestingOffset(
+                            rad,
+                            (width / 2 - mainButtonRadiusPx) / 2 + mainButtonRadiusPx,
+                            (height / 2 - mainButtonRadiusPx) / 2 + mainButtonRadiusPx
+                        )
+                }
+            }
+            teammateOffsets.keys
+                .filterNot { it in savedTeammatesRad }
+                .forEach { teammateOffsets.remove(it) }
+        }
+        LaunchedEffect(dragging.toMap(), draggingNew) {
             if (dragging.none { it.value } && !draggingNew) {
-                teammateOffsetsKey++
+                setSavedTeammatesRad(teammateOffsets.mapValues { (_, offset) -> offset.atan2() })
             }
         }
         TeammatesMainButton(
@@ -109,7 +118,10 @@ fun Teammates(
                 Teammate(
                     editing = editing,
                     offset = offset,
-                    onOffsetChange = { teammateOffsets[id] = it },
+                    moveOffset = { change ->
+                        teammateOffsets[id]?.let { it + change }?.let { teammateOffsets[id] = it }
+                    },
+                    setOffset = { teammateOffsets[id] = it },
                     getRestingOffset = getRestingOffset,
                     draggingOthers = dragging.any { id != it.key && it.value } || draggingNew,
                     setDragging = { dragging[id] = it },
@@ -125,6 +137,7 @@ fun Teammates(
             if (teammateOffsets.isNotEmpty()) {
                 recentlyCleared = teammateOffsets.mapValues { (_, offset) -> offset.atan2() }
                 teammateOffsets.clear()
+                setSavedTeammatesRad(emptyMap())
             } else {
                 recentlyCleared?.let {
                     teammateOffsets.putAll(
@@ -135,6 +148,9 @@ fun Teammates(
                                 (height / 2 - mainButtonRadiusPx) / 2 + mainButtonRadiusPx
                             )
                         }
+                    )
+                    setSavedTeammatesRad(
+                        teammateOffsets.mapValues { (_, offset) -> offset.atan2() }
                     )
                     recentlyCleared = null
                 }

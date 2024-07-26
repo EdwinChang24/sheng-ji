@@ -56,7 +56,8 @@ import util.iconRes
 fun BoxWithConstraintsScope.Teammate(
     editing: Boolean,
     offset: Offset,
-    onOffsetChange: (Offset) -> Unit,
+    moveOffset: (Offset) -> Unit,
+    setOffset: (Offset) -> Unit,
     getRestingOffset: (Offset) -> Offset,
     draggingOthers: Boolean,
     setDragging: (Boolean) -> Unit,
@@ -71,29 +72,17 @@ fun BoxWithConstraintsScope.Teammate(
     val isDragging = pressed || new
     val sizeDp = 48.dp
     val sizePx = with(LocalDensity.current) { sizeDp.roundToPx() }
-    var offsetLocal by remember { mutableStateOf(offset) }
-    LaunchedEffect(offsetLocal) { if (!new) onOffsetChange(offsetLocal) }
-    LaunchedEffect(offset) { if (!isDragging) offsetLocal = offset }
     LaunchedEffect(isDragging) {
+        setDragging(isDragging)
         if (!isDragging) {
-            setDragging(false)
-            if (new) {
-                if (offset.getDistanceSquared() > mainButtonRadiusPx.pow(2)) {
-                    onOffsetChange(getRestingOffset(offset))
-                } else delete()
-            } else {
-                if (offsetLocal.getDistanceSquared() > mainButtonRadiusPx.pow(2)) {
-                    offsetLocal = getRestingOffset(offsetLocal)
-                } else delete()
-            }
-        } else {
-            setDragging(true)
+            if (offset.getDistanceSquared() > mainButtonRadiusPx.pow(2)) {
+                setOffset(getRestingOffset(offset))
+            } else delete()
         }
     }
-    LaunchedEffect(offset) { if (new) offsetLocal = offset }
     val springSpec = spring<Float>(stiffness = Spring.StiffnessLow)
     val calcOffset =
-        with(if (new) offset else offsetLocal) {
+        with(offset) {
             Offset(
                 animateFloatAsState(x, if (isDragging) snap() else springSpec).value,
                 animateFloatAsState(y, if (isDragging) snap() else springSpec).value
@@ -216,8 +205,7 @@ fun BoxWithConstraintsScope.Teammate(
                                         onDragCancel = { pressed = false }
                                     ) { change, dragAmount ->
                                         change.consume()
-                                        if (new) onOffsetChange(offset + dragAmount)
-                                        else offsetLocal += dragAmount
+                                        moveOffset(dragAmount)
                                     }
                                 }
                                 .pointerInput(true) {
