@@ -33,7 +33,7 @@ fun PossibleTrumpsPicker(
                 .toMutableSet()
                 .apply { if (rank in this) remove(rank) else add(rank) }
                 .sortedBy { allRanks.indexOf(it) }
-                .toSet().also { println(it) }
+                .toSet()
         )
     }
     ExpandWidths(modifier = modifier) {
