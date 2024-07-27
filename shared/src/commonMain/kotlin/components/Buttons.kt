@@ -1,5 +1,7 @@
 package components
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.SizeTransform
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -20,6 +22,7 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import interaction.PressableWithEmphasis
+import util.DefaultTransition
 
 @Composable
 fun ButtonWithEmphasis(
@@ -43,8 +46,18 @@ fun ButtonWithEmphasis(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.pressEmphasis()
             ) {
-                icon?.let { Icon(it, null) }
-                Text(text, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                AnimatedContent(
+                    targetState = icon,
+                    transitionSpec = { DefaultTransition using SizeTransform(clip = false) }
+                ) { iconState ->
+                    iconState?.let { Icon(it, null) }
+                }
+                AnimatedContent(
+                    targetState = text,
+                    transitionSpec = { DefaultTransition using SizeTransform(clip = false) }
+                ) { textState ->
+                    Text(textState, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                }
             }
         }
     }
@@ -72,8 +85,18 @@ fun OutlinedButtonWithEmphasis(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.pressEmphasis()
             ) {
-                icon?.let { Icon(it, null) }
-                Text(text, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                AnimatedContent(
+                    targetState = icon,
+                    transitionSpec = { DefaultTransition using SizeTransform(clip = false) }
+                ) { iconState ->
+                    iconState?.let { Icon(it, null) }
+                }
+                AnimatedContent(
+                    targetState = text,
+                    transitionSpec = { DefaultTransition using SizeTransform(clip = false) }
+                ) { textState ->
+                    Text(textState, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                }
             }
         }
     }
