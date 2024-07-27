@@ -65,19 +65,7 @@ fun CallsSelection(
     modifier: Modifier = Modifier
 ) {
     ExpandWidths(modifier = modifier) {
-        Card(
-            colors = cardColors,
-            modifier =
-                Modifier.clip(CardDefaults.shape)
-                    .then(
-                        if (callsState.value.isEmpty())
-                            Modifier.clickable {
-                                    navigator.navigate(Dialog.EditCall(uuid4().toString()))
-                                }
-                                .pointerHoverIcon(PointerIcon.Hand)
-                        else Modifier
-                    )
-        ) {
+        Card(colors = cardColors, modifier = Modifier.clip(CardDefaults.shape)) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.padding(vertical = 24.dp)
@@ -164,7 +152,12 @@ fun CallsSelection(
                     } else {
                         WeightRow(
                             modifier =
-                                Modifier.expandWidth().padding(horizontal = 24.dp, vertical = 8.dp)
+                                Modifier.expandWidth()
+                                    .clickable {
+                                        navigator.navigate(Dialog.EditCall(uuid4().toString()))
+                                    }
+                                    .pointerHoverIcon(PointerIcon.Hand)
+                                    .padding(horizontal = 24.dp, vertical = 8.dp)
                         ) {
                             Box(
                                 contentAlignment = Alignment.CenterStart,
