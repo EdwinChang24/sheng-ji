@@ -178,7 +178,7 @@ fun App(state: AppState.Prop, modifier: Modifier = Modifier) {
                         ) {
                             when (targetDialog) {
                                 is Dialog.EditCall ->
-                                    EditCallDialog(targetDialog.index, navigator, state)
+                                    EditCallDialog(targetDialog.id, navigator, state)
                                 Dialog.EditPossibleTrumps ->
                                     EditPossibleTrumpsDialog(navigator, state)
                                 Dialog.EditTrump -> EditTrumpDialog(navigator, state)

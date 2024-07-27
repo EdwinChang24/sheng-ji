@@ -35,30 +35,30 @@ import resources.ic_done
 import util.ExpandWidths
 import util.iconRes
 
-/** @param index index of call to edit; will create a new call if index is out of bounds */
 @Composable
-fun EditCallDialog(index: Int, navigator: Navigator, state: AppState.Prop) {
-    var rank by rememberSaveable { mutableStateOf(state().calls.getOrNull(index)?.card?.rank) }
-    var suit by rememberSaveable { mutableStateOf(state().calls.getOrNull(index)?.card?.suit) }
-    var number by rememberSaveable {
-        mutableIntStateOf(state().calls.getOrNull(index)?.number ?: 1)
-    }
+fun EditCallDialog(id: String, navigator: Navigator, state: AppState.Prop) {
+    val existingCall = state().calls.firstOrNull { it.id == id }
+    var rank by rememberSaveable { mutableStateOf(existingCall?.card?.rank) }
+    var suit by rememberSaveable { mutableStateOf(existingCall?.card?.suit) }
+    var number by rememberSaveable { mutableIntStateOf(existingCall?.number ?: 1) }
     fun onDone() {
         rank?.let { r ->
             suit?.let { s ->
                 val calls =
                     state().calls.toMutableList().apply {
-                        if (index in indices) {
-                            this[index] =
-                                this[index].copy(
-                                    card = PlayingCard(r, s),
-                                    number = number,
-                                    found =
-                                        this[index].found.let { if (it > number) number else it }
-                                )
-                        } else {
-                            add(Call(PlayingCard(r, s), number, found = 0))
-                        }
+                        indexOfFirst { it.id == id }
+                            .takeIf { it > -1 }
+                            ?.let { index ->
+                                this[index] =
+                                    this[index].copy(
+                                        card = PlayingCard(r, s),
+                                        number = number,
+                                        found =
+                                            this[index].found.let {
+                                                if (it > number) number else it
+                                            }
+                                    )
+                            } ?: add(Call(id, PlayingCard(r, s), number, 0))
                     }
                 state { AppState.calls set calls }
                 navigator.closeDialog()

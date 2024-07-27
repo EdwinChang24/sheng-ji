@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import arrow.optics.get
+import com.benasher44.uuid.uuid4
 import components.CallFoundText
 import components.PlayingCard
 import interaction.PressableWithEmphasis
@@ -77,7 +78,7 @@ fun CallsDisplay(
                         Modifier.clip(MaterialTheme.shapes.large)
                             .clickableForEmphasis(
                                 onClick = {
-                                    navigator.navigate(Dialog.EditCall(state().calls.size))
+                                    navigator.navigate(Dialog.EditCall(uuid4().toString()))
                                 }
                             )
                             .padding(24.dp)
@@ -85,7 +86,7 @@ fun CallsDisplay(
                 ) {
                     Text("No calls added")
                     OutlinedButton(
-                        onClick = { navigator.navigate(Dialog.EditCall(state().calls.size)) }
+                        onClick = { navigator.navigate(Dialog.EditCall(uuid4().toString())) }
                     ) {
                         Icon(iconRes(Res.drawable.ic_add), null)
                         Spacer(modifier = Modifier.width(8.dp))

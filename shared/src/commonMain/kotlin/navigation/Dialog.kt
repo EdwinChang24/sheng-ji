@@ -9,7 +9,7 @@ import kotlinx.serialization.json.Json
 @Serializable
 sealed interface Dialog {
 
-    @Serializable @SerialName("editCall") data class EditCall(val index: Int) : Dialog
+    @Serializable @SerialName("editCall") data class EditCall(val id: String) : Dialog
 
     @Serializable @SerialName("editPossibleTrumps") data object EditPossibleTrumps : Dialog
 

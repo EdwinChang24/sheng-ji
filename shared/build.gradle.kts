@@ -34,6 +34,7 @@ kotlin {
                 implementation(libs.kotlinx.serialization)
                 implementation(libs.uuid)
                 implementation(libs.arrow.optics)
+                implementation(libs.reorderable)
             }
         }
         androidMain.dependencies {

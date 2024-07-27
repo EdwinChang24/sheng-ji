@@ -30,7 +30,9 @@ import androidx.compose.ui.unit.dp
 import components.AppName
 import components.IconButtonWithEmphasis
 import model.AppState
+import model.Call
 import model.PlayingCard
+import model.calls
 import model.possibleTrumps
 import model.teammates
 import model.trump
@@ -99,6 +101,21 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
                     tempTrumpSuit?.let { s -> state { AppState.trump set PlayingCard(r, s) } }
                 }
             }
+            var recentlyClearedCalls: List<Call>? by rememberSaveable { mutableStateOf(null) }
+            val callsState =
+                ClearableState(
+                    value = state().calls,
+                    setValue = { state { AppState.calls set it } },
+                    clearValue = {
+                        recentlyClearedCalls = state().calls
+                        state { AppState.calls set emptyList() }
+                    },
+                    canUndoClear = state().calls.isEmpty() && recentlyClearedCalls != null,
+                    undoClearValue = {
+                        recentlyClearedCalls?.let { state { AppState.calls set it } }
+                        recentlyClearedCalls = null
+                    }
+                )
             var recentlyClearedTeammates: Map<String, Float>? by rememberSaveable {
                 mutableStateOf(null)
             }
@@ -147,6 +164,7 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
                         modifier = Modifier.fillMaxWidth().padding(12.dp)
                     )
                     CallsSelection(
+                        callsState,
                         cardColors,
                         navigator,
                         state,
@@ -197,6 +215,7 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
                             }
                             Row {
                                 CallsSelection(
+                                    callsState,
                                     cardColors,
                                     navigator,
                                     state,

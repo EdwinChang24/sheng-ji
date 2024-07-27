@@ -39,11 +39,18 @@ fun NumberPicker(
         ExpandHeights(modifier = modifier) {
             WeightRow(spacing = 16.dp) {
                 PressableWithEmphasis {
+                    val enabled = value - 1 in range
                     OutlinedCard(
-                        enabled = value - 1 in range,
-                        onClick = { if (value - 1 in range) setValue(value - 1) },
+                        enabled = enabled,
+                        onClick = { if (enabled) setValue(value - 1) },
                         interactionSource = interactionSource,
-                        modifier = Modifier.expandHeight().weight()
+                        modifier =
+                            Modifier.expandHeight()
+                                .weight()
+                                .then(
+                                    if (enabled) Modifier.pointerHoverIcon(PointerIcon.Hand)
+                                    else Modifier
+                                )
                     ) {
                         Box(
                             contentAlignment = Alignment.Center,
@@ -75,12 +82,18 @@ fun NumberPicker(
                     }
                 }
                 PressableWithEmphasis {
+                    val enabled = value + 1 in range
                     OutlinedCard(
-                        enabled = value + 1 in range,
-                        onClick = { if (value + 1 in range) setValue(value + 1) },
+                        enabled = enabled,
+                        onClick = { if (enabled) setValue(value + 1) },
                         interactionSource = interactionSource,
                         modifier =
-                            Modifier.expandHeight().weight().pointerHoverIcon(PointerIcon.Hand)
+                            Modifier.expandHeight()
+                                .weight()
+                                .then(
+                                    if (enabled) Modifier.pointerHoverIcon(PointerIcon.Hand)
+                                    else Modifier
+                                )
                     ) {
                         Box(
                             contentAlignment = Alignment.Center,
