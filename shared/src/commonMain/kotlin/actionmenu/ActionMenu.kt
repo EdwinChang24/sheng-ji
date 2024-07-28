@@ -63,6 +63,8 @@ import kotlin.math.absoluteValue
 import resources.Res
 import resources.ic_action_menu
 import resources.ic_close
+import util.WindowHeight
+import util.calculateWindowHeight
 import util.iconRes
 
 val ActionMenuButtonSize = 56.dp
@@ -80,6 +82,7 @@ fun ActionMenu(
     editingTeammates: Boolean,
     modifier: Modifier = Modifier
 ) {
+    val windowHeight = calculateWindowHeight()
     var menuState by
         rememberSaveable(stateSaver = ActionMenuState.StateSaver) {
             mutableStateOf(ActionMenuState.Closed())
@@ -293,36 +296,38 @@ fun ActionMenu(
                 }
             }
         }
-        AnimatedContent(
-            targetState = hintedAction,
-            transitionSpec = { fadeIn() togetherWith fadeOut() },
-            modifier = Modifier.fillMaxSize()
-        ) { targetState ->
-            BoxWithConstraints(modifier = Modifier.fillMaxSize().padding(24.dp)) {
-                targetState?.let {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                        modifier =
-                            Modifier.widthIn(max = maxWidth * 0.6f).align(Alignment.TopCenter)
-                    ) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            verticalAlignment = Alignment.CenterVertically
+        if (windowHeight >= WindowHeight.Large) {
+            AnimatedContent(
+                targetState = hintedAction,
+                transitionSpec = { fadeIn() togetherWith fadeOut() },
+                modifier = Modifier.fillMaxSize()
+            ) { targetState ->
+                BoxWithConstraints(modifier = Modifier.fillMaxSize().padding(24.dp)) {
+                    targetState?.let {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                            modifier =
+                                Modifier.widthIn(max = maxWidth * 0.6f).align(Alignment.TopCenter)
                         ) {
-                            Icon(iconRes(it.icon()), null)
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(iconRes(it.icon()), null)
+                                Text(
+                                    it.name(),
+                                    style = MaterialTheme.typography.titleSmall,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
                             Text(
-                                it.name(),
-                                style = MaterialTheme.typography.titleSmall,
-                                maxLines = 1,
+                                it.description(),
+                                style = MaterialTheme.typography.bodyMedium,
+                                maxLines = 3,
                                 overflow = TextOverflow.Ellipsis
                             )
                         }
-                        Text(
-                            it.description(),
-                            style = MaterialTheme.typography.bodyMedium,
-                            maxLines = 3,
-                            overflow = TextOverflow.Ellipsis
-                        )
                     }
                 }
             }

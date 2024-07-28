@@ -55,7 +55,7 @@ sealed interface WindowHeight {
     }
 
     data object Large : WindowHeight {
-        override val breakpoint = 800.dp
+        override val breakpoint = 600.dp
     }
 }
 
