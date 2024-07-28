@@ -19,8 +19,6 @@ import org.w3c.dom.StorageEvent
 @OptIn(ExperimentalComposeUiApi::class, DelicateCoroutinesApi::class)
 fun main() {
     configureWebResources { resourcePathMapping { path -> "./$path" } }
-    val stateStorageKey = "shengjidisplay.state"
-    val themeStorageKey = "shengjidisplay.theme"
     val appState =
         MutableStateFlow(
             localStorage.getItem(stateStorageKey)?.let { data ->
@@ -57,5 +55,3 @@ fun main() {
         App(AppState.Prop(state) { copy -> appState.value = state.copy(copy) })
     }
 }
-
-external fun updateTheme()

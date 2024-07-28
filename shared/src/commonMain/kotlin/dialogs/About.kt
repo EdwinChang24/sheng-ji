@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import appVersion
 import components.AppName
 import components.ButtonWithEmphasis
 import components.OutlinedButtonWithEmphasis
@@ -40,7 +41,6 @@ import util.WindowWidth
 import util.calculateWindowWidth
 import util.iconRes
 import util.suitIconRes
-import versionconfig.VersionConfig
 
 @Composable
 fun AboutDialog(navigator: Navigator, modifier: Modifier = Modifier) {
@@ -62,7 +62,7 @@ fun AboutDialog(navigator: Navigator, modifier: Modifier = Modifier) {
             ) {
                 ProvideTextStyle(MaterialTheme.typography.titleLarge) { AppName() }
                 Text(
-                    "Version ${VersionConfig.version} for $PlatformName",
+                    "Version $appVersion for $PlatformName",
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis

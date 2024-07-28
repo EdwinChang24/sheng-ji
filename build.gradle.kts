@@ -5,7 +5,6 @@ import com.diffplug.gradle.spotless.SpotlessExtension
 plugins {
     alias(libs.plugins.androidApplication) apply false
     alias(libs.plugins.androidLibrary) apply false
-    alias(libs.plugins.buildkonfig) apply false
     alias(libs.plugins.composeCompiler) apply false
     alias(libs.plugins.composeJB) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false

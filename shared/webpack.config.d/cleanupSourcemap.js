@@ -1,21 +1,25 @@
 // Replace paths unavailable during compilation with `null`, so they will not be shown in devtools
-;
+
 (() => {
     const fs = require("fs");
     const path = require("path");
 
-    const outDir = __dirname + "/kotlin/"
-    const projecName = path.basename(__dirname);
-    const mapFileLegacy = outDir + projecName + ".map"
-    const mapFile = outDir + projecName + ".wasm.map"
+    const outDir = __dirname + "/kotlin/";
+    const projectName = path.basename(__dirname);
+    const mapFileLegacy = outDir + projectName + ".map";
+    const mapFile = outDir + projectName + ".wasm.map";
 
-    let sourcemap
+    let sourcemap;
     try {
-        sourcemap = JSON.parse(fs.readFileSync(mapFileLegacy))
+        sourcemap = JSON.parse(fs.readFileSync(mapFileLegacy));
     } catch (e) {
-        sourcemap = JSON.parse(fs.readFileSync(mapFile))
+        try {
+            sourcemap = JSON.parse(fs.readFileSync(mapFile));
+        } catch (e1) {
+            return;
+        }
     }
-    const sources = sourcemap["sources"]
+    const sources = sourcemap["sources"];
     srcLoop: for (let i in sources) {
         const srcFilePath = sources[i];
         if (srcFilePath == null) continue;
