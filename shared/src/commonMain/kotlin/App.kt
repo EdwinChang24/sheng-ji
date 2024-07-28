@@ -57,8 +57,8 @@ import navigation.Navigator
 import navigation.Screen
 import settings.ui.SettingsPage
 import theme.ShengJiDisplayTheme
-import util.WindowSize
-import util.calculateWindowSize
+import util.WindowWidth
+import util.calculateWindowWidth
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -200,7 +200,7 @@ private fun SettingsPane(
     state: AppState.Prop
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val windowSize = calculateWindowSize()
+    val windowWidth = calculateWindowWidth()
     val closeSettings = { coroutineScope.launch { dragState.animateTo(false) } }
     Box(
         modifier =
@@ -246,7 +246,7 @@ private fun SettingsPane(
             Surface(
                 color = MaterialTheme.colorScheme.surfaceContainer,
                 modifier =
-                    (if (windowSize == WindowSize.Small) Modifier.fillMaxSize()
+                    (if (windowWidth <= WindowWidth.Small) Modifier.fillMaxSize()
                         else Modifier.fillMaxHeight())
                         .then(
                             Modifier.offset {

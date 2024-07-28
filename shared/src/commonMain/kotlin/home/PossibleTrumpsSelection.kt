@@ -34,25 +34,24 @@ import resources.ic_edit
 import util.ClearableState
 import util.ExpandWidths
 import util.WeightRow
-import util.WindowSize
+import util.WindowWidth
 import util.iconRes
 
 @Composable
 fun PossibleTrumpsSelection(
     possibleTrumpsState: ClearableState<Set<String>>,
     cardColors: CardColors,
-    windowSize: WindowSize,
+    windowWidth: WindowWidth,
     navigator: Navigator,
     modifier: Modifier = Modifier
 ) {
-    val large = windowSize == WindowSize.Large
     ExpandWidths(modifier = modifier) {
         Card(
             colors = cardColors,
             modifier =
                 Modifier.clip(CardDefaults.shape)
                     .then(
-                        if (!large)
+                        if (windowWidth < WindowWidth.Large)
                             Modifier.clickable { navigator.navigate(Dialog.EditPossibleTrumps) }
                                 .pointerHoverIcon(PointerIcon.Hand)
                         else Modifier
@@ -69,7 +68,7 @@ fun PossibleTrumpsSelection(
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.padding(horizontal = 24.dp)
                 )
-                if (large) {
+                if (windowWidth >= WindowWidth.Large) {
                     Column(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,

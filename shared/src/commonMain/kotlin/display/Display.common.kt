@@ -83,8 +83,8 @@ import settings.clockOrientation
 import settings.displayRotationVertical
 import settings.general
 import teammates.Teammates
-import util.WindowSize
-import util.calculateWindowSize
+import util.WindowWidth
+import util.calculateWindowWidth
 import util.iconRes
 import util.rotate90
 
@@ -97,7 +97,7 @@ fun DisplayPage(
     displayViewModel: DisplayViewModel =
         viewModel(key = Json.encodeToString(displayScheme)) { DisplayViewModel() }
 ) {
-    val windowSize = calculateWindowSize()
+    val windowWidth = calculateWindowWidth()
     val content by displayViewModel.currentContent.collectAsStateWithLifecycle()
     var currentTimeMs by rememberSaveable {
         mutableLongStateOf(Clock.System.now().toEpochMilliseconds())
@@ -139,7 +139,7 @@ fun DisplayPage(
                 displayScheme,
                 navigator,
                 state,
-                windowSize,
+                windowWidth,
                 currentTimeMs,
                 { editingTeammates = true }
             )
@@ -225,7 +225,7 @@ private fun DisplayVertical(
     displayScheme: DisplayScheme,
     navigator: Navigator,
     state: AppState.Prop,
-    windowSize: WindowSize,
+    windowWidth: WindowWidth,
     currentTimeMs: Long,
     onEditTeammates: () -> Unit,
     modifier: Modifier = Modifier
@@ -274,7 +274,7 @@ private fun DisplayVertical(
                 )
             }
             Box(contentAlignment = Alignment.CenterEnd, modifier = Modifier.weight(1f)) {
-                if (windowSize != WindowSize.Small && displayScheme.showTeammates) {
+                if (windowWidth >= WindowWidth.Small && displayScheme.showTeammates) {
                     IconButtonWithEmphasis(onClick = onEditTeammates) {
                         Icon(iconRes(Res.drawable.ic_group), null)
                     }
@@ -282,7 +282,7 @@ private fun DisplayVertical(
             }
             Spacer(modifier = Modifier.size(ActionMenuButtonSize))
             Box(contentAlignment = Alignment.CenterStart, modifier = Modifier.weight(1f)) {
-                if (windowSize != WindowSize.Small) {
+                if (windowWidth >= WindowWidth.Small) {
                     IconButtonWithEmphasis(onClick = { navigator.navigate(Screen.Home) }) {
                         Icon(iconRes(Res.drawable.ic_close), null)
                     }

@@ -42,14 +42,14 @@ import resources.Res
 import resources.ic_info
 import resources.ic_settings
 import util.ClearableState
-import util.WindowSize
-import util.calculateWindowSize
+import util.WindowWidth
+import util.calculateWindowWidth
 import util.iconRes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomePage(navigator: Navigator, state: AppState.Prop) {
-    val windowSize = calculateWindowSize()
+    val windowWidth = calculateWindowWidth()
     Scaffold(
         topBar = {
             TopAppBar(
@@ -66,7 +66,6 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
         }
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {
-            val large = windowSize == WindowSize.Large
             var startButtonsHeight by rememberSaveable { mutableStateOf(0) }
             val startButtonsHeightDp = with(LocalDensity.current) { startButtonsHeight.toDp() }
             var recentlyClearedPossibleTrumps: Set<String>? by rememberSaveable {
@@ -138,7 +137,7 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
                 )
             val cardColors =
                 CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
-            if (windowSize == WindowSize.Small) {
+            if (windowWidth <= WindowWidth.Small) {
                 Column(
                     modifier =
                         Modifier.verticalScroll(rememberScrollState())
@@ -148,7 +147,7 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
                     PossibleTrumpsSelection(
                         possibleTrumpsState,
                         cardColors,
-                        windowSize,
+                        windowWidth,
                         navigator,
                         modifier = Modifier.fillMaxWidth().padding(12.dp)
                     )
@@ -158,7 +157,7 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
                         { tempTrumpRank = it },
                         tempTrumpSuit,
                         { tempTrumpSuit = it },
-                        windowSize,
+                        windowWidth,
                         navigator,
                         state,
                         modifier = Modifier.fillMaxWidth().padding(12.dp)
@@ -187,17 +186,21 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
                             modifier =
                                 Modifier.widthIn(
                                         0.dp,
-                                        (WindowSize.Medium.breakpoint +
-                                            WindowSize.Large.breakpoint) / 2
+                                        (WindowWidth.Medium.breakpoint +
+                                            WindowWidth.Large.breakpoint) / 2
                                     )
                                     .padding(12.dp)
-                                    .padding(bottom = if (!large) startButtonsHeightDp else 0.dp)
+                                    .padding(
+                                        bottom =
+                                            if (windowWidth < WindowWidth.Large) startButtonsHeightDp
+                                            else 0.dp
+                                    )
                         ) {
                             Row {
                                 PossibleTrumpsSelection(
                                     possibleTrumpsState,
                                     cardColors,
-                                    windowSize,
+                                    windowWidth,
                                     navigator,
                                     modifier = Modifier.weight(1f).padding(12.dp)
                                 )
@@ -207,7 +210,7 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
                                     { tempTrumpRank = it },
                                     tempTrumpSuit,
                                     { tempTrumpSuit = it },
-                                    windowSize,
+                                    windowWidth,
                                     navigator,
                                     state,
                                     modifier = Modifier.weight(1f).padding(12.dp)
@@ -230,7 +233,7 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
                             }
                         }
                     }
-                    if (large) {
+                    if (windowWidth >= WindowWidth.Large) {
                         Box(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier.fillMaxHeight().weight(1f).padding(24.dp)
@@ -240,7 +243,7 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
                     }
                 }
             }
-            if (!large) {
+            if (windowWidth < WindowWidth.Large) {
                 StartButtons(
                     navigator,
                     modifier =

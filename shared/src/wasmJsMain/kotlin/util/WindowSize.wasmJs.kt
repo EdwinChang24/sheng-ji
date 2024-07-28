@@ -13,13 +13,13 @@ import org.w3c.dom.Window
 import org.w3c.dom.events.Event
 
 @Composable
-actual fun calculateWindowSize(): WindowSize {
+actual fun calculateWindowWidth(): WindowWidth {
     fun Window.size() = DpSize(innerWidth.dp, innerHeight.dp)
-    var windowSize by remember { mutableStateOf(WindowSize.from(window.size())) }
+    var windowWidth by remember { mutableStateOf(WindowWidth.from(window.size())) }
     DisposableEffect(true) {
-        val callback = { _: Event -> windowSize = WindowSize.from(window.size()) }
+        val callback = { _: Event -> windowWidth = WindowWidth.from(window.size()) }
         window.addEventListener("resize", callback)
         onDispose { window.removeEventListener("resize", callback) }
     }
-    return windowSize
+    return windowWidth
 }

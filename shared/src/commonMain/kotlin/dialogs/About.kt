@@ -36,8 +36,8 @@ import resources.ic_done
 import resources.ic_license
 import util.ExpandWidths
 import util.PlatformName
-import util.WindowSize
-import util.calculateWindowSize
+import util.WindowWidth
+import util.calculateWindowWidth
 import util.iconRes
 import util.suitIconRes
 import versionconfig.VersionConfig
@@ -88,8 +88,8 @@ fun AboutDialog(navigator: Navigator, modifier: Modifier = Modifier) {
                         }
                     )
                 }
-            val windowSize = calculateWindowSize()
-            if (windowSize == WindowSize.Small) {
+            val windowWidth = calculateWindowWidth()
+            if (windowWidth <= WindowWidth.Small) {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,

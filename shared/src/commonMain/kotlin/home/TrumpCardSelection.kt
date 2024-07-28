@@ -39,7 +39,7 @@ import resources.ic_add
 import resources.ic_close
 import util.ExpandWidths
 import util.WeightRow
-import util.WindowSize
+import util.WindowWidth
 import util.iconRes
 
 @Composable
@@ -49,19 +49,18 @@ fun TrumpCardSelection(
     setTempTrumpRank: (String) -> Unit,
     tempTrumpSuit: Suit?,
     setTempTrumpSuit: (Suit) -> Unit,
-    windowSize: WindowSize,
+    windowWidth: WindowWidth,
     navigator: Navigator,
     state: AppState.Prop,
     modifier: Modifier = Modifier
 ) {
-    val large = windowSize == WindowSize.Large
     ExpandWidths(modifier = modifier) {
         Card(
             colors = cardColors,
             modifier =
                 Modifier.clip(CardDefaults.shape)
                     .then(
-                        if (!large)
+                        if (windowWidth < WindowWidth.Large)
                             Modifier.clickable { navigator.navigate(Dialog.EditTrump) }
                                 .pointerHoverIcon(PointerIcon.Hand)
                         else Modifier
@@ -78,7 +77,7 @@ fun TrumpCardSelection(
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.padding(horizontal = 24.dp)
                 )
-                if (large) {
+                if (windowWidth >= WindowWidth.Large) {
                     Column(modifier = Modifier.expandWidth()) {
                         AnimatedContent(
                             targetState = state().trump,
