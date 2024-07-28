@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeJB)
     alias(libs.plugins.ksp)
@@ -25,7 +25,7 @@ kotlin {
                     (devServer ?: KotlinWebpackConfig.DevServer()).apply {
                         static =
                             (static ?: mutableListOf()).apply {
-                                add(project.rootDir.path + "/shared/")
+                                add(project.rootDir.path + "/display/")
                             }
                     }
             }
@@ -41,7 +41,7 @@ kotlin {
                     (devServer ?: KotlinWebpackConfig.DevServer()).apply {
                         static =
                             (static ?: mutableListOf()).apply {
-                                add(project.rootDir.path + "/shared/")
+                                add(project.rootDir.path + "/display/")
                             }
                     }
             }
@@ -74,7 +74,10 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.core.ktx)
             implementation(libs.activity.compose)
+            implementation(compose.preview)
+            implementation(compose.uiTooling)
             implementation(libs.window)
+            implementation(libs.core.splashscreen)
         }
         val webMain by creating { dependsOn(commonMain) }
         val wasmJsMain by getting { dependsOn(webMain) }
@@ -92,11 +95,12 @@ abstract class GenerateVersionNumberTask : DefaultTask() {
 
     @TaskAction
     fun generate() {
-        val file = File(project.rootDir, "version.properties")
-        val properties =
-            if (file.exists()) Properties().apply { load(file.inputStream()) } else null
-        val version = properties?.getProperty("version", "?") ?: "?"
-        output.get().asFile.writeText("val appVersion = \"$version\"")
+        val versionFile = File(project.rootDir, "version.properties")
+        val versionProperties =
+            if (versionFile.exists()) Properties().apply { load(versionFile.inputStream()) }
+            else null
+        val appVersion = versionProperties?.getProperty("version", "?") ?: "?"
+        output.get().asFile.writeText("val appVersion = \"${appVersion}\"")
     }
 }
 
@@ -113,21 +117,42 @@ compose.resources { packageOfResClass = "resources" }
 
 android {
     compileSdk = 34
-    namespace = "io.github.edwinchang24.shengjidisplay.shared"
-    defaultConfig { minSdk = 24 }
+    namespace = "io.github.edwinchang24.shengjidisplay"
+    defaultConfig {
+        applicationId = "io.github.edwinchang24.shengjidisplay"
+        minSdk = 24
+        targetSdk = 34
+        versionCode = 1
+        val versionFile = File(project.rootDir, "version.properties")
+        val versionProperties =
+            if (versionFile.exists()) Properties().apply { load(versionFile.inputStream()) }
+            else null
+        versionName = versionProperties?.getProperty("version", "?") ?: "?"
+        vectorDrawables { useSupportLibrary = true }
+    }
+    buildTypes {
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
+            signingConfig = signingConfigs.findByName("debug")
+        }
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlin { jvmToolchain(17) }
+    packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
 }
 
-val buildWebApp by tasks.creating(Copy::class) {
-    val wasm = "wasmJsBrowserDistribution"
-    val js = "jsBrowserDistribution"
-    dependsOn(wasm, js)
-    from(tasks.named(wasm).get().outputs.files)
-    from(tasks.named(js).get().outputs.files)
-    into(layout.buildDirectory.file("webApp"))
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-}
+val buildWebApp by
+    tasks.creating(Copy::class) {
+        val wasm = "wasmJsBrowserDistribution"
+        val js = "jsBrowserDistribution"
+        dependsOn(wasm, js)
+        from(tasks.named(wasm).get().outputs.files)
+        from(tasks.named(js).get().outputs.files)
+        into(layout.buildDirectory.file("webApp"))
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }

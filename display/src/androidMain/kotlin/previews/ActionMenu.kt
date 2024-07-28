@@ -1,4 +1,4 @@
-package io.github.edwinchang24.shengjidisplay.previews
+package previews
 
 import actionmenu.ActionMenu
 import androidx.compose.foundation.layout.fillMaxSize

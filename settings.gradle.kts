@@ -19,6 +19,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "sheng-ji-display"
 
-include(":shared")
-
-include(":androidApp")
+include(":display")

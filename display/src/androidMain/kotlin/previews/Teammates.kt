@@ -1,4 +1,4 @@
-package io.github.edwinchang24.shengjidisplay.previews
+package previews
 
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
