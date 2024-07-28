@@ -15,3 +15,12 @@ actual fun calculateWindowWidth(): WindowWidth {
     val size = with(LocalDensity.current) { metrics.bounds.toComposeRect().size.toDpSize() }
     return WindowWidth.from(size)
 }
+
+@Composable
+actual fun calculateWindowHeight(): WindowHeight {
+    LocalConfiguration.current
+    val metrics =
+        WindowMetricsCalculator.getOrCreate().computeCurrentWindowMetrics(LocalContext.current)
+    val size = with(LocalDensity.current) { metrics.bounds.toComposeRect().size.toDpSize() }
+    return WindowHeight.from(size)
+}

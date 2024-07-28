@@ -12,9 +12,10 @@ import kotlinx.browser.window
 import org.w3c.dom.Window
 import org.w3c.dom.events.Event
 
+private fun Window.size() = DpSize(innerWidth.dp, innerHeight.dp)
+
 @Composable
 actual fun calculateWindowWidth(): WindowWidth {
-    fun Window.size() = DpSize(innerWidth.dp, innerHeight.dp)
     var windowWidth by remember { mutableStateOf(WindowWidth.from(window.size())) }
     DisposableEffect(true) {
         val callback = { _: Event -> windowWidth = WindowWidth.from(window.size()) }
@@ -22,4 +23,15 @@ actual fun calculateWindowWidth(): WindowWidth {
         onDispose { window.removeEventListener("resize", callback) }
     }
     return windowWidth
+}
+
+@Composable
+actual fun calculateWindowHeight(): WindowHeight {
+    var windowHeight by remember { mutableStateOf(WindowHeight.from(window.size())) }
+    DisposableEffect(true) {
+        val callback = { _: Event -> windowHeight = WindowHeight.from(window.size()) }
+        window.addEventListener("resize", callback)
+        onDispose { window.removeEventListener("resize", callback) }
+    }
+    return windowHeight
 }

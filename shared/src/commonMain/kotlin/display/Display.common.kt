@@ -83,7 +83,9 @@ import settings.clockOrientation
 import settings.displayRotationVertical
 import settings.general
 import teammates.Teammates
+import util.WindowHeight
 import util.WindowWidth
+import util.calculateWindowHeight
 import util.calculateWindowWidth
 import util.iconRes
 import util.rotate90
@@ -98,6 +100,7 @@ fun DisplayPage(
         viewModel(key = Json.encodeToString(displayScheme)) { DisplayViewModel() }
 ) {
     val windowWidth = calculateWindowWidth()
+    val windowHeight = calculateWindowHeight()
     val content by displayViewModel.currentContent.collectAsStateWithLifecycle()
     var currentTimeMs by rememberSaveable {
         mutableLongStateOf(Clock.System.now().toEpochMilliseconds())
@@ -149,6 +152,7 @@ fun DisplayPage(
                 displayScheme,
                 navigator,
                 state,
+                windowHeight,
                 currentTimeMs,
                 { editingTeammates = true }
             )
@@ -331,6 +335,7 @@ private fun DisplayHorizontal(
     displayScheme: DisplayScheme,
     navigator: Navigator,
     state: AppState.Prop,
+    windowHeight: WindowHeight,
     currentTimeMs: Long,
     onEditTeammates: () -> Unit,
     modifier: Modifier = Modifier
@@ -379,7 +384,7 @@ private fun DisplayHorizontal(
                 )
             }
             Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier.weight(1f)) {
-                if (displayScheme.showTeammates) {
+                if (displayScheme.showTeammates && windowHeight >= WindowHeight.Medium) {
                     IconButtonWithEmphasis(onClick = onEditTeammates) {
                         Icon(iconRes(Res.drawable.ic_group), null)
                     }
@@ -387,8 +392,10 @@ private fun DisplayHorizontal(
             }
             Spacer(modifier = Modifier.size(ActionMenuButtonSize))
             Box(contentAlignment = Alignment.TopCenter, modifier = Modifier.weight(1f)) {
-                IconButtonWithEmphasis(onClick = { navigator.navigate(Screen.Home) }) {
-                    Icon(iconRes(Res.drawable.ic_close), null)
+                if (windowHeight >= WindowHeight.Medium) {
+                    IconButtonWithEmphasis(onClick = { navigator.navigate(Screen.Home) }) {
+                        Icon(iconRes(Res.drawable.ic_close), null)
+                    }
                 }
             }
             if (state().settings.general.showClock) {

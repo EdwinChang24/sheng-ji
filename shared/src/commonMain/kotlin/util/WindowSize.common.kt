@@ -14,7 +14,7 @@ sealed interface WindowWidth {
 
     val breakpoint: Dp
 
-    operator fun compareTo(size: WindowWidth) = breakpoint.compareTo(size.breakpoint)
+    operator fun compareTo(width: WindowWidth) = breakpoint.compareTo(width.breakpoint)
 
     data object ExtraSmall : WindowWidth {
         override val breakpoint = 0.dp
@@ -34,3 +34,29 @@ sealed interface WindowWidth {
 }
 
 @Composable expect fun calculateWindowWidth(): WindowWidth
+
+sealed interface WindowHeight {
+
+    companion object {
+        fun from(size: DpSize) =
+            listOf(Large, Medium, Small).firstOrNull { size.height >= it.breakpoint } ?: Small
+    }
+
+    val breakpoint: Dp
+
+    operator fun compareTo(height: WindowHeight) = breakpoint.compareTo(height.breakpoint)
+
+    data object Small : WindowHeight {
+        override val breakpoint = 0.dp
+    }
+
+    data object Medium : WindowHeight {
+        override val breakpoint = 400.dp
+    }
+
+    data object Large : WindowHeight {
+        override val breakpoint = 800.dp
+    }
+}
+
+@Composable expect fun calculateWindowHeight(): WindowHeight
