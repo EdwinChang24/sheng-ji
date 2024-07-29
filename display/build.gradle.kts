@@ -117,9 +117,9 @@ compose.resources { packageOfResClass = "resources" }
 
 android {
     compileSdk = 34
-    namespace = "io.github.edwinchang24.shengjidisplay"
+    namespace = "dev.edwinchang.shengjidisplay"
     defaultConfig {
-        applicationId = "io.github.edwinchang24.shengjidisplay"
+        applicationId = "dev.edwinchang.shengjidisplay"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

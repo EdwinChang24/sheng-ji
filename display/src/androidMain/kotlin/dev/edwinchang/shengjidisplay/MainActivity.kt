@@ -1,4 +1,4 @@
-package io.github.edwinchang24.shengjidisplay
+package dev.edwinchang.shengjidisplay
 
 import App
 import android.os.Bundle

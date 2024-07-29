@@ -1,4 +1,4 @@
-package io.github.edwinchang24.shengjidisplay
+package dev.edwinchang.shengjidisplay
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
