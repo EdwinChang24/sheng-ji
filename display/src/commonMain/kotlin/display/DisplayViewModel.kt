@@ -1,9 +1,11 @@
 package display
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,6 +15,7 @@ import settings.Settings
 
 class DisplayViewModel : ViewModel() {
     private var job: Job? = null
+    private val coroutineScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
     private var possibleContentPairs = listOf<DisplayContentPair>()
     private var possibleRotations = listOf<ContentRotation>()
     private var pause = false
@@ -36,7 +39,7 @@ class DisplayViewModel : ViewModel() {
                 job?.isActive != true
         ) {
             job?.cancelAndJoin()
-            job = viewModelScope.launch { update() }
+            job = coroutineScope.launch { update() }
         }
     }
 

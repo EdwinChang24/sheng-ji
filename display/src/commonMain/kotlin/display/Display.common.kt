@@ -33,6 +33,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -53,7 +54,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import components.IconButtonWithEmphasis
 import components.Scale
@@ -101,7 +101,7 @@ fun DisplayPage(
 ) {
     val windowWidth = calculateWindowWidth()
     val windowHeight = calculateWindowHeight()
-    val content by displayViewModel.currentContent.collectAsStateWithLifecycle()
+    val content by displayViewModel.currentContent.collectAsState()
     var currentTimeMs by rememberSaveable {
         mutableLongStateOf(Clock.System.now().toEpochMilliseconds())
     }

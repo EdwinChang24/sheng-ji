@@ -25,6 +25,13 @@ sealed interface PlatformSettings {
         companion object
     }
 
+    @Serializable
+    @SerialName("desktop")
+    @optics
+    data class Desktop(val fullScreen: Boolean = true) : PlatformSettings {
+        companion object
+    }
+
     companion object
 }
 

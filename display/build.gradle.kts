@@ -1,4 +1,5 @@
 import java.util.Properties
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
@@ -48,6 +49,7 @@ kotlin {
         }
         binaries.executable()
     }
+    jvm("desktop")
     sourceSets {
         all {
             languageSettings { optIn("org.jetbrains.compose.resources.ExperimentalResourceApi") }
@@ -82,6 +84,7 @@ kotlin {
         val webMain by creating { dependsOn(commonMain) }
         val wasmJsMain by getting { dependsOn(webMain) }
         val jsMain by getting { dependsOn(webMain) }
+        val desktopMain by getting { dependencies { implementation(compose.desktop.currentOs) } }
     }
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     compilerOptions { freeCompilerArgs.add("-Xexpect-actual-classes") }
@@ -156,3 +159,24 @@ val buildWebApp by
         into(layout.buildDirectory.file("webApp"))
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
+
+compose.desktop {
+    application {
+        mainClass = "MainKt"
+        buildTypes.release.proguard {
+            obfuscate.set(true)
+            optimize.set(true)
+            joinOutputJars.set(true)
+        }
+        nativeDistributions {
+            packageName = "Sheng Ji Display"
+            val versionFile = File(project.rootDir, "version.properties")
+            val versionProperties =
+                if (versionFile.exists()) Properties().apply { load(versionFile.inputStream()) }
+                else null
+            packageVersion = versionProperties?.getProperty("version", "?") ?: "?"
+            licenseFile.set(rootProject.file("LICENSE"))
+            targetFormats(TargetFormat.Exe, TargetFormat.Deb)
+        }
+    }
+}
