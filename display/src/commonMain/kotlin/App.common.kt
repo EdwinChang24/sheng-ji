@@ -71,6 +71,7 @@ fun App(state: AppState.Prop, modifier: Modifier = Modifier) {
             val density = LocalDensity.current
             var currentScreen by
                 rememberSaveable(stateSaver = Screen.Saver) { mutableStateOf(Screen.Home) }
+            WebHistoryHandler(currentScreen) { currentScreen = it }
             val settingsDragState =
                 rememberSaveable(
                     saver =
@@ -264,3 +265,5 @@ private fun SettingsPane(
         }
     }
 }
+
+@Composable expect fun WebHistoryHandler(currentScreen: Screen, setCurrentScreen: (Screen) -> Unit)
