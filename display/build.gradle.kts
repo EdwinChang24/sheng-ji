@@ -80,17 +80,36 @@ kotlin {
             implementation(compose.uiTooling)
             implementation(libs.window)
             implementation(libs.core.splashscreen)
+            implementation(libs.qrcode.kotlin)
         }
         val webMain by creating { dependsOn(commonMain) }
-        val wasmJsMain by getting { dependsOn(webMain) }
-        val jsMain by getting { dependsOn(webMain) }
-        val desktopMain by getting { dependencies { implementation(compose.desktop.currentOs) } }
+        val wasmJsMain by getting {
+            dependsOn(webMain)
+            dependencies { implementation(npm("uqr", libs.versions.uqr.get())) }
+        }
+        val jsMain by getting {
+            dependsOn(webMain)
+            dependencies { implementation(npm("uqr", libs.versions.uqr.get())) }
+        }
+        val desktopMain by getting {
+            dependencies {
+                implementation(compose.desktop.currentOs)
+                implementation(libs.qrcode.kotlin)
+            }
+        }
     }
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     compilerOptions { freeCompilerArgs.add("-Xexpect-actual-classes") }
 }
 
 dependencies { kspCommonMainMetadata(libs.arrow.optics.ksp) }
+
+fun getAppVersion(): String {
+    val versionFile = File(project.rootDir, "version.properties")
+    val versionProperties =
+        if (versionFile.exists()) Properties().apply { load(versionFile.inputStream()) } else null
+    return versionProperties?.getProperty("version", "?") ?: "?"
+}
 
 abstract class GenerateVersionNumberTask : DefaultTask() {
     @OutputFile
@@ -103,7 +122,7 @@ abstract class GenerateVersionNumberTask : DefaultTask() {
             if (versionFile.exists()) Properties().apply { load(versionFile.inputStream()) }
             else null
         val appVersion = versionProperties?.getProperty("version", "?") ?: "?"
-        output.get().asFile.writeText("val appVersion = \"${appVersion}\"")
+        output.get().asFile.writeText("const val appVersion = \"$appVersion\"")
     }
 }
 
@@ -126,11 +145,7 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 1
-        val versionFile = File(project.rootDir, "version.properties")
-        val versionProperties =
-            if (versionFile.exists()) Properties().apply { load(versionFile.inputStream()) }
-            else null
-        versionName = versionProperties?.getProperty("version", "?") ?: "?"
+        versionName = getAppVersion()
         vectorDrawables { useSupportLibrary = true }
     }
     buildTypes {
@@ -170,11 +185,7 @@ compose.desktop {
         }
         nativeDistributions {
             packageName = "Sheng Ji Display"
-            val versionFile = File(project.rootDir, "version.properties")
-            val versionProperties =
-                if (versionFile.exists()) Properties().apply { load(versionFile.inputStream()) }
-                else null
-            packageVersion = versionProperties?.getProperty("version", "?") ?: "?"
+            packageVersion = getAppVersion()
             licenseFile.set(rootProject.file("LICENSE"))
             targetFormats(TargetFormat.Exe, TargetFormat.Deb)
         }

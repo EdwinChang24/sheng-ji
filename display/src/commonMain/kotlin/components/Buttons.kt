@@ -39,7 +39,10 @@ fun ButtonWithEmphasis(
             enabled = enabled,
             elevation = elevation,
             interactionSource = interactionSource,
-            modifier = modifier.pointerHoverIcon(PointerIcon.Hand)
+            modifier =
+                modifier.then(
+                    if (enabled) Modifier.pointerHoverIcon(PointerIcon.Hand) else Modifier
+                )
         ) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -78,7 +81,10 @@ fun OutlinedButtonWithEmphasis(
             enabled = enabled,
             colors = colors,
             interactionSource = interactionSource,
-            modifier = modifier.pointerHoverIcon(PointerIcon.Hand)
+            modifier =
+                modifier.then(
+                    if (enabled) Modifier.pointerHoverIcon(PointerIcon.Hand) else Modifier
+                )
         ) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -114,7 +120,10 @@ fun IconButtonWithEmphasis(
             onClick = onClick,
             enabled = enabled,
             interactionSource = interactionSource,
-            modifier = modifier.pointerHoverIcon(PointerIcon.Hand)
+            modifier =
+                modifier.then(
+                    if (enabled) Modifier.pointerHoverIcon(PointerIcon.Hand) else Modifier
+                )
         ) {
             Box(modifier = Modifier.pressEmphasis()) { content() }
         }

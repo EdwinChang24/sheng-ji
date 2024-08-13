@@ -57,12 +57,19 @@ import navigation.Navigator
 import navigation.Screen
 import settings.ui.SettingsPage
 import theme.ShengJiDisplayTheme
+import transfer.DisambigDialog
+import transfer.QuickTransferDialog
 import util.WindowWidth
 import util.calculateWindowWidth
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun App(state: AppState.Prop, modifier: Modifier = Modifier) {
+fun App(
+    state: AppState.Prop,
+    importUrl: String? = null,
+    importDisambig: Boolean = false,
+    modifier: Modifier = Modifier
+) {
     ShengJiDisplayTheme(state) {
         Surface(
             color = MaterialTheme.colorScheme.background,
@@ -113,6 +120,19 @@ fun App(state: AppState.Prop, modifier: Modifier = Modifier) {
                         currentDialog = null
                     }
                 }
+            var shownImportDialog by rememberSaveable { mutableStateOf(false) }
+            LaunchedEffect(true) {
+                if (!shownImportDialog) {
+                    if (importUrl != null) {
+                        if (importDisambig) {
+                            navigator.navigate(Dialog.Disambig(importUrl))
+                        } else {
+                            navigator.navigate(Dialog.QuickTransfer(importUrl))
+                        }
+                    }
+                    shownImportDialog = true
+                }
+            }
             AndroidBackHandler(
                 currentScreen,
                 settingsDragState.targetValue,
@@ -184,6 +204,10 @@ fun App(state: AppState.Prop, modifier: Modifier = Modifier) {
                                     EditPossibleTrumpsDialog(navigator, state)
                                 Dialog.EditTrump -> EditTrumpDialog(navigator, state)
                                 Dialog.About -> AboutDialog(navigator)
+                                is Dialog.QuickTransfer ->
+                                    QuickTransferDialog(targetDialog.url, navigator, state)
+                                is Dialog.Disambig ->
+                                    DisambigDialog(targetDialog.url, navigator, state)
                             }
                         }
                     }

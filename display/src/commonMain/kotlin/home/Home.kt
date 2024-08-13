@@ -40,6 +40,7 @@ import navigation.Dialog
 import navigation.Navigator
 import resources.Res
 import resources.ic_info
+import resources.ic_send_to_mobile
 import resources.ic_settings
 import util.ClearableState
 import util.WindowWidth
@@ -55,6 +56,11 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
             TopAppBar(
                 title = { AppName() },
                 actions = {
+                    IconButtonWithEmphasis(
+                        onClick = { navigator.navigate(Dialog.QuickTransfer()) }
+                    ) {
+                        Icon(iconRes(Res.drawable.ic_send_to_mobile), null)
+                    }
                     IconButtonWithEmphasis(onClick = { navigator.toggleSettings() }) {
                         Icon(iconRes(Res.drawable.ic_settings), null)
                     }
@@ -192,7 +198,8 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
                                     .padding(12.dp)
                                     .padding(
                                         bottom =
-                                            if (windowWidth < WindowWidth.Large) startButtonsHeightDp
+                                            if (windowWidth < WindowWidth.Large)
+                                                startButtonsHeightDp
                                             else 0.dp
                                     )
                         ) {

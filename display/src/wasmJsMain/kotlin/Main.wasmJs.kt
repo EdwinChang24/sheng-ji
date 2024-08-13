@@ -15,6 +15,11 @@ import kotlinx.serialization.json.Json
 import model.AppState
 import org.jetbrains.compose.resources.configureWebResources
 import org.w3c.dom.StorageEvent
+import org.w3c.dom.url.URL
+import settings.ImportInto
+import settings.invoke
+import transfer.AndroidLinksUrl
+import transfer.decodeParam
 
 @OptIn(ExperimentalComposeUiApi::class, DelicateCoroutinesApi::class)
 fun main() {
@@ -50,8 +55,34 @@ fun main() {
             updateTheme()
         }
     }
+    val importUrl =
+        window.location.href.takeIf {
+            URL(window.location.href)
+                .searchParams
+                .get("d")
+                ?.let { decodeParam((it)) }
+                ?.isEmpty()
+                ?.not() == true
+        }
+    val android = "android" in window.navigator.userAgent.lowercase()
+    if (
+        importUrl != null &&
+            android &&
+            appState.value.platformSettings().importInto == ImportInto.Android
+    ) {
+        window.location.href = "$AndroidLinksUrl${URL(importUrl).searchParams.get("d")}"
+        return
+    }
+    val importDisambig =
+        importUrl != null &&
+            android &&
+            appState.value.platformSettings().importInto == ImportInto.Ask
     CanvasBasedWindow(canvasElementId = "app") {
         val state by appState.collectAsState()
-        App(AppState.Prop(state) { copy -> appState.value = state.copy(copy) })
+        App(
+            AppState.Prop(state) { copy -> appState.value = state.copy(copy) },
+            importUrl = importUrl,
+            importDisambig = importDisambig
+        )
     }
 }

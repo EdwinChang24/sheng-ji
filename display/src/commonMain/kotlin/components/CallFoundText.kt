@@ -15,6 +15,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import model.Call
 
@@ -41,9 +42,14 @@ fun CallFoundText(
                 },
                 label = ""
             ) { target ->
-                Text(target.toString(), style = style.copy(fontWeight = FontWeight.Bold))
+                Text(
+                    target.toString(),
+                    style = style.copy(fontWeight = FontWeight.Bold),
+                    maxLines = 1,
+                    overflow = TextOverflow.Visible
+                )
             }
-            Text("/", style = style)
+            Text("/", style = style, maxLines = 1, overflow = TextOverflow.Visible)
             AnimatedContent(
                 targetState = call.number,
                 transitionSpec = {
@@ -58,7 +64,12 @@ fun CallFoundText(
                 },
                 label = ""
             ) { target ->
-                Text(target.toString(), style = style.copy(fontWeight = FontWeight.Bold))
+                Text(
+                    target.toString(),
+                    style = style.copy(fontWeight = FontWeight.Bold),
+                    maxLines = 1,
+                    overflow = TextOverflow.Visible
+                )
             }
         },
         modifier = modifier

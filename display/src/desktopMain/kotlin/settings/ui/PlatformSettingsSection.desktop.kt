@@ -13,7 +13,9 @@ import settings.invoke
 actual fun PlatformSettingsSection(
     state: AppState.Prop,
     sectionHeader: @Composable (text: String, modifier: Modifier) -> Unit,
-    booleanPicker: @Composable (value: Boolean, setValue: (Boolean) -> Unit, label: @Composable () -> Unit) -> Unit
+    booleanPicker:
+        @Composable
+        (value: Boolean, setValue: (Boolean) -> Unit, label: @Composable () -> Unit) -> Unit
 ) {
     sectionHeader("Desktop settings", Modifier)
     booleanPicker(

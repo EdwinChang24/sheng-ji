@@ -51,3 +51,9 @@ The following is a list of third-party dependencies used in this project.
 - Reorderable
     https://github.com/Calvin-LL/Reorderable
     License: Apache 2.0
+- QRCode Kotlin
+    https://qrcodekotlin.com
+    License: MIT
+- uqr
+    https://github.com/unjs/uqr
+    License: MIT

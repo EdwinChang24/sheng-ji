@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import model.AppState
 import model.PlayingCard
 import model.Suit
@@ -47,6 +48,8 @@ fun PlayingCard(
             style = textStyle,
             fontWeight = FontWeight.Bold,
             color = color,
+            maxLines = 1,
+            overflow = TextOverflow.Visible,
             onTextLayout = { baseline = it.lastBaseline },
             modifier =
                 Modifier.drawBehind {

@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import model.AppState
 import model.platformSettings
+import settings.importInto
 import settings.invoke
 import settings.keepScreenOn
 import settings.web
@@ -24,4 +25,8 @@ actual fun PlatformSettingsSection(
     ) {
         Text("Keep screen on")
     }
+    SettingsImportIntoPicker(
+        importInto = state().platformSettings().importInto,
+        setImportInto = { state { AppState.platformSettings.web.importInto set it } }
+    )
 }

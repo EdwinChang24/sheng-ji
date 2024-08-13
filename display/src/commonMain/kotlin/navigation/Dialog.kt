@@ -17,6 +17,12 @@ sealed interface Dialog {
 
     @Serializable @SerialName("about") data object About : Dialog
 
+    @Serializable
+    @SerialName("quickTransfer")
+    data class QuickTransfer(val url: String? = null) : Dialog
+
+    @Serializable @SerialName("disambig") data class Disambig(val url: String) : Dialog
+
     companion object {
         val Saver =
             Saver<Dialog?, String>(
