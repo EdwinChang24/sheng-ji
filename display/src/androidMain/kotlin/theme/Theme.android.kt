@@ -32,5 +32,5 @@ actual fun ShengJiDisplayTheme(state: AppState.Prop, content: @Composable () -> 
                 .isAppearanceLightStatusBars = !useDarkTheme
         }
     }
-    MaterialTheme(colorScheme = colorScheme, typography = Typography, content = content)
+    MaterialTheme(colorScheme = colorScheme, typography = getTypography(Inter), content = content)
 }

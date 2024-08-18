@@ -11,7 +11,7 @@ actual fun ShengJiDisplayTheme(state: AppState.Prop, content: @Composable () -> 
     val useDarkTheme = state().settings.general.theme.computesToDark()
     MaterialTheme(
         colorScheme = if (useDarkTheme) darkColorScheme() else lightColorScheme(),
-        typography = Typography,
+        typography = getTypography(Inter),
         content = content
     )
 }
