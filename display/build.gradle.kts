@@ -104,30 +104,18 @@ kotlin {
 
 dependencies { kspCommonMainMetadata(libs.arrow.optics.ksp) }
 
-fun getAppVersion(): String {
-    val versionFile = File(project.rootDir, "version.properties")
-    val versionProperties =
-        if (versionFile.exists()) Properties().apply { load(versionFile.inputStream()) } else null
-    return versionProperties?.getProperty("version", "?") ?: "?"
-}
+val versionFile = layout.projectDirectory.file("version.properties").asFile
+val versionProperties =
+    if (versionFile.exists()) Properties().apply { load(versionFile.inputStream()) } else null
+val appVersion = versionProperties?.getProperty("version", "?") ?: "?"
 
-abstract class GenerateVersionNumberTask : DefaultTask() {
-    @OutputFile
-    val output = project.layout.buildDirectory.file("generated/version/commonMain/Version.kt")
-
-    @TaskAction
-    fun generate() {
-        val versionFile = File(project.rootDir, "version.properties")
-        val versionProperties =
-            if (versionFile.exists()) Properties().apply { load(versionFile.inputStream()) }
-            else null
-        val appVersion = versionProperties?.getProperty("version", "?") ?: "?"
-        output.get().asFile.writeText("const val appVersion = \"$appVersion\"")
+val generateVersionNumber: Task by
+    tasks.creating {
+        group = "custom"
+        val output = layout.buildDirectory.file("generated/version/commonMain/Version.kt")
+        outputs.file(output)
+        doLast { output.get().asFile.writeText("const val appVersion = \"$appVersion\"") }
     }
-}
-
-val generateVersionNumber =
-    tasks.register<GenerateVersionNumberTask>("generateVersionNumber") { group = "custom" }
 
 tasks.withType(KotlinCompilationTask::class) {
     val kspTaskName = "kspCommonMainKotlinMetadata"
@@ -145,7 +133,7 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 1
-        versionName = getAppVersion()
+        versionName = appVersion
         vectorDrawables { useSupportLibrary = true }
     }
     buildTypes {
@@ -189,7 +177,7 @@ compose.desktop {
         }
         nativeDistributions {
             packageName = "Sheng Ji Display"
-            packageVersion = getAppVersion()
+            packageVersion = appVersion
             licenseFile.set(rootProject.file("LICENSE"))
             targetFormats(TargetFormat.Exe, TargetFormat.Deb)
         }
