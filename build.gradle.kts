@@ -1,6 +1,5 @@
 import com.diffplug.gradle.spotless.SpotlessExtension
 
-// Top-level build file where you can add configuration options common to all subprojects/modules.
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.androidApplication) apply false
@@ -28,5 +27,31 @@ configure<SpotlessExtension> {
         ktfmt().kotlinlangStyle()
     }
 }
+
+val mergeWeb: Task by
+    tasks.creating {
+        group = "custom"
+        dependsOn(":display:buildWebApp")
+        doLast {
+            delete { delete("build/web") }
+            copy {
+                from(project.file("website"))
+                exclude("node_modules", "dist")
+                into(layout.buildDirectory.dir("web"))
+            }
+            copy {
+                from(project("display").layout.buildDirectory.file("webApp/index.html"))
+                rename { "display.html" }
+                into(layout.buildDirectory.dir("web/src/pages"))
+                duplicatesStrategy = DuplicatesStrategy.INCLUDE
+            }
+            copy {
+                from(project("display").layout.buildDirectory.file("webApp"))
+                exclude("index.html")
+                into(layout.buildDirectory.dir("web/public"))
+                duplicatesStrategy = DuplicatesStrategy.INCLUDE
+            }
+        }
+    }
 
 true

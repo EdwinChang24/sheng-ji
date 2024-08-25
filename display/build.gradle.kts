@@ -164,15 +164,19 @@ android {
     packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
 }
 
-val buildWebApp by
-    tasks.creating(Copy::class) {
+val buildWebApp: Task by
+    tasks.creating {
+        group = "custom"
         val wasm = "wasmJsBrowserDistribution"
         val js = "jsBrowserDistribution"
         dependsOn(wasm, js)
-        from(tasks.named(wasm).get().outputs.files)
-        from(tasks.named(js).get().outputs.files)
-        into(layout.buildDirectory.file("webApp"))
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        delete { delete(layout.buildDirectory.file("webApp")) }
+        copy {
+            from(tasks.named(wasm).get().outputs.files)
+            from(tasks.named(js).get().outputs.files)
+            into(layout.buildDirectory.file("webApp"))
+            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        }
     }
 
 compose.desktop {

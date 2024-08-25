@@ -1,8 +1,10 @@
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.CanvasBasedWindow
 import arrow.optics.copy
+import kotlinx.browser.document
 import kotlinx.browser.localStorage
 import kotlinx.browser.window
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -78,6 +80,7 @@ fun main() {
             android &&
             appState.value.platformSettings().importInto == ImportInto.Ask
     CanvasBasedWindow(canvasElementId = "app") {
+        LaunchedEffect(true) { document.getElementById("loading")?.remove() }
         val state by appState.collectAsState()
         App(
             AppState.Prop(state) { copy -> appState.value = state.copy(copy) },

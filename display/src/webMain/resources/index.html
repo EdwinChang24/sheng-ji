@@ -9,17 +9,24 @@
         <style>
             body {
                 background: white;
+                color: black;
             }
             body.dark {
                 background: black;
+                color: white;
             }
             @media (prefers-color-scheme: dark) {
                 body {
                     background: black;
+                    color: white;
                 }
                 body.light {
                     background: white;
+                    color: black;
                 }
+            }
+            .hide {
+                display: none;
             }
         </style>
     </head>
@@ -45,39 +52,73 @@
                 }
             });
         </script>
+        <noscript
+            style="
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                font-family: Inter, sans-serif;
+                margin: 16px;
+                text-align: center;
+            "
+        >
+            升级 Display unfortunately doesn't work without JavaScript. Please enable it to use the
+            app.
+        </noscript>
+        <svg
+            id="loading"
+            class="hide"
+            style="
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                margin: 16px;
+            "
+            width="160px"
+            height="160px"
+            viewBox="0 0 160 160"
+        >
+            <style>
+                #circle1 {
+                    animation: 1.6s ease-out -0.8s infinite anim;
+                }
+                #circle2 {
+                    animation: 1.6s ease-out 0s infinite anim;
+                }
+                @keyframes anim {
+                    0% {
+                        transform: translate(-12px, 0);
+                    }
+                    25% {
+                        transform: translate(0, -12px);
+                    }
+                    50% {
+                        transform: translate(12px, 0);
+                    }
+                    75% {
+                        transform: translate(0, 12px);
+                    }
+                    100% {
+                        transform: translate(-12px, 0);
+                    }
+                }
+            </style>
+            <circle id="circle1" cx="80" cy="80" r="4" fill="currentColor" />
+            <circle id="circle2" cx="80" cy="80" r="4" fill="red" />
+        </svg>
+        <script type="application/javascript">
+            document.getElementById("loading").classList.remove("hide");
+        </script>
         <canvas id="app"></canvas>
         <script type="application/javascript">
-            /*
-            (module
-                (type $type0 (struct (field $field0 i8)))
-                (func $func0
-                    try
-                    catch_all
-                    end
-                )
-                (func $func1
-                    ref.null func
-                    drop
-                )
-            )
-            */
-            const module = new Uint8Array([
-                0, 97, 115, 109, 1, 0, 0, 0, 1, 8, 2, 95, 1, 120, 0, 96, 0, 0, 3, 3, 2, 1, 1, 10, 14, 2, 6, 0,
-                6, 64, 25, 11, 11, 5, 0, 208, 112, 26, 11, 0, 45, 4, 110, 97, 109, 101, 1, 15, 2, 0, 5, 102,
-                117, 110, 99, 48, 1, 5, 102, 117, 110, 99, 49, 4, 8, 1, 0, 5, 116, 121, 112, 101, 48, 10, 11,
-                1, 0, 1, 0, 6, 102, 105, 101, 108, 100, 48,
-            ]);
             function script(src) {
                 const e = document.createElement("script");
                 e.src = src;
-                e.type = "application/javascript";
                 document.body.appendChild(e);
             }
-            if (
-                typeof WebAssembly !== "undefined" &&
-                typeof WebAssembly.validate === "function" &&
-                WebAssembly.validate(module)
-            ) {
+            if (navigator.userAgent.indexOf("AppleWebKit") == -1) {
                 script("shengjidisplay-wasm.js");
             } else {
                 script("skiko.js");

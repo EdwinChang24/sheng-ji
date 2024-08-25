@@ -1,0 +1,7 @@
+{
+  "name": "sheng-ji",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^3.72.2"
+  }
+}
