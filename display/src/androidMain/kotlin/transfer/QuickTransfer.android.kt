@@ -1,6 +1,5 @@
 package transfer
 
-import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
@@ -15,9 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
 import model.AppState
+import org.jetbrains.compose.resources.decodeToImageBitmap
 import qrcode.QRCode
 import qrcode.color.Colors
 
@@ -27,17 +26,14 @@ actual fun QrImage(data: String, state: AppState.Prop, modifier: Modifier) {
     val useDarkTheme = state().settings.general.theme.computesToDark()
     LaunchedEffect(data) {
         image =
-            BitmapFactory.decodeStream(
-                    QRCode.ofSquares()
-                        .withRadius(0)
-                        .withInnerSpacing(0)
-                        .withBackgroundColor(Colors.TRANSPARENT)
-                        .withColor(if (useDarkTheme) Colors.WHITE else Colors.BLACK)
-                        .build(data)
-                        .renderToBytes()
-                        .inputStream()
-                )
-                .asImageBitmap()
+            QRCode.ofSquares()
+                .withRadius(0)
+                .withInnerSpacing(0)
+                .withBackgroundColor(Colors.TRANSPARENT)
+                .withColor(if (useDarkTheme) Colors.WHITE else Colors.BLACK)
+                .build(data)
+                .renderToBytes()
+                .decodeToImageBitmap()
     }
     image?.let {
         Image(
