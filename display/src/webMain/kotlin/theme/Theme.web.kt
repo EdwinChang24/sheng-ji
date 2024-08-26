@@ -40,15 +40,19 @@ actual fun ShengJiDisplayTheme(state: AppState.Prop, content: @Composable () -> 
 
 suspend fun getInterWeb(): FontFamily {
     suspend operator fun String.invoke() = Res.readBytes("font/$this")
+    val regular = "inter_regular.ttf"()
+    val bold = "inter_bold.ttf"()
+    val semibold = "inter_semibold.ttf"()
+    val medium = "inter_medium.ttf"()
     return FontFamily(
-        Font("inter_regular", "inter_regular.otf"(), weight = FontWeight.Normal),
-        Font("inter_bold", "inter_bold.otf"(), weight = FontWeight.Bold),
-        Font("inter_semibold", "inter_semibold.otf"(), weight = FontWeight.SemiBold),
-        Font("inter_medium", "inter_medium.otf"(), weight = FontWeight.Medium),
-        Font("inter_thin", "inter_thin.otf"(), weight = FontWeight.Thin),
-        Font("inter_extralight", "inter_extralight.otf"(), weight = FontWeight.ExtraLight),
-        Font("inter_light", "inter_light.otf"(), weight = FontWeight.Light),
-        Font("inter_extrabold", "inter_extrabold.otf"(), weight = FontWeight.ExtraBold),
-        Font("inter_black", "inter_black.otf"(), weight = FontWeight.Black)
+        Font("inter_regular", regular, weight = FontWeight.Normal),
+        Font("inter_bold", bold, weight = FontWeight.Bold),
+        Font("inter_semibold", semibold, weight = FontWeight.SemiBold),
+        Font("inter_medium", medium, weight = FontWeight.Medium),
+        Font("inter_thin", regular, weight = FontWeight.Thin),
+        Font("inter_extralight", regular, weight = FontWeight.ExtraLight),
+        Font("inter_light", regular, weight = FontWeight.Light),
+        Font("inter_extrabold", bold, weight = FontWeight.ExtraBold),
+        Font("inter_black", bold, weight = FontWeight.Black)
     )
 }

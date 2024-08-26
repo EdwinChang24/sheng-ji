@@ -41,7 +41,7 @@ val mergeWeb: Task by
             }
             copy {
                 from(project("display").layout.buildDirectory.file("webApp/index.html"))
-                rename { "display.html" }
+                rename { "display.astro" }
                 into(layout.buildDirectory.dir("web/src/pages"))
                 duplicatesStrategy = DuplicatesStrategy.INCLUDE
             }

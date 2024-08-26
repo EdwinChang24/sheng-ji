@@ -153,18 +153,16 @@ android {
 }
 
 val buildWebApp: Task by
-    tasks.creating {
+    tasks.creating(Copy::class) {
         group = "custom"
         val wasm = "wasmJsBrowserDistribution"
         val js = "jsBrowserDistribution"
         dependsOn(wasm, js)
-        delete { delete(layout.buildDirectory.file("webApp")) }
-        copy {
-            from(tasks.named(wasm).get().outputs.files)
-            from(tasks.named(js).get().outputs.files)
-            into(layout.buildDirectory.file("webApp"))
-            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        }
+        doFirst { layout.buildDirectory.file("webApp").get().asFile.delete() }
+        from(tasks.named(wasm).get().outputs.files)
+        from(tasks.named(js).get().outputs.files)
+        into(layout.buildDirectory.file("webApp"))
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 
 compose.desktop {
