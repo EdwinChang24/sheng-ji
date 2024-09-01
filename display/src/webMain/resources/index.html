@@ -58,7 +58,7 @@
             }
         </style>
     </head>
-    <body>
+    <body style="overflow: clip;">
         <script>
             const key = "shengjidisplay.theme";
             function updateTheme() {
@@ -102,7 +102,6 @@
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%, -50%);
-                margin: 16px;
             "
             width="160px"
             height="160px"
@@ -139,7 +138,7 @@
         <script type="application/javascript">
             document.getElementById("loading").classList.remove("hide");
         </script>
-        <canvas id="app"></canvas>
+        <canvas id="app" style="width: 0; height: 0;"></canvas>
         <script type="application/javascript">
             function script(src) {
                 const e = document.createElement("script");
