@@ -1,8 +1,6 @@
 package theme
 
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -31,8 +29,8 @@ actual fun ShengJiDisplayTheme(state: AppState.Prop, content: @Composable () -> 
     }
     MaterialTheme(
         colorScheme =
-            if (state().settings.general.theme.computesToDark()) darkColorScheme()
-            else lightColorScheme(),
+            if (state().settings.general.theme.computesToDark()) defaultDarkTheme
+            else defaultLightTheme,
         typography = getTypography(fontFamily ?: FontFamily.SansSerif),
         content = content
     )
