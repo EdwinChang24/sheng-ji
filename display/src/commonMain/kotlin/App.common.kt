@@ -18,7 +18,6 @@ import androidx.compose.foundation.gestures.animateTo
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -40,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -256,36 +256,37 @@ private fun SettingsPane(
                             )
                 )
     )
-    Box(contentAlignment = Alignment.CenterEnd, modifier = Modifier.fillMaxSize()) {
-        BoxWithConstraints {
-            val width = with(LocalDensity.current) { maxWidth.toPx() }
-            LaunchedEffect(width) {
+    Box(
+        contentAlignment = Alignment.CenterEnd,
+        modifier =
+            Modifier.fillMaxSize().onSizeChanged {
                 dragState.updateAnchors(
                     newAnchors =
                         DraggableAnchors {
                             true at 0f
-                            false at width
-                        }
+                            false at it.width.toFloat()
+                        },
+                    newTarget = dragState.currentValue
                 )
             }
-            Surface(
-                color = MaterialTheme.colorScheme.surfaceContainer,
-                modifier =
-                    (if (windowWidth <= WindowWidth.Small) Modifier.fillMaxSize()
-                        else Modifier.fillMaxHeight())
-                        .then(
-                            Modifier.offset {
-                                    IntOffset(
-                                        (dragState.offset.takeIf { !it.isNaN() } ?: Float.MAX_VALUE)
-                                            .toInt(),
-                                        0
-                                    )
-                                }
-                                .anchoredDraggable(state = dragState, Orientation.Horizontal)
-                        )
-            ) {
-                SettingsPage(navigator, state)
-            }
+    ) {
+        Surface(
+            color = MaterialTheme.colorScheme.surfaceContainer,
+            modifier =
+                (if (windowWidth <= WindowWidth.Small) Modifier.fillMaxSize()
+                    else Modifier.fillMaxHeight())
+                    .then(
+                        Modifier.offset {
+                                IntOffset(
+                                    (dragState.offset.takeIf { !it.isNaN() } ?: Float.MAX_VALUE)
+                                        .toInt(),
+                                    0
+                                )
+                            }
+                            .anchoredDraggable(state = dragState, Orientation.Horizontal)
+                    )
+        ) {
+            SettingsPage(navigator, state)
         }
     }
 }
