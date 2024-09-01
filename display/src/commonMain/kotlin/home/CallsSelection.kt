@@ -52,7 +52,6 @@ import sh.calvin.reorderable.ReorderableScope
 import util.ClearableState
 import util.DefaultTransition
 import util.ExpandWidths
-import util.WeightRow
 import util.formatCallNumber
 import util.iconRes
 
@@ -64,123 +63,109 @@ fun CallsSelection(
     state: AppState.Prop,
     modifier: Modifier = Modifier
 ) {
-    ExpandWidths(modifier = modifier) {
-        Card(colors = cardColors, modifier = Modifier.clip(CardDefaults.shape)) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.padding(vertical = 24.dp)
-            ) {
-                WeightRow(modifier = Modifier.expandWidth().padding(horizontal = 24.dp)) {
-                    Text(
-                        "Calls",
-                        style = MaterialTheme.typography.titleLarge,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Box(contentAlignment = Alignment.CenterEnd, modifier = Modifier.weight()) {
-                        OutlinedButtonWithEmphasis(
-                            text = if (callsState.canUndoClear) "Undo clear" else "Clear",
-                            icon =
-                                iconRes(
-                                    if (callsState.canUndoClear) Res.drawable.ic_undo
-                                    else Res.drawable.ic_clear_all
-                                ),
-                            onClick = {
-                                if (callsState.canUndoClear) callsState.undoClearValue()
-                                else callsState.clearValue()
+    Card(colors = cardColors, modifier = modifier.clip(CardDefaults.shape)) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(vertical = 24.dp)
+        ) {
+            Text(
+                "Calls",
+                style = MaterialTheme.typography.titleLarge,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(horizontal = 24.dp)
+            )
+            AnimatedContent(
+                targetState = callsState.value,
+                transitionSpec = { DefaultTransition using SizeTransform(clip = false) },
+                contentKey = { it.isEmpty() }
+            ) { calls ->
+                if (calls.isNotEmpty()) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier =
+                            Modifier.horizontalScroll(rememberScrollState())
+                                .padding(horizontal = 24.dp, vertical = 8.dp)
+                    ) {
+                        ReorderableRow(
+                            list = calls,
+                            onSettle = { from, to ->
+                                callsState.setValue(
+                                    callsState.value.toMutableList().apply {
+                                        add(to, removeAt(from))
+                                    }
+                                )
                             },
-                            enabled = callsState.canUndoClear || callsState.value.isNotEmpty()
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) { _, call, _ ->
+                            key(call.id) {
+                                CallCard(
+                                    call = call,
+                                    onEdit = { navigator.navigate(Dialog.EditCall(call.id)) },
+                                    setFound = { found ->
+                                        callsState.setValue(
+                                            callsState.value.map {
+                                                if (it.id == call.id) it.copy(found = found) else it
+                                            }
+                                        )
+                                    },
+                                    onDelete = {
+                                        callsState.setValue(
+                                            callsState.value.filter { it.id != call.id }
+                                        )
+                                    },
+                                    state = state
+                                )
+                            }
+                        }
+                        OutlinedButtonWithEmphasis(
+                            text = "Add call",
+                            icon = iconRes(Res.drawable.ic_add),
+                            onClick = { navigator.navigate(Dialog.EditCall(uuid4().toString())) },
+                            modifier = Modifier.zIndex(-1f)
+                        )
+                    }
+                } else {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier =
+                            Modifier.clickable {
+                                    navigator.navigate(Dialog.EditCall(uuid4().toString()))
+                                }
+                                .pointerHoverIcon(PointerIcon.Hand)
+                                .padding(horizontal = 24.dp, vertical = 8.dp)
+                    ) {
+                        Box(
+                            contentAlignment = Alignment.CenterStart,
+                            modifier = Modifier.weight(1f).padding(end = 16.dp)
+                        ) {
+                            Text("No calls added", maxLines = 2, overflow = TextOverflow.Ellipsis)
+                        }
+                        Spacer(modifier = Modifier.width(16.dp))
+                        ButtonWithEmphasis(
+                            text = "Add",
+                            icon = iconRes(Res.drawable.ic_add),
+                            onClick = { navigator.navigate(Dialog.EditCall(uuid4().toString())) }
                         )
                     }
                 }
-                AnimatedContent(
-                    targetState = callsState.value,
-                    transitionSpec = { DefaultTransition using SizeTransform(clip = false) },
-                    contentKey = { it.isEmpty() }
-                ) { calls ->
-                    if (calls.isNotEmpty()) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier =
-                                Modifier.expandWidth()
-                                    .horizontalScroll(rememberScrollState())
-                                    .padding(horizontal = 24.dp, vertical = 8.dp)
-                        ) {
-                            ReorderableRow(
-                                list = calls,
-                                onSettle = { from, to ->
-                                    callsState.setValue(
-                                        callsState.value.toMutableList().apply {
-                                            add(to, removeAt(from))
-                                        }
-                                    )
-                                },
-                                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) { _, call, _ ->
-                                key(call.id) {
-                                    CallCard(
-                                        call = call,
-                                        onEdit = { navigator.navigate(Dialog.EditCall(call.id)) },
-                                        setFound = { found ->
-                                            callsState.setValue(
-                                                callsState.value.map {
-                                                    if (it.id == call.id) it.copy(found = found)
-                                                    else it
-                                                }
-                                            )
-                                        },
-                                        onDelete = {
-                                            callsState.setValue(
-                                                callsState.value.filter { it.id != call.id }
-                                            )
-                                        },
-                                        state = state
-                                    )
-                                }
-                            }
-                            OutlinedButtonWithEmphasis(
-                                text = "Add call",
-                                icon = iconRes(Res.drawable.ic_add),
-                                onClick = {
-                                    navigator.navigate(Dialog.EditCall(uuid4().toString()))
-                                },
-                                modifier = Modifier.zIndex(-1f)
-                            )
-                        }
-                    } else {
-                        WeightRow(
-                            modifier =
-                                Modifier.expandWidth()
-                                    .clickable {
-                                        navigator.navigate(Dialog.EditCall(uuid4().toString()))
-                                    }
-                                    .pointerHoverIcon(PointerIcon.Hand)
-                                    .padding(horizontal = 24.dp, vertical = 8.dp)
-                        ) {
-                            Box(
-                                contentAlignment = Alignment.CenterStart,
-                                modifier = Modifier.weight().padding(end = 16.dp)
-                            ) {
-                                Text(
-                                    "No calls added",
-                                    maxLines = 2,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(16.dp))
-                            ButtonWithEmphasis(
-                                text = "Add",
-                                icon = iconRes(Res.drawable.ic_add),
-                                onClick = {
-                                    navigator.navigate(Dialog.EditCall(uuid4().toString()))
-                                }
-                            )
-                        }
-                    }
-                }
             }
+            OutlinedButtonWithEmphasis(
+                text = if (callsState.canUndoClear) "Undo clear" else "Clear",
+                icon =
+                    iconRes(
+                        if (callsState.canUndoClear) Res.drawable.ic_undo
+                        else Res.drawable.ic_clear_all
+                    ),
+                onClick = {
+                    if (callsState.canUndoClear) callsState.undoClearValue()
+                    else callsState.clearValue()
+                },
+                enabled = callsState.canUndoClear || callsState.value.isNotEmpty(),
+                modifier = Modifier.align(Alignment.CenterHorizontally).padding(horizontal = 24.dp)
+            )
         }
     }
 }
