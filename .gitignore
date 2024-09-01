@@ -1,5 +1,5 @@
-# Created by https://www.toptal.com/developers/gitignore/api/git,linux,macos,gradle,kotlin,android,windows,jetbrains,node,web,astro,svelte,dotenv
-# Edit at https://www.toptal.com/developers/gitignore?templates=git,linux,macos,gradle,kotlin,android,windows,jetbrains,node,web,astro,svelte,dotenv
+# Created by https://www.toptal.com/developers/gitignore/api/git,node,astro,linux,macos,dotenv,gradle,kotlin,svelte,android,windows,jetbrains
+# Edit at https://www.toptal.com/developers/gitignore?templates=git,node,astro,linux,macos,dotenv,gradle,kotlin,svelte,android,windows,jetbrains
 
 ### Android ###
 # Gradle files
@@ -396,21 +396,6 @@ dist
 .svelte-kit/
 package
 
-### Web ###
-*.asp
-*.cer
-*.csr
-*.css
-*.htm
-*.html
-*.js
-*.jsp
-*.php
-*.rss
-*.wasm
-*.wat
-*.xhtml
-
 ### Windows ###
 # Windows thumbnail cache files
 Thumbs.db
@@ -463,7 +448,7 @@ gradle-app.setting
 ### Gradle Patch ###
 # Java heap dump
 
-# End of https://www.toptal.com/developers/gitignore/api/git,linux,macos,gradle,kotlin,android,windows,jetbrains,node,web,astro,svelte,dotenv
+# End of https://www.toptal.com/developers/gitignore/api/git,node,astro,linux,macos,dotenv,gradle,kotlin,svelte,android,windows,jetbrains
 
 ### Custom ###
 

@@ -57,3 +57,6 @@ The following is a list of third-party dependencies used in this project.
 - uqr
     https://github.com/unjs/uqr
     License: MIT
+- Framework7 Icons
+    https://github.com/framework7io/framework7-icons
+    License: MIT

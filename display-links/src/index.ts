@@ -15,6 +15,9 @@ export default {
                 },
             ]);
         }
-        return Response.redirect("https://example.com", 303); // TODO
+        if (url.pathname === "/display") {
+            return Response.redirect("https://shengji.edwinchang.dev/display", 303);
+        }
+        return Response.redirect("https://shengji.edwinchang.dev/downloads/display", 303);
     },
 } satisfies ExportedHandler<Env>;
