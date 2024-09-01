@@ -7,9 +7,9 @@ import model.PlayingCard
 import model.Suit
 import util.allRanks
 
-const val BaseUrl = "https://shengji-dev.edwinchang.dev/display"
-const val BaseUrlWww = "https://www.shengji-dev.edwinchang.dev/display"
-const val AndroidLinksUrl = "https://l.shengji-dev.edwinchang.dev/"
+const val BaseUrl = "https://shengji.edwinchang.dev/display"
+const val BaseUrlWww = "https://www.shengji.edwinchang.dev/display"
+const val AndroidLinksUrl = "https://l.shengji.edwinchang.dev/"
 
 fun TransferredData.toUrl(): String {
     val possibleTrumpsEncoded =

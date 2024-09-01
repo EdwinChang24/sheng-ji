@@ -1,4 +1,4 @@
-import java.util.Properties
+
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -104,10 +104,8 @@ kotlin {
 
 dependencies { kspCommonMainMetadata(libs.arrow.optics.ksp) }
 
-val versionFile = layout.projectDirectory.file("version.properties").asFile
-val versionProperties =
-    if (versionFile.exists()) Properties().apply { load(versionFile.inputStream()) } else null
-val appVersion = versionProperties?.getProperty("version", "?") ?: "?"
+val versionFile = layout.projectDirectory.file("version.txt").asFile
+val appVersion = if (versionFile.exists()) versionFile.readText().lines().first() else "?"
 
 val generateVersionNumber: Task by
     tasks.creating {
@@ -155,8 +153,8 @@ android {
 val buildWebApp: Task by
     tasks.creating(Copy::class) {
         group = "custom"
-        val wasm = "wasmJsBrowserDistribution"
-        val js = "jsBrowserDistribution"
+        val wasm = "wasmJsBrowserDevelopmentExecutableDistribution"
+        val js = "jsBrowserDevelopmentExecutableDistribution"
         dependsOn(wasm, js)
         doFirst { layout.buildDirectory.file("webApp").get().asFile.delete() }
         from(tasks.named(wasm).get().outputs.files)

@@ -1,0 +1,11 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import DisplayNavBar from "../../sheng-ji-display/components/DisplayNavBar.svelte";
+import DisplayDownloads from "../../sheng-ji-display/DisplayDownloads.svelte";
+import version from "../../version/version.json";
+---
+
+<Layout title="Downloads" description="Download 升级 Display for Android, Windows, or Linux.">
+    <DisplayNavBar slot="navbar" client:only="svelte" />
+    <DisplayDownloads slot="content" versionNumber={version} client:only="svelte" />
+</Layout>

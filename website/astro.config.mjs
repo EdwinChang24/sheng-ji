@@ -9,7 +9,7 @@ export default defineConfig({
         format: "file",
     },
     integrations: [svelte(), tailwind()],
-    redirects: {
-        "/downloads": "/downloads/display",
-    },
+    prefetch: {
+        prefetchAll: true
+    }
 });

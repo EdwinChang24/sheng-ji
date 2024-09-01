@@ -32,6 +32,7 @@ val mergeWeb: Task by
     tasks.creating {
         group = "custom"
         dependsOn(":display:buildWebApp")
+        inputs.file(project("display").file("version.txt"))
         doLast {
             delete { delete("build/web") }
             copy {
@@ -45,6 +46,13 @@ val mergeWeb: Task by
                 into(layout.buildDirectory.dir("web/public"))
                 duplicatesStrategy = DuplicatesStrategy.INCLUDE
             }
+            layout.buildDirectory
+                .file("web/src/version/version.json")
+                .get()
+                .asFile
+                .writeText(
+                    "\"${project("display").file("version.txt").readText().lines().first()}\""
+                )
         }
     }
 

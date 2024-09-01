@@ -1,39 +1,10 @@
 ---
-import ShengJiDisplay from '../components/ShengJiDisplay.svelte';
-import NavBar from '../components/NavBar.svelte';
-import Footer from '../components/Footer.svelte';
-import '../styles/NotoSansSC.scss';
+import ShengJiDisplay from "../components/ShengJiDisplay.svelte";
+import Layout from "../layouts/Layout.astro";
+import DisplayNavBar from "../sheng-ji-display/components/DisplayNavBar.svelte";
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="description" content="Astro description" />
-        <meta name="viewport" content="width=device-width" />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <meta name="generator" content={Astro.generator} />
-        <meta name="darkreader-lock" />
-        <link rel="preconnect" href="https://rsms.me/">
-        <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
-        <title>升级 Display</title>
-    </head>
-    <body class="overflow-x-clip bg-black">
-        <div class="overflow-x-clip text-white">
-            <NavBar client:only="svelte" />
-            <ShengJiDisplay client:only="svelte" />
-            <Footer client:only="svelte" />
-        </div>
-    </body>
-</html>
-
-<style lang="scss" is:global>
-    :root {
-        font-family: Inter, "Noto Sans SC", sans-serif;
-        font-feature-settings: 'liga' 1, 'calt' 1;
-        font-optical-sizing: none;
-    }
-    @supports (font-variation-settings: normal) {
-        :root { font-family: InterVariable, "Noto Sans SC", sans-serif; }
-    }
-</style>
+<Layout title="升级 Display" description="Level up your 升级 gameplay.">
+    <DisplayNavBar slot="navbar" client:only="svelte" />
+    <ShengJiDisplay slot="content" client:only="svelte" />
+</Layout>

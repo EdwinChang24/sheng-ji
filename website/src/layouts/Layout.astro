@@ -1,0 +1,44 @@
+---
+import NavBar from "../sheng-ji-display/components/DisplayNavBar.svelte";
+import Footer from "../components/Footer.svelte";
+import "../styles/NotoSansSC.scss";
+
+const { title, description, navBarTitle } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="description" content={description} />
+        <meta name="viewport" content="width=device-width" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="generator" content={Astro.generator} />
+        <meta name="darkreader-lock" />
+        <link rel="preconnect" href="https://rsms.me/" />
+        <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+        <title>{title}</title>
+    </head>
+    <body class="overflow-x-clip bg-black">
+        <div class="overflow-x-clip text-white">
+            <slot name="navbar" />
+            <slot name="content" />
+            <Footer client:only="svelte" />
+        </div>
+    </body>
+</html>
+
+<style lang="scss" is:global>
+    :root {
+        font-family: Inter, "Noto Sans SC", sans-serif;
+        font-feature-settings:
+            "liga" 1,
+            "calt" 1;
+        font-optical-sizing: none;
+    }
+    @supports (font-variation-settings: normal) {
+        :root {
+            font-family: InterVariable, "Noto Sans SC", sans-serif;
+        }
+    }
+</style>

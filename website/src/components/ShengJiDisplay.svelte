@@ -6,7 +6,7 @@
     import PossibleTrumps from "../sheng-ji-display/sections/PossibleTrumps.svelte";
     import Teammates from "../sheng-ji-display/sections/Teammates.svelte";
     import TrumpCalls from "../sheng-ji-display/sections/TrumpCalls.svelte";
-
+    
     let scroll = 0;
     let height: number;
 </script>

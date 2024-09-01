@@ -9,7 +9,7 @@
         <p class="inline text-nowrap">升级 Display</p>
     </a>
     <a
-        href="/downloads/display"
+        href="/display/downloads"
         class="bg-slate-600 hover:bg-slate-500 px-6 py-3 rounded-full shadow-sm hover:shadow-2xl transition"
     >
         See downloads

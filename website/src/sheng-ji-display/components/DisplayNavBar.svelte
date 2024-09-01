@@ -1,5 +1,5 @@
 <script lang="ts">
-    import shengJi from "../assets/sheng-ji.svg";
+    import shengJi from "../../assets/sheng-ji.svg";
 </script>
 
 <div
@@ -12,10 +12,10 @@
         <p class="hidden sm:block font-semibold text-xl">升级 Display</p>
     </div>
     <div class="flex items-center space-x-6">
-        <a href="/downloads/display" class="hidden sm:block text-base font-semibold">Download</a>
+        <a href="/display/downloads" class="hidden sm:block text-base font-semibold">Download</a>
         <a
             href="https://l.shengji.edwinchang.dev/display"
-            class="text-base font-semibold bg-blue-800 hover:bg-blue-700 px-6 py-3 rounded-full shadow-sm hover:shadow-2xl transition"
+            class="text-base font-semibold bg-blue-600 hover:bg-blue-500 px-6 py-3 rounded-full shadow-sm hover:shadow-2xl transition"
         >
             Open
             <p class="hidden sm:inline text-nowrap">升级 Display</p>
