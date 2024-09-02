@@ -454,3 +454,4 @@ gradle-app.setting
 
 .kotlin
 .wrangler
+keystore-pwd.txt

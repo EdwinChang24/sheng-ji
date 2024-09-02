@@ -9,7 +9,7 @@ export default {
                         namespace: "android_app",
                         package_name: "dev.edwinchang.shengjidisplay",
                         sha256_cert_fingerprints: [
-                            // TODO
+                            "19:34:28:93:D6:50:6A:7B:0E:90:07:CD:79:FC:04:F8:18:4D:EB:F8:EA:89:12:66:1D:22:D5:39:38:03:AA:9F",
                         ],
                     },
                 },

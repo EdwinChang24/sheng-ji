@@ -1,4 +1,3 @@
-
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -135,10 +134,22 @@ android {
         vectorDrawables { useSupportLibrary = true }
     }
     buildTypes {
+        signingConfigs {
+            create("release") {
+                storeFile = file("keystore.jks")
+                storePassword = System.getenv("KEYSTORE_PWD")
+                keyAlias = "display"
+                keyPassword = System.getenv("KEYSTORE_PWD")
+            }
+        }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
+            signingConfig = signingConfigs.findByName("release")
+        }
+        create("releaseDebug") {
+            initWith(getByName("release"))
             signingConfig = signingConfigs.findByName("debug")
         }
     }
