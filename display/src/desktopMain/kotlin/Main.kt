@@ -23,6 +23,9 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import model.AppState
+import org.jetbrains.compose.resources.painterResource
+import resources.Res
+import resources.app_icon
 
 val stateFile =
     if (System.getProperty("os.name").contains("win", ignoreCase = true)) {
@@ -69,6 +72,7 @@ fun main() {
             onCloseRequest = ::exitApplication,
             state = windowState,
             title = "升级 Display $appVersion",
+            icon = painterResource(Res.drawable.app_icon),
             onKeyEvent = { keyEvent ->
                 if (keyEvent.key == Key.F11) {
                     if (keyEvent.type == KeyEventType.KeyDown) {

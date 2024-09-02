@@ -1,9 +1,8 @@
 ---
-import NavBar from "../sheng-ji-display/components/DisplayNavBar.svelte";
 import Footer from "../components/Footer.svelte";
 import "../styles/NotoSansSC.scss";
 
-const { title, description, navBarTitle } = Astro.props;
+const { title, description } = Astro.props;
 ---
 
 <!doctype html>
@@ -12,7 +11,9 @@ const { title, description, navBarTitle } = Astro.props;
         <meta charset="UTF-8" />
         <meta name="description" content={description} />
         <meta name="viewport" content="width=device-width" />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="icon" href="/favicon.ico" sizes="48x48" />
+        <link rel="icon" href="/favicon.svg" sizes="any" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/favicon-180.png" />
         <meta name="generator" content={Astro.generator} />
         <meta name="darkreader-lock" />
         <link rel="preconnect" href="https://rsms.me/" />
