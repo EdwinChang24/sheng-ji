@@ -4,7 +4,11 @@ import DisplayNavBar from "../sheng-ji-display/components/DisplayNavBar.svelte";
 import version from "../version/version.json";
 ---
 
-<Layout title="Privacy" description="Privacy policy for Edwin Chang's 升级 software.">
+<Layout
+    title="Privacy"
+    description="Privacy policy for Edwin Chang's 升级 software."
+    url="https://shengji.edwinchang.dev/privacy"
+>
     <DisplayNavBar slot="navbar" versionNumber={version} client:only="svelte" />
     <div slot="content" class="bg-slate-900 min-h-dvh pt-24 pb-8 px-8 flex justify-center">
         <div class="max-w-2xl flex flex-col space-y-4">

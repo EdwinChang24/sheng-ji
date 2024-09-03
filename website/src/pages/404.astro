@@ -4,7 +4,11 @@ import DisplayNavBar from "../sheng-ji-display/components/DisplayNavBar.svelte";
 import version from "../version/version.json";
 ---
 
-<Layout title="404 Not Found" description="Finding things is hard. As is finding friends.">
+<Layout
+    title="404 Not Found"
+    description="Finding things is hard. As is finding friends."
+    url="https://shengji.edwinchang.dev/404"
+>
     <DisplayNavBar slot="navbar" versionNumber={version} client:only="svelte" />
     <div
         slot="content"

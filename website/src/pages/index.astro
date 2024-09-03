@@ -1,11 +1,15 @@
 ---
-import ShengJiDisplay from "../components/ShengJiDisplay.svelte";
+import ShengJiDisplay from "../sheng-ji-display/ShengJiDisplay.svelte";
 import Layout from "../layouts/Layout.astro";
 import DisplayNavBar from "../sheng-ji-display/components/DisplayNavBar.svelte";
 import version from "../version/version.json";
 ---
 
-<Layout title="升级 Display" description="Level up your 升级 gameplay.">
+<Layout
+    title="升级 Display"
+    description="Level up your 升级 gameplay."
+    url="https://shengji.edwinchang.dev"
+>
     <DisplayNavBar slot="navbar" versionNumber={version} client:only="svelte" />
     <ShengJiDisplay slot="content" client:only="svelte" />
 </Layout>

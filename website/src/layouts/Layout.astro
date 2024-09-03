@@ -2,7 +2,21 @@
 import Footer from "../components/Footer.svelte";
 import "../styles/NotoSansSC.scss";
 
-const { title, description } = Astro.props;
+interface Props {
+    title: string;
+    description: string;
+    ogImage?: string;
+    twitterImage?: string;
+    url: string;
+}
+
+const {
+    title,
+    description,
+    ogImage = "https://shengji.edwinchang.dev/social/sheng-ji-og.jpg",
+    twitterImage = "https://shengji.edwinchang.dev/social/sheng-ji-twitter.jpg",
+    url,
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -15,6 +29,17 @@ const { title, description } = Astro.props;
         <link rel="icon" href="/favicon.svg" sizes="any" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/favicon-180.png" />
         <meta name="generator" content={Astro.generator} />
+        <meta property="og:title" content={title} />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:url" content={url} />
+        <meta property="og:description" content={description} />
+        <meta property="og:site_name" content="升级 • Edwin Chang" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={twitterImage} />
+        <meta name="theme-color" content="#990000" />
         <meta name="darkreader-lock" />
         <link rel="preconnect" href="https://rsms.me/" />
         <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />

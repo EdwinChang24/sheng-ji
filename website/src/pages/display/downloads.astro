@@ -5,7 +5,13 @@ import DisplayDownloads from "../../sheng-ji-display/DisplayDownloads.svelte";
 import version from "../../version/version.json";
 ---
 
-<Layout title="Downloads" description="Download 升级 Display for Android, Windows, or Linux.">
+<Layout
+    title="Downloads"
+    description="Download 升级 Display for Android, Windows, or Linux."
+    url="https://shengji.edwinchang.dev/display/downloads"
+    ogImage="https://shengji.edwinchang.dev/social/sheng-ji-display-og.jpg"
+    twitterImage="https://shengji.edwinchang.dev/social/sheng-ji-display-twitter.jpg"
+>
     <DisplayNavBar slot="navbar" versionNumber={version} client:only="svelte" />
     <DisplayDownloads slot="content" versionNumber={version} client:only="svelte" />
 </Layout>
