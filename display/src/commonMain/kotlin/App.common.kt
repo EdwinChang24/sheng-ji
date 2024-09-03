@@ -203,7 +203,7 @@ fun App(
                                 Dialog.EditPossibleTrumps ->
                                     EditPossibleTrumpsDialog(navigator, state)
                                 Dialog.EditTrump -> EditTrumpDialog(navigator, state)
-                                Dialog.About -> AboutDialog(navigator)
+                                Dialog.About -> AboutDialog(navigator, state)
                                 is Dialog.QuickTransfer ->
                                     QuickTransferDialog(targetDialog.url, navigator, state)
                                 is Dialog.Disambig ->
