@@ -6,6 +6,6 @@ import version from "../../version/version.json";
 ---
 
 <Layout title="Downloads" description="Download 升级 Display for Android, Windows, or Linux.">
-    <DisplayNavBar slot="navbar" client:only="svelte" />
+    <DisplayNavBar slot="navbar" versionNumber={version} client:only="svelte" />
     <DisplayDownloads slot="content" versionNumber={version} client:only="svelte" />
 </Layout>

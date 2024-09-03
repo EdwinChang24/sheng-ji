@@ -1,5 +1,8 @@
 <script lang="ts">
     import shengJi from "../../assets/sheng-ji.svg";
+    import shengJiDisplay from "../../assets/sheng-ji-display.svg";
+
+    export let versionNumber: string;
 </script>
 
 <div
@@ -9,7 +12,14 @@
         <a href="/" class="h-8 w-8">
             <img src={shengJi.src} alt="升级" class="h-8" />
         </a>
+        <div class="h-6 w-[1px] bg-slate-500" />
+        <a href="/" class="h-8 w-8">
+            <img src={shengJiDisplay.src} alt="升级" class="h-8" />
+        </a>
         <p class="hidden sm:block font-semibold text-xl">升级 Display</p>
+        <p class="font-medium text-sm text-center bg-slate-700 px-2 py-1 rounded-lg text-nowrap">
+            v{versionNumber}
+        </p>
     </div>
     <div class="flex items-center space-x-6">
         <a href="/display/downloads" class="hidden sm:block text-base font-semibold">Download</a>

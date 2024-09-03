@@ -1,10 +1,11 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import DisplayNavBar from "../sheng-ji-display/components/DisplayNavBar.svelte";
+import version from "../version/version.json";
 ---
 
 <Layout title="404 Not Found" description="Finding things is hard. As is finding friends.">
-    <DisplayNavBar slot="navbar" client:only="svelte" />
+    <DisplayNavBar slot="navbar" versionNumber={version} client:only="svelte" />
     <div
         slot="content"
         class="bg-slate-900 min-h-dvh flex flex-col justify-center items-center space-y-8 pt-24 pb-8 px-8"

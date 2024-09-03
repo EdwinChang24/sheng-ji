@@ -15,7 +15,7 @@
         </div>
         <div class="h-48 sm:h-64">
             <img
-                class="w-48 sm:w-64 rounded-[25%] shadow-[0_0_4rem_rgb(255_0_0/0.25)] transition-opacity"
+                class="w-48 sm:w-64 drop-shadow-[0_0_4rem_rgb(255_0_0/0.25)] transition-opacity"
                 src={shengJiDisplay.src}
                 alt="升级 Display"
                 style:opacity={iconOpacity}
