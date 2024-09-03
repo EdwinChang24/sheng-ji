@@ -22,6 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.SpanStyle
@@ -98,6 +100,7 @@ fun AboutDialog(navigator: Navigator, state: AppState.Prop, modifier: Modifier =
                     Modifier.align(Alignment.CenterHorizontally)
                         .clip(MaterialTheme.shapes.medium)
                         .clickable { uriHandler.openUri("https://edwinchang.dev") }
+                        .pointerHoverIcon(PointerIcon.Hand)
                         .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
                 ProvideTextStyle(MaterialTheme.typography.bodyLarge) {
@@ -176,6 +179,7 @@ fun AboutDialog(navigator: Navigator, state: AppState.Prop, modifier: Modifier =
                     modifier =
                         Modifier.clip(MaterialTheme.shapes.medium)
                             .clickable { uriHandler.openUri("https://shengji.edwinchang.dev") }
+                            .pointerHoverIcon(PointerIcon.Hand)
                             .padding(16.dp)
                             .size(64.dp)
                 )
@@ -190,6 +194,7 @@ fun AboutDialog(navigator: Navigator, state: AppState.Prop, modifier: Modifier =
                     modifier =
                         Modifier.clip(MaterialTheme.shapes.medium)
                             .clickable { uriHandler.openUri("https://edwinchang.dev") }
+                            .pointerHoverIcon(PointerIcon.Hand)
                             .padding(16.dp)
                             .size(64.dp)
                 )
@@ -204,6 +209,7 @@ fun AboutDialog(navigator: Navigator, state: AppState.Prop, modifier: Modifier =
                     Modifier.align(Alignment.CenterHorizontally)
                         .clip(MaterialTheme.shapes.medium)
                         .clickable { uriHandler.openUri("https://edwinchang.dev") }
+                        .pointerHoverIcon(PointerIcon.Hand)
                         .padding(horizontal = 16.dp, vertical = 8.dp)
             )
             ButtonWithEmphasis(
