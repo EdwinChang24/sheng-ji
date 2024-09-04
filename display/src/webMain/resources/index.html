@@ -114,42 +114,59 @@
             升级 Display unfortunately doesn't work without JavaScript. Please enable it to use the
             app.
         </noscript>
-        <svg
+        <div
             id="loading"
             class="hide"
-            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"
-            width="160px"
-            height="160px"
-            viewBox="0 0 160 160"
+            style="
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            "
         >
-            <style>
-                #circle1 {
-                    animation: 1.6s ease-out -0.8s infinite anim;
-                }
-                #circle2 {
-                    animation: 1.6s ease-out 0s infinite anim;
-                }
-                @keyframes anim {
-                    0% {
-                        transform: translate(-12px, 0);
+            <div style="height: 8rem; width: 8rem">
+                <img
+                    src="/sheng-ji-display.svg"
+                    height="48"
+                    width="48"
+                    style="height: 8rem; width: 8rem"
+                />
+            </div>
+            <svg width="160px" height="160px" viewBox="0 0 160 160">
+                <style>
+                    #circle1 {
+                        animation: 1.6s ease-out -0.8s infinite anim;
                     }
-                    25% {
-                        transform: translate(0, -12px);
+                    #circle2 {
+                        animation: 1.6s ease-out 0s infinite anim;
                     }
-                    50% {
-                        transform: translate(12px, 0);
+                    @keyframes anim {
+                        0% {
+                            transform: translate(-12px, 0);
+                        }
+                        25% {
+                            transform: translate(0, -12px);
+                        }
+                        50% {
+                            transform: translate(12px, 0);
+                        }
+                        75% {
+                            transform: translate(0, 12px);
+                        }
+                        100% {
+                            transform: translate(-12px, 0);
+                        }
                     }
-                    75% {
-                        transform: translate(0, 12px);
-                    }
-                    100% {
-                        transform: translate(-12px, 0);
-                    }
-                }
-            </style>
-            <circle id="circle1" cx="80" cy="80" r="4" fill="currentColor" />
-            <circle id="circle2" cx="80" cy="80" r="4" fill="red" />
-        </svg>
+                </style>
+                <circle id="circle1" cx="80" cy="80" r="4" fill="currentColor" />
+                <circle id="circle2" cx="80" cy="80" r="4" fill="red" />
+            </svg>
+        </div>
+
         <script type="application/javascript">
             document.getElementById("loading").classList.remove("hide");
         </script>

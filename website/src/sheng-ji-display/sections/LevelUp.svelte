@@ -1,6 +1,5 @@
 <script lang="ts">
     import Buttons from "../components/Buttons.svelte";
-    import shengJiDisplay from "../../assets/sheng-ji-display.svg";
 
     let headlineText: HTMLDivElement;
     let iconOpacity = 0;
@@ -16,7 +15,7 @@
         <div class="h-48 sm:h-64">
             <img
                 class="w-48 sm:w-64 drop-shadow-[0_0_4rem_rgb(255_0_0/0.25)] transition-opacity"
-                src={shengJiDisplay.src}
+                src="/sheng-ji-display.svg"
                 alt="升级 Display"
                 style:opacity={iconOpacity}
                 on:load={() => {
