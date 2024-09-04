@@ -16,7 +16,7 @@
         <h2 class="text-2xl font-medium">Android</h2>
         <a
             class="flex space-x-4 items-center rounded-xl border-2 border-slate-300 w-fit px-6 py-3"
-            href="https://github.com/EdwinChang24/sheng-ji-display/releases/download/display-{versionNumber}/sheng-ji-display-{versionNumber}.apk"
+            href="https://github.com/EdwinChang24/sheng-ji/releases/download/display%2F{versionNumber}/sheng-ji-display-{versionNumber}.apk"
         >
             <img src={android.src} alt="Android logo" class="h-4" />
             <p>Download for Android</p>
@@ -25,14 +25,14 @@
         <div class="flex flex-col sm:flex-row space-y-8 sm:space-y-0 sm:space-x-8">
             <a
                 class="flex space-x-4 items-center rounded-xl border-2 border-slate-300 w-fit px-6 py-3"
-                href="https://github.com/EdwinChang24/sheng-ji-display/releases/download/display-{versionNumber}/sheng-ji-display-{versionNumber}.exe"
+                href="https://github.com/EdwinChang24/sheng-ji/releases/download/display%2F{versionNumber}/sheng-ji-display-{versionNumber}.exe"
             >
                 <img src={windows.src} alt="Windows logo" class="h-4" />
                 <p>Download for Windows</p>
             </a>
             <a
                 class="flex space-x-4 items-center rounded-xl border-2 border-slate-300 w-fit px-6 py-3"
-                href="https://github.com/EdwinChang24/sheng-ji-display/releases/download/display-{versionNumber}/sheng-ji-display-{versionNumber}.deb"
+                href="https://github.com/EdwinChang24/sheng-ji/releases/download/display%2F{versionNumber}/sheng-ji-display-{versionNumber}.deb"
             >
                 <img src={linux.src} alt="Linux logo" class="h-4" />
                 <p>Download for Linux (.deb)</p>

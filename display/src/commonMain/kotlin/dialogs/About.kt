@@ -141,7 +141,7 @@ fun AboutDialog(navigator: Navigator, state: AppState.Prop, modifier: Modifier =
                     text = "Source code",
                     icon = iconRes(Res.drawable.ic_code),
                     onClick = {
-                        uriHandler.openUri("https://github.com/EdwinChang24/sheng-ji-display")
+                        uriHandler.openUri("https://github.com/EdwinChang24/sheng-ji")
                     }
                 )
                 OutlinedButtonWithEmphasis(
@@ -149,7 +149,7 @@ fun AboutDialog(navigator: Navigator, state: AppState.Prop, modifier: Modifier =
                     icon = painterResource(Res.drawable.ic_code_blocks),
                     onClick = {
                         uriHandler.openUri(
-                            "https://github.com/EdwinChang24/sheng-ji-display/blob/-/display/NOTICE"
+                            "https://github.com/EdwinChang24/sheng-ji/blob/-/display/NOTICE"
                         )
                     }
                 )
@@ -158,7 +158,7 @@ fun AboutDialog(navigator: Navigator, state: AppState.Prop, modifier: Modifier =
                     icon = iconRes(Res.drawable.ic_license),
                     onClick = {
                         uriHandler.openUri(
-                            "https://github.com/EdwinChang24/sheng-ji-display/blob/-/LICENSE"
+                            "https://github.com/EdwinChang24/sheng-ji/blob/-/LICENSE"
                         )
                     }
                 )

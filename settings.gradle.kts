@@ -17,6 +17,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "sheng-ji-display"
+rootProject.name = "sheng-ji"
 
 include(":display")

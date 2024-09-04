@@ -12,11 +12,11 @@
     class="grid grid-cols-2 lg:grid-cols-[repeat(3,minmax(0,1fr))_minmax(0,2fr)_repeat(3,minmax(0,1fr))] gap-8 justify-items-center items-center p-12 bg-slate-950"
 >
     <a
-        href="https://github.com/EdwinChang24/sheng-ji-display"
+        href="https://github.com/EdwinChang24/sheng-ji"
         class="col-span-full lg:col-span-1 lg:col-start-4 flex items-center space-x-2"
     >
         <img class="h-6" src={github.src} alt="GitHub" />
-        <p class="font-medium text-sm">EdwinChang24/sheng-ji-display</p>
+        <p class="font-medium text-sm">EdwinChang24/sheng-ji</p>
     </a>
     <a
         href="/"

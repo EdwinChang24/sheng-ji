@@ -11,7 +11,7 @@
             <p class="inline">
                 doesn't have ads, tracking, or cookies, and always respects your privacy. The source
                 code is available on
-                <a class="underline" href="https://github.com/EdwinChang24/sheng-ji-display">
+                <a class="underline" href="https://github.com/EdwinChang24/sheng-ji">
                     GitHub</a
                 > under the MIT License, and contributions are more than welcome.
             </p>
