@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.LocalTextStyle
@@ -66,7 +67,8 @@ fun AboutDialog(navigator: Navigator, state: AppState.Prop, modifier: Modifier =
     ExpandWidths {
         Column(
             verticalArrangement = Arrangement.spacedBy(24.dp),
-            modifier = modifier.verticalScroll(rememberScrollState()).padding(24.dp)
+            modifier =
+                modifier.verticalScroll(rememberScrollState()).widthIn(0.dp, 480.dp).padding(24.dp)
         ) {
             Text(
                 "About",
@@ -140,9 +142,7 @@ fun AboutDialog(navigator: Navigator, state: AppState.Prop, modifier: Modifier =
                 OutlinedButtonWithEmphasis(
                     text = "Source code",
                     icon = iconRes(Res.drawable.ic_code),
-                    onClick = {
-                        uriHandler.openUri("https://github.com/EdwinChang24/sheng-ji")
-                    }
+                    onClick = { uriHandler.openUri("https://github.com/EdwinChang24/sheng-ji") }
                 )
                 OutlinedButtonWithEmphasis(
                     text = "Dependencies",
@@ -163,6 +163,18 @@ fun AboutDialog(navigator: Navigator, state: AppState.Prop, modifier: Modifier =
                     }
                 )
             }
+            val credits1 =
+                "Special thanks to Wen, Daniel, Jayleen, Alice, Lorenz, Kai, Hannah, Eli, " +
+                    "Bianca, Brendan, Seb, Nathan, Anirvan, Kevin, Ronin, May, Steven, Kina, " +
+                    "Sophia, Jerry, Wendy, and Ellie for giving me the best Saturday nights of " +
+                    "my life."
+            val credits2 =
+                "Super special thanks to Cynthia and her family for teaching us the game and " +
+                    "hosting us nocturnal party animals."
+            val credits3 = "And to Bunny for being unconditionally a goofball."
+            Text(credits1, textAlign = TextAlign.Center, modifier = Modifier.expandWidth())
+            Text(credits2, textAlign = TextAlign.Center, modifier = Modifier.expandWidth())
+            Text(credits3, textAlign = TextAlign.Center, modifier = Modifier.expandWidth())
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
                 verticalAlignment = Alignment.CenterVertically,
