@@ -188,7 +188,9 @@ compose.desktop {
             licenseFile.set(rootProject.file("LICENSE"))
             targetFormats(TargetFormat.Exe, TargetFormat.Deb)
             windows {
-                iconFile.set(project.file("src/desktopMain/composeResources/drawable/app_icon.ico"))
+                iconFile.set(
+                    project.file("src/desktopMain/composeResources/drawable/app_icon_windows.ico")
+                )
             }
             linux {
                 iconFile.set(project.file("src/desktopMain/composeResources/drawable/app_icon.png"))
