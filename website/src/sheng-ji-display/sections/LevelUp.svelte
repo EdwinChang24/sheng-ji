@@ -3,6 +3,11 @@
 
     let headlineText: HTMLDivElement;
     let iconOpacity = 0;
+
+    let fontsLoaded = false;
+    document.fonts.ready.then(() => {
+        fontsLoaded = true;
+    });
 </script>
 
 <div class="min-h-dvh flex flex-col justify-evenly px-16 py-16 bg-slate-950">
@@ -25,7 +30,10 @@
         </div>
     </div>
     <div class="flex flex-col justify-evenly space-y-12 items-center mb-0">
-        <div bind:this={headlineText} class="animate-[headline-enter_0.8s_ease-out_1]">
+        <div
+            bind:this={headlineText}
+            class={fontsLoaded ? "animate-[headline-enter_0.8s_ease-out_1]" : "invisible"}
+        >
             <div
                 class="font-bold text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-center tracking-tight drop-shadow-lg"
             >
