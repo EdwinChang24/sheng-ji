@@ -1,0 +1,65 @@
+name: Build 升级 Display
+
+on: workflow_dispatch
+
+jobs:
+  get-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get-version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: get-version
+        run: |
+          version="$(cat display/version.txt | tr -d '\n')"
+          echo "version=${version}"
+  deb:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+      - uses: gradle/actions/setup-gradle@v4
+      - run: ./gradlew :display:packageReleaseDeb
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deb
+          path: display/build/compose/binaries/main-release/deb/*.deb
+  exe:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+      - uses: gradle/actions/setup-gradle@v4
+      - run: ./gradlew :display:packageReleaseExe
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exe
+          path: display/build/compose/binaries/main-release/exe/*.exe
+  apk:
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+      - uses: gradle/actions/setup-gradle@v4
+      - run: |
+          echo ${{ secrets.DISPLAY_KEYSTORE_B64 }} | base64 -d > display/keystore.jks
+          ./gradlew :display:packageRelease
+        env:
+          KEYSTORE_PWD: ${{ secrets.DISPLAY_KEYSTORE_PWD }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: apk
+          path: display/build/outputs/apk/release/*.apk
