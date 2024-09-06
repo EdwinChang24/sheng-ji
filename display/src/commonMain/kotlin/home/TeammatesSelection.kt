@@ -7,6 +7,7 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Card
@@ -32,7 +33,6 @@ import resources.ic_edit
 import resources.ic_undo
 import util.ClearableState
 import util.DefaultTransition
-import util.ExpandWidths
 import util.iconRes
 
 @Composable
@@ -42,72 +42,70 @@ fun TeammatesSelection(
     navigator: Navigator,
     modifier: Modifier = Modifier
 ) {
-    ExpandWidths(modifier = modifier) {
-        Card(
-            colors = cardColors,
-            modifier =
-                Modifier.clip(CardDefaults.shape)
-                    .clickable {
+    Card(
+        colors = cardColors,
+        modifier =
+            modifier
+                .clip(CardDefaults.shape)
+                .clickable {
+                    navigator.navigate(
+                        Screen.Display(scheme = DisplayScheme.Main, editTeammates = true)
+                    )
+                }
+                .pointerHoverIcon(PointerIcon.Hand)
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.padding(vertical = 24.dp)
+        ) {
+            Text(
+                "Teammates",
+                style = MaterialTheme.typography.titleLarge,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(horizontal = 24.dp)
+            )
+            AnimatedContent(
+                targetState = teammatesState.value.size,
+                transitionSpec = { DefaultTransition using SizeTransform(clip = false) },
+                modifier = Modifier.padding(horizontal = 24.dp)
+            ) { targetState ->
+                Text(
+                    "$targetState teammate${if (targetState == 1) "" else "s"} added",
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically,
+                modifier =
+                    Modifier.fillMaxWidth()
+                        .horizontalScroll(rememberScrollState())
+                        .padding(horizontal = 24.dp)
+            ) {
+                OutlinedButtonWithEmphasis(
+                    text = "Edit",
+                    icon = iconRes(Res.drawable.ic_edit),
+                    onClick = {
                         navigator.navigate(
                             Screen.Display(scheme = DisplayScheme.Main, editTeammates = true)
                         )
                     }
-                    .pointerHoverIcon(PointerIcon.Hand)
-        ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.padding(vertical = 24.dp)
-            ) {
-                Text(
-                    "Teammates",
-                    style = MaterialTheme.typography.titleLarge,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(horizontal = 24.dp)
                 )
-                AnimatedContent(
-                    targetState = teammatesState.value.size,
-                    transitionSpec = { DefaultTransition using SizeTransform(clip = false) },
-                    modifier = Modifier.padding(horizontal = 24.dp)
-                ) { targetState ->
-                    Text(
-                        "$targetState teammate${if (targetState == 1) "" else "s"} added",
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-                Row(
-                    horizontalArrangement =
-                        Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier =
-                        Modifier.expandWidth()
-                            .horizontalScroll(rememberScrollState())
-                            .padding(horizontal = 24.dp)
-                ) {
-                    OutlinedButtonWithEmphasis(
-                        text = "Edit",
-                        icon = iconRes(Res.drawable.ic_edit),
-                        onClick = {
-                            navigator.navigate(
-                                Screen.Display(scheme = DisplayScheme.Main, editTeammates = true)
-                            )
-                        }
-                    )
-                    OutlinedButtonWithEmphasis(
-                        text = if (teammatesState.canUndoClear) "Undo clear" else "Clear",
-                        icon =
-                            iconRes(
-                                if (teammatesState.canUndoClear) Res.drawable.ic_undo
-                                else Res.drawable.ic_clear_all
-                            ),
-                        onClick = {
-                            if (teammatesState.canUndoClear) teammatesState.undoClearValue()
-                            else teammatesState.clearValue()
-                        },
-                        enabled = teammatesState.canUndoClear || teammatesState.value.isNotEmpty()
-                    )
-                }
+                OutlinedButtonWithEmphasis(
+                    text = if (teammatesState.canUndoClear) "Undo clear" else "Clear",
+                    icon =
+                        iconRes(
+                            if (teammatesState.canUndoClear) Res.drawable.ic_undo
+                            else Res.drawable.ic_clear_all
+                        ),
+                    onClick = {
+                        if (teammatesState.canUndoClear) teammatesState.undoClearValue()
+                        else teammatesState.clearValue()
+                    },
+                    enabled = teammatesState.canUndoClear || teammatesState.value.isNotEmpty()
+                )
             }
         }
     }
