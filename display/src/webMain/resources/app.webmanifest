@@ -1,0 +1,17 @@
+{
+    "name": "升级 Display",
+    "icons": [
+        {
+            "src": "/sheng-ji-display.svg",
+            "type": "image/svg+xml",
+            "sizes": "192x192 512x512"
+        }
+    ],
+    "id": "/display",
+    "start_url": "/display",
+    "scope": "/display",
+    "background_color": "black",
+    "theme_color": "black",
+    "display": "standalone",
+    "description": "Level up your 升级 gameplay."
+}
