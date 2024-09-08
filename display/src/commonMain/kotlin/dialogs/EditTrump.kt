@@ -41,15 +41,13 @@ fun EditTrumpDialog(navigator: Navigator, state: AppState.Prop) {
             verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.verticalScroll(rememberScrollState()).padding(vertical = 24.dp)
         ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.padding(horizontal = 24.dp)
-            ) {
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Text(
                     "Edit trump card",
                     style = MaterialTheme.typography.headlineMedium,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(horizontal = 24.dp)
                 )
                 Column(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -59,17 +57,21 @@ fun EditTrumpDialog(navigator: Navigator, state: AppState.Prop) {
                         "Rank",
                         style = MaterialTheme.typography.labelMedium,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(horizontal = 24.dp)
                     )
                     RankPicker(
                         rank,
                         { rank = it },
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                        modifier =
+                            Modifier.align(Alignment.CenterHorizontally)
+                                .horizontalScroll(rememberScrollState())
+                                .padding(horizontal = 24.dp)
                     )
                 }
                 Column(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.expandWidth()
+                    modifier = Modifier.expandWidth().padding(horizontal = 24.dp)
                 ) {
                     Text(
                         "Suit",

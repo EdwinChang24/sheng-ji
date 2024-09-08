@@ -69,7 +69,7 @@ fun SuitPicker(
                                 ),
                             modifier =
                                 Modifier.pressEmphasis()
-                                    .padding(16.dp)
+                                    .padding(12.dp)
                                     .size(32.dp)
                                     .align(Alignment.CenterHorizontally)
                         )

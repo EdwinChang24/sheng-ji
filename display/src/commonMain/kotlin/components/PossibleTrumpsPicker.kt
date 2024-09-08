@@ -1,9 +1,12 @@
 package components
 
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
@@ -40,7 +43,10 @@ fun PossibleTrumpsPicker(
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.expandWidth()
+                modifier =
+                    Modifier.expandWidth()
+                        .horizontalScroll(rememberScrollState())
+                        .padding(horizontal = 24.dp)
             ) {
                 Row {
                     (2..6)
@@ -58,7 +64,7 @@ fun PossibleTrumpsPicker(
                     }
                 }
             }
-            Box(modifier = Modifier.expandWidth()) {
+            Box(modifier = Modifier.expandWidth().padding(horizontal = 24.dp)) {
                 OutlinedButtonWithEmphasis(
                     text = if (!possibleTrumpsState.canUndoClear) "Clear" else "Undo clear",
                     icon =

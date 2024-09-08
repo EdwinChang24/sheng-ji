@@ -72,13 +72,13 @@ fun EditCallDialog(id: String, navigator: Navigator, state: AppState.Prop) {
         ) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.padding(horizontal = 24.dp)
             ) {
                 Text(
                     "Edit call",
                     style = MaterialTheme.typography.headlineMedium,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(horizontal = 24.dp)
                 )
                 Column(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -88,17 +88,21 @@ fun EditCallDialog(id: String, navigator: Navigator, state: AppState.Prop) {
                         "Rank",
                         style = MaterialTheme.typography.labelMedium,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(horizontal = 24.dp)
                     )
                     RankPicker(
                         rank,
                         { rank = it },
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                        modifier =
+                            Modifier.align(Alignment.CenterHorizontally)
+                                .horizontalScroll(rememberScrollState())
+                                .padding(horizontal = 24.dp)
                     )
                 }
                 Column(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.expandWidth()
+                    modifier = Modifier.expandWidth().padding(horizontal = 24.dp)
                 ) {
                     Text(
                         "Suit",
@@ -110,7 +114,7 @@ fun EditCallDialog(id: String, navigator: Navigator, state: AppState.Prop) {
                 }
                 Column(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.expandWidth()
+                    modifier = Modifier.expandWidth().padding(horizontal = 24.dp)
                 ) {
                     Text(
                         "Number",

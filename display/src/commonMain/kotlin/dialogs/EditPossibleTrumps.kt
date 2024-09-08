@@ -45,13 +45,13 @@ fun EditPossibleTrumpsDialog(navigator: Navigator, state: AppState.Prop) {
         ) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.padding(horizontal = 24.dp)
             ) {
                 Text(
                     "Edit possible trumps",
                     style = MaterialTheme.typography.headlineMedium,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(horizontal = 24.dp)
                 )
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.expandWidth()) {
                     PossibleTrumpsPicker(
