@@ -16,7 +16,7 @@ expect fun PressableWithEmphasis(content: @Composable PressableWithEmphasisScope
 
 class PressableWithEmphasisScope(
     val interactionSource: MutableInteractionSource,
-    private val scale: Float
+    private val scale: Float,
 ) {
     fun Modifier.pressEmphasis() = scale(scale)
 
@@ -27,7 +27,7 @@ class PressableWithEmphasisScope(
                     interactionSource = interactionSource,
                     indication = LocalIndication.current,
                     onClick = onClick,
-                    onLongClick = onLongClick
+                    onLongClick = onLongClick,
                 )
                 .pointerHoverIcon(PointerIcon.Hand)
         }

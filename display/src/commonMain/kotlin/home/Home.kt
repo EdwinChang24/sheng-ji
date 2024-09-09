@@ -67,7 +67,7 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
                     IconButtonWithEmphasis(onClick = { navigator.navigate(Dialog.About) }) {
                         Icon(iconRes(Res.drawable.ic_info), null)
                     }
-                }
+                },
             )
         }
     ) { padding ->
@@ -95,7 +95,7 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
                             state { AppState.possibleTrumps set it }
                         }
                         recentlyClearedPossibleTrumps = null
-                    }
+                    },
                 )
             var tempTrumpRank by
                 rememberSaveable(state().trump) { mutableStateOf(state().trump?.rank) }
@@ -119,7 +119,7 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
                     undoClearValue = {
                         recentlyClearedCalls?.let { state { AppState.calls set it } }
                         recentlyClearedCalls = null
-                    }
+                    },
                 )
             var recentlyClearedTeammates: Map<String, Float>? by rememberSaveable {
                 mutableStateOf(null)
@@ -139,7 +139,7 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
                     undoClearValue = {
                         recentlyClearedTeammates?.let { state { AppState.teammates set it } }
                         recentlyClearedTeammates = null
-                    }
+                    },
                 )
             val cardColors =
                 CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
@@ -155,7 +155,7 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
                         cardColors,
                         windowWidth,
                         navigator,
-                        modifier = Modifier.fillMaxWidth().padding(12.dp)
+                        modifier = Modifier.fillMaxWidth().padding(12.dp),
                     )
                     TrumpCardSelection(
                         cardColors,
@@ -166,34 +166,34 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
                         windowWidth,
                         navigator,
                         state,
-                        modifier = Modifier.fillMaxWidth().padding(12.dp)
+                        modifier = Modifier.fillMaxWidth().padding(12.dp),
                     )
                     CallsSelection(
                         callsState,
                         cardColors,
                         navigator,
                         state,
-                        modifier = Modifier.fillMaxWidth().padding(12.dp)
+                        modifier = Modifier.fillMaxWidth().padding(12.dp),
                     )
                     TeammatesSelection(
                         teammatesState,
                         cardColors,
                         navigator,
-                        modifier = Modifier.fillMaxWidth().padding(12.dp)
+                        modifier = Modifier.fillMaxWidth().padding(12.dp),
                     )
                 }
             } else {
                 Row(modifier = Modifier.fillMaxSize()) {
                     Box(
                         contentAlignment = Alignment.Center,
-                        modifier = Modifier.verticalScroll(rememberScrollState()).weight(2f)
+                        modifier = Modifier.verticalScroll(rememberScrollState()).weight(2f),
                     ) {
                         Column(
                             modifier =
                                 Modifier.widthIn(
                                         0.dp,
                                         (WindowWidth.Medium.breakpoint +
-                                            WindowWidth.Large.breakpoint) / 2
+                                            WindowWidth.Large.breakpoint) / 2,
                                     )
                                     .padding(12.dp)
                                     .padding(
@@ -209,7 +209,7 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
                                     cardColors,
                                     windowWidth,
                                     navigator,
-                                    modifier = Modifier.weight(1f).padding(12.dp)
+                                    modifier = Modifier.weight(1f).padding(12.dp),
                                 )
                                 TrumpCardSelection(
                                     cardColors,
@@ -220,7 +220,7 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
                                     windowWidth,
                                     navigator,
                                     state,
-                                    modifier = Modifier.weight(1f).padding(12.dp)
+                                    modifier = Modifier.weight(1f).padding(12.dp),
                                 )
                             }
                             Row {
@@ -229,13 +229,13 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
                                     cardColors,
                                     navigator,
                                     state,
-                                    modifier = Modifier.weight(1f).padding(12.dp)
+                                    modifier = Modifier.weight(1f).padding(12.dp),
                                 )
                                 TeammatesSelection(
                                     teammatesState,
                                     cardColors,
                                     navigator,
-                                    modifier = Modifier.weight(1f).padding(12.dp)
+                                    modifier = Modifier.weight(1f).padding(12.dp),
                                 )
                             }
                         }
@@ -243,7 +243,7 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
                     if (windowWidth >= WindowWidth.Large) {
                         Box(
                             contentAlignment = Alignment.Center,
-                            modifier = Modifier.fillMaxHeight().weight(1f).padding(24.dp)
+                            modifier = Modifier.fillMaxHeight().weight(1f).padding(24.dp),
                         ) {
                             StartButtons(navigator)
                         }
@@ -256,7 +256,7 @@ fun HomePage(navigator: Navigator, state: AppState.Prop) {
                     modifier =
                         Modifier.align(Alignment.BottomCenter)
                             .onGloballyPositioned { startButtonsHeight = it.size.height }
-                            .padding(start = 24.dp, end = 24.dp, bottom = 24.dp)
+                            .padding(start = 24.dp, end = 24.dp, bottom = 24.dp),
                 )
             }
         }

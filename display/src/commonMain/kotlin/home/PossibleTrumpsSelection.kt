@@ -43,7 +43,7 @@ fun PossibleTrumpsSelection(
     cardColors: CardColors,
     windowWidth: WindowWidth,
     navigator: Navigator,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Card(
         colors = cardColors,
@@ -55,24 +55,24 @@ fun PossibleTrumpsSelection(
                         Modifier.clickable { navigator.navigate(Dialog.EditPossibleTrumps) }
                             .pointerHoverIcon(PointerIcon.Hand)
                     else Modifier
-                )
+                ),
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.padding(vertical = 24.dp)
+            modifier = Modifier.padding(vertical = 24.dp),
         ) {
             Text(
                 "Possible trumps",
                 style = MaterialTheme.typography.titleLarge,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(horizontal = 24.dp)
+                modifier = Modifier.padding(horizontal = 24.dp),
             )
             if (windowWidth >= WindowWidth.Large) {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp)
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
                 ) {
                     AnimatedContent(
                         possibleTrumpsState.value,
@@ -81,22 +81,22 @@ fun PossibleTrumpsSelection(
                             (fadeIn(animationSpec = tween(220, delayMillis = 90)) +
                                     scaleIn(
                                         initialScale = 0.92f,
-                                        animationSpec = tween(220, delayMillis = 90)
+                                        animationSpec = tween(220, delayMillis = 90),
                                     ))
                                 .togetherWith(fadeOut(animationSpec = tween(90)))
                                 .using(SizeTransform())
-                        }
+                        },
                     ) { targetState ->
                         Box(
                             contentAlignment = Alignment.Center,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
                         ) {
                             Text(
                                 if (targetState.isEmpty()) "None selected"
                                 else targetState.joinToString(),
                                 maxLines = 2,
                                 overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.padding(16.dp)
+                                modifier = Modifier.padding(16.dp),
                             )
                         }
                     }
@@ -105,24 +105,24 @@ fun PossibleTrumpsSelection(
             } else {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp)
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp),
                 ) {
                     AnimatedContent(
                         possibleTrumpsState.value,
-                        modifier = Modifier.weight(1f).padding(end = 16.dp)
+                        modifier = Modifier.weight(1f).padding(end = 16.dp),
                     ) { targetState ->
                         Text(
                             if (targetState.isEmpty()) "None selected"
                             else targetState.joinToString(),
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.padding(end = 16.dp)
+                            modifier = Modifier.padding(end = 16.dp),
                         )
                     }
                     OutlinedButtonWithEmphasis(
                         text = "Edit",
                         icon = iconRes(Res.drawable.ic_edit),
-                        onClick = { navigator.navigate(Dialog.EditPossibleTrumps) }
+                        onClick = { navigator.navigate(Dialog.EditPossibleTrumps) },
                     )
                 }
             }

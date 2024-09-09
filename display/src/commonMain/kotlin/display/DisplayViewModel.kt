@@ -27,7 +27,7 @@ class DisplayViewModel : ViewModel() {
         newPossibleContentPairs: List<DisplayContentPair>,
         newPossibleRotations: List<ContentRotation>,
         newPause: Boolean,
-        newAutoSwitchSeconds: Int
+        newAutoSwitchSeconds: Int,
     ) {
         possibleContentPairs = newPossibleContentPairs
         possibleRotations = newPossibleRotations
@@ -60,7 +60,7 @@ class DisplayViewModel : ViewModel() {
     private fun getNextContent(
         possibleContentPairs: List<DisplayContentPair>,
         possibleRotations: List<ContentRotation>,
-        currentContent: DisplayContentWithRotation
+        currentContent: DisplayContentWithRotation,
     ): DisplayContentWithRotation {
         val newRotation =
             possibleRotations.getOrNull(

@@ -7,5 +7,5 @@ actual fun AndroidBackHandler(
     currentScreen: Screen,
     settingsOpen: Boolean,
     currentDialog: Dialog?,
-    navigator: Navigator
+    navigator: Navigator,
 ) {}

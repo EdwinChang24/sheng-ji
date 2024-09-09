@@ -29,7 +29,7 @@ fun AppName(modifier: Modifier = Modifier) {
                             defaultWidth = 155.36.dp,
                             defaultHeight = 75.36.dp,
                             viewportWidth = 1f,
-                            viewportHeight = 1f
+                            viewportHeight = 1f,
                         )
                         .build()
             )
@@ -40,7 +40,7 @@ fun AppName(modifier: Modifier = Modifier) {
             modifier =
                 Modifier.height(
                     with(LocalDensity.current) { LocalTextStyle.current.fontSize.toDp() }
-                )
+                ),
         )
         Text(" Display", minLines = 1, maxLines = 1, overflow = TextOverflow.Ellipsis)
     }

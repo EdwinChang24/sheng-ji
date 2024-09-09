@@ -29,11 +29,12 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import arrow.optics.get
-import com.benasher44.uuid.uuid4
 import components.CallFoundText
 import components.PlayingCard
 import interaction.PressableWithEmphasis
 import kotlin.math.roundToInt
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 import model.AppState
 import model.Call
 import model.calls
@@ -47,18 +48,19 @@ import util.iconRes
 
 const val MaxItemsPerRow = 2
 
+@OptIn(ExperimentalUuidApi::class)
 @Composable
 fun CallsDisplay(
     state: AppState.Prop,
     navigator: Navigator,
     displayScale: Float,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     AnimatedContent(
         targetState = state().calls,
         transitionSpec = { DefaultTransition using SizeTransform(clip = false) },
         contentKey = { it.isEmpty() },
-        modifier = modifier
+        modifier = modifier,
     ) { targetCalls ->
         targetCalls
             .takeIf { it.isNotEmpty() }
@@ -67,7 +69,7 @@ fun CallsDisplay(
                     calls = state().calls,
                     setFound = { index, found -> state { AppState.calls[index].found set found } },
                     state = state,
-                    displayScale = displayScale
+                    displayScale = displayScale,
                 )
             }
             ?: PressableWithEmphasis {
@@ -78,15 +80,15 @@ fun CallsDisplay(
                         Modifier.clip(MaterialTheme.shapes.large)
                             .clickableForEmphasis(
                                 onClick = {
-                                    navigator.navigate(Dialog.EditCall(uuid4().toString()))
+                                    navigator.navigate(Dialog.EditCall(Uuid.random().toString()))
                                 }
                             )
                             .padding(24.dp)
-                            .pressEmphasis()
+                            .pressEmphasis(),
                 ) {
                     Text("No calls added")
                     OutlinedButton(
-                        onClick = { navigator.navigate(Dialog.EditCall(uuid4().toString())) }
+                        onClick = { navigator.navigate(Dialog.EditCall(Uuid.random().toString())) }
                     ) {
                         Icon(iconRes(Res.drawable.ic_add), null)
                         Spacer(modifier = Modifier.width(8.dp))
@@ -103,13 +105,13 @@ private fun CallsCard(
     call: Call,
     setFound: (index: Int, found: Int) -> Unit,
     state: AppState.Prop,
-    displayScale: Float
+    displayScale: Float,
 ) {
     val color = MaterialTheme.colorScheme.outlineVariant
     val lineScale by
         animateFloatAsState(
             if (call.found == call.number) 0.5f else 0f,
-            animationSpec = tween(durationMillis = 100)
+            animationSpec = tween(durationMillis = 100),
         )
     val strokeWidth = with(LocalDensity.current) { 4.dp.toPx() * displayScale }
     PressableWithEmphasis {
@@ -123,21 +125,21 @@ private fun CallsCard(
                             start =
                                 Offset(
                                     size.width * (0.5f - lineScale),
-                                    size.height * (0.5f + lineScale)
+                                    size.height * (0.5f + lineScale),
                                 ),
                             end =
                                 Offset(
                                     size.width * (0.5f + lineScale),
-                                    size.height * (0.5f - lineScale)
+                                    size.height * (0.5f - lineScale),
                                 ),
-                            strokeWidth = strokeWidth
+                            strokeWidth = strokeWidth,
                         )
                     }
                     .clickableForEmphasis(
                         onLongClick = {
                             setFound(index, (call.found + call.number) % (call.number + 1))
                         },
-                        onClick = { setFound(index, (call.found + 1) % (call.number + 1)) }
+                        onClick = { setFound(index, (call.found + 1) % (call.number + 1)) },
                     )
         ) {
             Column(
@@ -149,21 +151,21 @@ private fun CallsCard(
                         .alpha(
                             animateFloatAsState(
                                     targetValue = if (call.found == call.number) 0.4f else 1f,
-                                    label = ""
+                                    label = "",
                                 )
                                 .value
                         )
                         .padding(16.dp * displayScale)
-                        .pressEmphasis()
+                        .pressEmphasis(),
             ) {
                 PlayingCard(
                     call.card,
                     state = state,
-                    textStyle = LocalTextStyle.current.copy(fontSize = 48.sp * displayScale)
+                    textStyle = LocalTextStyle.current.copy(fontSize = 48.sp * displayScale),
                 )
                 CallFoundText(
                     call = call,
-                    style = LocalTextStyle.current.copy(fontSize = 28.sp * displayScale)
+                    style = LocalTextStyle.current.copy(fontSize = 28.sp * displayScale),
                 )
             }
         }
@@ -176,12 +178,12 @@ private fun CallsLayout(
     setFound: (index: Int, found: Int) -> Unit,
     state: AppState.Prop,
     displayScale: Float,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp * displayScale),
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
+        modifier = modifier,
     ) {
         calls.chunked(MaxItemsPerRow).forEachIndexed { rowIndex, rowCalls ->
             SubcomposeLayout { constraints ->
@@ -193,7 +195,7 @@ private fun CallsLayout(
                                 call,
                                 setFound,
                                 state,
-                                displayScale
+                                displayScale,
                             )
                         }
                     }
@@ -207,7 +209,7 @@ private fun CallsLayout(
                     width =
                         placeables.sumOf { it.width } +
                             (MaxItemsPerRow * 8.dp.toPx() * displayScale).roundToInt(),
-                    height = placeables.maxOfOrNull { it.height } ?: 0
+                    height = placeables.maxOfOrNull { it.height } ?: 0,
                 ) {
                     var x = 0
                     placeablesFinal.forEachIndexed { index, placeable ->

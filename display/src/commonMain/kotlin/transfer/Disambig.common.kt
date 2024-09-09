@@ -44,28 +44,28 @@ fun DisambigDialog(
     url: String,
     navigator: Navigator,
     state: AppState.Prop,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     ExpandWidths(modifier = Modifier.widthIn(0.dp, WindowWidth.Medium.breakpoint)) {
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = modifier.verticalScroll(rememberScrollState()).padding(24.dp)
+            modifier = modifier.verticalScroll(rememberScrollState()).padding(24.dp),
         ) {
             Text(
                 "Quick transfer",
                 style = MaterialTheme.typography.headlineMedium,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
             )
             Text(
                 """You clicked on a link to import data, but it looks like you're on Android. Would you like to import into the web app or the Android app?""",
                 maxLines = 5,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
             )
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.expandWidth()
+                modifier = Modifier.expandWidth(),
             ) {
                 var saveChoice by rememberSaveable { mutableStateOf(false) }
                 ButtonWithEmphasis(
@@ -77,7 +77,7 @@ fun DisambigDialog(
                             state { AppState.platformSettings.web.importInto set ImportInto.Here }
                         }
                         navigator.navigate(Dialog.QuickTransfer(url = url))
-                    }
+                    },
                 )
                 ButtonWithEmphasis(
                     text = "Import into Android app",
@@ -87,7 +87,7 @@ fun DisambigDialog(
                             state { AppState.platformSettings.web.importInto set ImportInto.Here }
                         }
                         openUrlWeb("$AndroidLinksUrl${dataParamFromUrl(url)}")
-                    }
+                    },
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -95,14 +95,14 @@ fun DisambigDialog(
                         Modifier.clip(MaterialTheme.shapes.medium)
                             .clickable { saveChoice = !saveChoice }
                             .pointerHoverIcon(PointerIcon.Hand)
-                            .padding(horizontal = 8.dp)
+                            .padding(horizontal = 8.dp),
                 ) {
                     Checkbox(checked = saveChoice, onCheckedChange = { saveChoice = it })
                     Text(
                         "Save my choice",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(8.dp)
+                        modifier = Modifier.padding(8.dp),
                     )
                 }
                 OutlinedButtonWithEmphasis(
@@ -112,7 +112,7 @@ fun DisambigDialog(
                         removeUrlParamWeb()
                         navigator.closeDialog()
                     },
-                    modifier = Modifier.padding(top = 8.dp)
+                    modifier = Modifier.padding(top = 8.dp),
                 )
             }
         }

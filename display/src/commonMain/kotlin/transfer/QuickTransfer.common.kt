@@ -51,12 +51,13 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.benasher44.uuid.uuid4
 import components.ButtonWithEmphasis
 import components.CallFoundText
 import components.IconButtonWithEmphasis
 import components.OutlinedButtonWithEmphasis
 import components.PlayingCard
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 import model.AppState
 import model.calls
 import model.possibleTrumps
@@ -78,13 +79,13 @@ import util.WindowWidth
 import util.calculateWindowWidth
 import util.iconRes
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalUuidApi::class)
 @Composable
 fun QuickTransferDialog(
     url: String? = null,
     navigator: Navigator,
     state: AppState.Prop,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val windowWidth = calculateWindowWidth()
     val data =
@@ -92,7 +93,7 @@ fun QuickTransferDialog(
                 state().possibleTrumps,
                 state().trump,
                 state().calls,
-                state().teammates.values.toList()
+                state().teammates.values.toList(),
             )
             .toUrl()
     var importUrl by rememberSaveable { mutableStateOf(url ?: "") }
@@ -101,13 +102,13 @@ fun QuickTransferDialog(
     ExpandWidths {
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = modifier.verticalScroll(rememberScrollState()).padding(24.dp)
+            modifier = modifier.verticalScroll(rememberScrollState()).padding(24.dp),
         ) {
             Text(
                 "Quick transfer",
                 style = MaterialTheme.typography.headlineMedium,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
             )
             var exportTab by rememberSaveable { mutableStateOf(url == null) }
             Column(
@@ -122,19 +123,19 @@ fun QuickTransferDialog(
                 PrimaryTabRow(
                     selectedTabIndex = if (exportTab) 0 else 1,
                     containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand).expandWidth().width(0.dp)
+                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand).expandWidth().width(0.dp),
                 ) {
                     Tab(
                         selected = exportTab,
                         onClick = { exportTab = true },
                         text = { Text("Export", maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                        icon = { Icon(iconRes(Res.drawable.ic_output), null) }
+                        icon = { Icon(iconRes(Res.drawable.ic_output), null) },
                     )
                     Tab(
                         selected = !exportTab,
                         onClick = { exportTab = false },
                         text = { Text("Import", maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                        icon = { Icon(iconRes(Res.drawable.ic_input), null) }
+                        icon = { Icon(iconRes(Res.drawable.ic_input), null) },
                     )
                 }
                 AnimatedContent(
@@ -143,7 +144,7 @@ fun QuickTransferDialog(
                         slideInHorizontally { if (targetState) -it else it } togetherWith
                             slideOutHorizontally { if (targetState) it else -it }
                     },
-                    modifier = Modifier.expandWidth()
+                    modifier = Modifier.expandWidth(),
                 ) { targetState ->
                     if (targetState) Export(data, state, windowWidth)
                     else
@@ -152,7 +153,7 @@ fun QuickTransferDialog(
                             { importUrl = it },
                             dataFromImport,
                             focusRequester = importFieldFocusRequester,
-                            state
+                            state,
                         )
                 }
             }
@@ -168,14 +169,14 @@ fun QuickTransferDialog(
                             dataFromImport.trump?.let { AppState.trump set it }
                             dataFromImport.calls?.let { AppState.calls set it }
                             dataFromImport.teammates?.let {
-                                AppState.teammates set it.associateBy { uuid4().toString() }
+                                AppState.teammates set it.associateBy { Uuid.random().toString() }
                             }
                         }
                     }
                     navigator.closeDialog()
                 },
                 enabled = exportTab || (dataFromImport != null && !dataFromImport.isEmpty()),
-                modifier = Modifier.align(Alignment.End)
+                modifier = Modifier.align(Alignment.End),
             )
         }
     }
@@ -186,19 +187,19 @@ private fun Export(
     data: String,
     state: AppState.Prop,
     windowWidth: WindowWidth,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.padding(16.dp)
+        modifier = modifier.padding(16.dp),
     ) {
         QrImage(
             data,
             state,
             modifier =
                 Modifier.size(if (windowWidth > WindowWidth.Small) 300.dp else 200.dp)
-                    .aspectRatio(1f)
+                    .aspectRatio(1f),
         )
         var copied: Boolean by rememberSaveable { mutableStateOf(false) }
         LaunchedEffect(data) { copied = false }
@@ -214,7 +215,7 @@ private fun Export(
             onClick = {
                 clipboardManager.setText(buildAnnotatedString { append(data) })
                 copied = true
-            }
+            },
         )
         Text(
             "Data embedded in URL. Settings not included.",
@@ -222,7 +223,7 @@ private fun Export(
             textAlign = TextAlign.Center,
             maxLines = 3,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.padding(horizontal = 16.dp),
         )
     }
 }
@@ -234,7 +235,7 @@ private fun ExpandWidthsScope.Import(
     dataFromImport: TransferredData?,
     focusRequester: FocusRequester,
     state: AppState.Prop,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier.padding(24.dp)) {
         OutlinedTextField(
@@ -246,7 +247,7 @@ private fun ExpandWidthsScope.Import(
                     "$BaseUrl...",
                     color = LocalContentColor.current.copy(alpha = 0.25f),
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
             },
             leadingIcon = { Icon(iconRes(Res.drawable.ic_link), null) },
@@ -267,7 +268,7 @@ private fun ExpandWidthsScope.Import(
                 Modifier.expandWidth()
                     .widthIn(0.dp, WindowWidth.Medium.breakpoint)
                     .focusRequester(focusRequester)
-                    .animateContentSize()
+                    .animateContentSize(),
         )
         Spacer(modifier = Modifier.height(16.dp))
         val clipboardManager = LocalClipboardManager.current
@@ -279,7 +280,7 @@ private fun ExpandWidthsScope.Import(
             text = "From clipboard",
             icon = iconRes(Res.drawable.ic_content_paste),
             onClick = { clipboardManager.getText()?.text?.let(setImportUrl) },
-            enabled = clipboardHasText
+            enabled = clipboardHasText,
         )
         Spacer(modifier = Modifier.height(16.dp))
         AnimatedContent(
@@ -288,7 +289,7 @@ private fun ExpandWidthsScope.Import(
                 fadeIn() + slideInVertically() togetherWith
                     fadeOut() + slideOutVertically() using
                     SizeTransform(clip = false)
-            }
+            },
         ) { visible ->
             Column(modifier = Modifier.expandWidth()) {
                 if (visible) {
@@ -297,17 +298,17 @@ private fun ExpandWidthsScope.Import(
                         color = MaterialTheme.colorScheme.primary,
                         style = MaterialTheme.typography.labelLarge,
                         maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     AnimatedContent(
                         targetState = dataFromImport,
                         transitionSpec = { DefaultTransition using SizeTransform(clip = false) },
-                        modifier = Modifier.expandWidth()
+                        modifier = Modifier.expandWidth(),
                     ) { targetState ->
                         Column(
                             verticalArrangement = Arrangement.spacedBy(12.dp),
-                            modifier = Modifier.expandWidth()
+                            modifier = Modifier.expandWidth(),
                         ) {
                             targetState?.let { data ->
                                 data.possibleTrumps
@@ -317,13 +318,13 @@ private fun ExpandWidthsScope.Import(
                                             Text(
                                                 "Possible trumps",
                                                 maxLines = 2,
-                                                overflow = TextOverflow.Ellipsis
+                                                overflow = TextOverflow.Ellipsis,
                                             )
                                             Text(
                                                 possibleTrumps.joinToString(),
                                                 style = MaterialTheme.typography.bodySmall,
                                                 maxLines = 2,
-                                                overflow = TextOverflow.Ellipsis
+                                                overflow = TextOverflow.Ellipsis,
                                             )
                                         }
                                     }
@@ -332,7 +333,7 @@ private fun ExpandWidthsScope.Import(
                                         Text(
                                             "Trump card",
                                             maxLines = 2,
-                                            overflow = TextOverflow.Ellipsis
+                                            overflow = TextOverflow.Ellipsis,
                                         )
                                         PlayingCard(trump, state)
                                     }
@@ -344,7 +345,7 @@ private fun ExpandWidthsScope.Import(
                                             Text(
                                                 "Calls",
                                                 maxLines = 1,
-                                                overflow = TextOverflow.Ellipsis
+                                                overflow = TextOverflow.Ellipsis,
                                             )
                                             Row(
                                                 horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -358,7 +359,7 @@ private fun ExpandWidthsScope.Import(
                                                         CallFoundText(
                                                             call,
                                                             style =
-                                                                MaterialTheme.typography.bodySmall
+                                                                MaterialTheme.typography.bodySmall,
                                                         )
                                                     }
                                                 }
@@ -372,13 +373,13 @@ private fun ExpandWidthsScope.Import(
                                             Text(
                                                 "Teammates",
                                                 maxLines = 1,
-                                                overflow = TextOverflow.Ellipsis
+                                                overflow = TextOverflow.Ellipsis,
                                             )
                                             Text(
                                                 "${teammates.size} teammate${if (teammates.size == 1) "" else "s"}",
                                                 style = MaterialTheme.typography.bodySmall,
                                                 maxLines = 2,
-                                                overflow = TextOverflow.Ellipsis
+                                                overflow = TextOverflow.Ellipsis,
                                             )
                                         }
                                     }

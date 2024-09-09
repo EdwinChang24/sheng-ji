@@ -31,7 +31,7 @@ fun PlayingCard(
     card: PlayingCard,
     state: AppState.Prop,
     modifier: Modifier = Modifier,
-    textStyle: TextStyle = LocalTextStyle.current
+    textStyle: TextStyle = LocalTextStyle.current,
 ) {
     Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
         val color =
@@ -60,23 +60,23 @@ fun PlayingCard(
                                 start =
                                     Offset(
                                         size.width / 2 - (size.width / 4 * underlineLength),
-                                        bl + size.height / 8
+                                        bl + size.height / 8,
                                     ),
                                 end =
                                     Offset(
                                         size.width / 2 + (size.width / 4 * underlineLength),
-                                        bl + size.height / 8
-                                    )
+                                        bl + size.height / 8,
+                                    ),
                             )
                         }
                     }
-                }
+                },
         )
         Image(
             suitIconRes(card.suit.icon),
             null,
             colorFilter = ColorFilter.tint(color),
-            modifier = Modifier.size(with(LocalDensity.current) { textStyle.fontSize.toDp() })
+            modifier = Modifier.size(with(LocalDensity.current) { textStyle.fontSize.toDp() }),
         )
     }
 }

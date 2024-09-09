@@ -31,13 +31,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.benasher44.uuid.uuid4
 import components.ButtonWithEmphasis
 import components.CallFoundText
 import components.IconButtonWithEmphasis
 import components.OutlinedButtonWithEmphasis
 import components.PlayingCard
 import interaction.PressableWithEmphasis
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 import model.AppState
 import model.Call
 import navigation.Dialog
@@ -55,30 +56,31 @@ import util.ExpandWidths
 import util.formatCallNumber
 import util.iconRes
 
+@OptIn(ExperimentalUuidApi::class)
 @Composable
 fun CallsSelection(
     callsState: ClearableState<List<Call>>,
     cardColors: CardColors,
     navigator: Navigator,
     state: AppState.Prop,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Card(colors = cardColors, modifier = modifier.clip(CardDefaults.shape)) {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.padding(vertical = 24.dp)
+            modifier = Modifier.padding(vertical = 24.dp),
         ) {
             Text(
                 "Calls",
                 style = MaterialTheme.typography.titleLarge,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(horizontal = 24.dp)
+                modifier = Modifier.padding(horizontal = 24.dp),
             )
             AnimatedContent(
                 targetState = callsState.value,
                 transitionSpec = { DefaultTransition using SizeTransform(clip = false) },
-                contentKey = { it.isEmpty() }
+                contentKey = { it.isEmpty() },
             ) { calls ->
                 if (calls.isNotEmpty()) {
                     Row(
@@ -86,7 +88,7 @@ fun CallsSelection(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier =
                             Modifier.horizontalScroll(rememberScrollState())
-                                .padding(horizontal = 24.dp, vertical = 8.dp)
+                                .padding(horizontal = 24.dp, vertical = 8.dp),
                     ) {
                         ReorderableRow(
                             list = calls,
@@ -98,7 +100,7 @@ fun CallsSelection(
                                 )
                             },
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
                         ) { _, call, _ ->
                             key(call.id) {
                                 CallCard(
@@ -116,15 +118,17 @@ fun CallsSelection(
                                             callsState.value.filter { it.id != call.id }
                                         )
                                     },
-                                    state = state
+                                    state = state,
                                 )
                             }
                         }
                         OutlinedButtonWithEmphasis(
                             text = "Add call",
                             icon = iconRes(Res.drawable.ic_add),
-                            onClick = { navigator.navigate(Dialog.EditCall(uuid4().toString())) },
-                            modifier = Modifier.zIndex(-1f)
+                            onClick = {
+                                navigator.navigate(Dialog.EditCall(Uuid.random().toString()))
+                            },
+                            modifier = Modifier.zIndex(-1f),
                         )
                     }
                 } else {
@@ -132,14 +136,14 @@ fun CallsSelection(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier =
                             Modifier.clickable {
-                                    navigator.navigate(Dialog.EditCall(uuid4().toString()))
+                                    navigator.navigate(Dialog.EditCall(Uuid.random().toString()))
                                 }
                                 .pointerHoverIcon(PointerIcon.Hand)
-                                .padding(horizontal = 24.dp, vertical = 8.dp)
+                                .padding(horizontal = 24.dp, vertical = 8.dp),
                     ) {
                         Box(
                             contentAlignment = Alignment.CenterStart,
-                            modifier = Modifier.weight(1f).padding(end = 16.dp)
+                            modifier = Modifier.weight(1f).padding(end = 16.dp),
                         ) {
                             Text("No calls added", maxLines = 2, overflow = TextOverflow.Ellipsis)
                         }
@@ -147,7 +151,9 @@ fun CallsSelection(
                         ButtonWithEmphasis(
                             text = "Add",
                             icon = iconRes(Res.drawable.ic_add),
-                            onClick = { navigator.navigate(Dialog.EditCall(uuid4().toString())) }
+                            onClick = {
+                                navigator.navigate(Dialog.EditCall(Uuid.random().toString()))
+                            },
                         )
                     }
                 }
@@ -164,7 +170,7 @@ fun CallsSelection(
                     else callsState.clearValue()
                 },
                 enabled = callsState.canUndoClear || callsState.value.isNotEmpty(),
-                modifier = Modifier.align(Alignment.CenterHorizontally).padding(horizontal = 24.dp)
+                modifier = Modifier.align(Alignment.CenterHorizontally).padding(horizontal = 24.dp),
             )
         }
     }
@@ -177,7 +183,7 @@ private fun ReorderableScope.CallCard(
     setFound: (Int) -> Unit,
     onDelete: () -> Unit,
     state: AppState.Prop,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     PressableWithEmphasis {
         OutlinedCard(
@@ -190,32 +196,32 @@ private fun ReorderableScope.CallCard(
             modifier =
                 modifier
                     .longPressDraggableHandle(interactionSource = interactionSource)
-                    .pointerHoverIcon(PointerIcon.Hand)
+                    .pointerHoverIcon(PointerIcon.Hand),
         ) {
             ExpandWidths {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(8.dp)
+                    modifier = Modifier.padding(8.dp),
                 ) {
                     Column(
                         verticalArrangement = Arrangement.spacedBy(4.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.expandWidth().pressEmphasis()
+                        modifier = Modifier.expandWidth().pressEmphasis(),
                     ) {
                         AnimatedContent(
                             targetState = call.card,
-                            transitionSpec = { DefaultTransition using SizeTransform(clip = false) }
+                            transitionSpec = { DefaultTransition using SizeTransform(clip = false) },
                         ) { card ->
                             PlayingCard(
                                 card,
                                 state = state,
-                                textStyle = LocalTextStyle.current.copy(fontSize = 32.sp)
+                                textStyle = LocalTextStyle.current.copy(fontSize = 32.sp),
                             )
                         }
                         AnimatedContent(
                             targetState = call.number,
-                            transitionSpec = { DefaultTransition using SizeTransform(clip = false) }
+                            transitionSpec = { DefaultTransition using SizeTransform(clip = false) },
                         ) { number ->
                             Text(formatCallNumber(number))
                         }
@@ -229,10 +235,10 @@ private fun ReorderableScope.CallCard(
                                         onLongClick = {
                                             setFound((call.found + call.number) % (call.number + 1))
                                         },
-                                        onClick = { setFound((call.found + 1) % (call.number + 1)) }
+                                        onClick = { setFound((call.found + 1) % (call.number + 1)) },
                                     )
                                     .padding(8.dp)
-                                    .pressEmphasis()
+                                    .pressEmphasis(),
                         ) {
                             Text("Found:")
                             Spacer(modifier = Modifier.width(8.dp))

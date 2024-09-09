@@ -20,11 +20,11 @@ configure<SpotlessExtension> {
                 exclude("**/build/**")
             }
         )
-        ktfmt().kotlinlangStyle()
+        ktfmt().kotlinlangStyle().configure { it.setManageTrailingCommas(true) }
     }
     kotlinGradle {
         target("**/*.gradle.kts")
-        ktfmt().kotlinlangStyle()
+        ktfmt().kotlinlangStyle().configure { it.setManageTrailingCommas(true) }
     }
 }
 

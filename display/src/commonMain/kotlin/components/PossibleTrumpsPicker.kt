@@ -28,7 +28,7 @@ import util.iconRes
 @Composable
 fun PossibleTrumpsPicker(
     possibleTrumpsState: ClearableState<Set<String>>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val toggleRank = { rank: String ->
         possibleTrumpsState.setValue(
@@ -46,7 +46,7 @@ fun PossibleTrumpsPicker(
                 modifier =
                     Modifier.expandWidth()
                         .horizontalScroll(rememberScrollState())
-                        .padding(horizontal = 24.dp)
+                        .padding(horizontal = 24.dp),
             ) {
                 Row {
                     (2..6)
@@ -78,7 +78,7 @@ fun PossibleTrumpsPicker(
                     },
                     enabled =
                         possibleTrumpsState.canUndoClear || possibleTrumpsState.value.isNotEmpty(),
-                    modifier = Modifier.align(Alignment.Center)
+                    modifier = Modifier.align(Alignment.Center),
                 )
             }
         }
@@ -94,7 +94,7 @@ private fun RankButton(rank: String, toggleRank: (String) -> Unit, selected: Boo
                 if (selected) IconButtonDefaults.filledIconButtonColors()
                 else IconButtonDefaults.iconButtonColors(),
             interactionSource = interactionSource,
-            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
+            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
         ) {
             Text(rank, modifier = Modifier.pressEmphasis())
         }

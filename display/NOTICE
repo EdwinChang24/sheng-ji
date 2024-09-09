@@ -27,9 +27,6 @@ The following is a list of third-party dependencies used in this project.
 - AndroidX Lifecycle ViewModel Compose
     https://github.com/JetBrains/compose-multiplatform-core
     License: Apache 2.0
-- Kotlin Multiplatform UUID
-    https://github.com/benasher44/uuid
-    License: MIT
 - AndroidX Window
     https://developer.android.com/jetpack/androidx/releases/window
     License: Apache 2.0

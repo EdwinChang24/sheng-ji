@@ -40,7 +40,7 @@ open class ExpandHeightsScope(val expandHeights: Boolean) {
 fun ExpandHeightsScope.WeightColumn(
     spacing: Dp = 0.dp,
     modifier: Modifier = Modifier,
-    content: @Composable ExpandHeightsScope.WeightColumnScope.() -> Unit
+    content: @Composable ExpandHeightsScope.WeightColumnScope.() -> Unit,
 ) {
     val density = LocalDensity.current
     val spacingPx = with(density) { spacing.roundToPx() }
@@ -74,7 +74,7 @@ fun ExpandHeightsScope.WeightColumn(
                         else
                             constraints.copy(
                                 minHeight = 0,
-                                maxHeight = (constraints.maxHeight - y).coerceAtLeast(0)
+                                maxHeight = (constraints.maxHeight - y).coerceAtLeast(0),
                             )
                     )
                 finalPlaceables[y] = placeable
@@ -117,12 +117,12 @@ fun ExpandHeightsScope.WeightColumn(
                             if (measurable.parentData == ExpandHeightsScope.Weight)
                                 constraints.copy(
                                     minHeight = newWeightedHeight,
-                                    maxHeight = newWeightedHeight
+                                    maxHeight = newWeightedHeight,
                                 )
                             else
                                 constraints.copy(
                                     minHeight = 0,
-                                    maxHeight = (constraints.maxHeight - y).coerceAtLeast(0)
+                                    maxHeight = (constraints.maxHeight - y).coerceAtLeast(0),
                                 )
                         )
                     maxWidth = maxOf(placeable.width, maxWidth)
@@ -138,19 +138,19 @@ fun ExpandHeightsScope.WeightColumn(
                                 if (it.parentData == ExpandHeightsScope.Weight)
                                     constraints.copy(
                                         minHeight = weightedHeight,
-                                        maxHeight = weightedHeight
+                                        maxHeight = weightedHeight,
                                     )
                                 else
                                     constraints.copy(
                                         minHeight = 0,
-                                        maxHeight = constraints.maxHeight
+                                        maxHeight = constraints.maxHeight,
                                     )
                             )
                         }
                 layout(
                     width = finalPlaceables.maxOf { it.width },
                     height =
-                        finalPlaceables.sumOf { it.height } + spacingPx * (finalPlaceables.size - 1)
+                        finalPlaceables.sumOf { it.height } + spacingPx * (finalPlaceables.size - 1),
                 ) {}
             }
         }
@@ -160,7 +160,7 @@ fun ExpandHeightsScope.WeightColumn(
 @Composable
 fun ExpandHeights(
     modifier: Modifier = Modifier,
-    content: @Composable ExpandHeightsScope.() -> Unit
+    content: @Composable ExpandHeightsScope.() -> Unit,
 ) {
     SubcomposeLayout(modifier = modifier) { constraints ->
         val height =

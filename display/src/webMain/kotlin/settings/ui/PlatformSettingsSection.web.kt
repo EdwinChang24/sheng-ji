@@ -16,17 +16,17 @@ actual fun PlatformSettingsSection(
     sectionHeader: @Composable (text: String, modifier: Modifier) -> Unit,
     booleanPicker:
         @Composable
-        (value: Boolean, setValue: (Boolean) -> Unit, label: @Composable () -> Unit) -> Unit
+        (value: Boolean, setValue: (Boolean) -> Unit, label: @Composable () -> Unit) -> Unit,
 ) {
     sectionHeader("Web settings", Modifier)
     booleanPicker(
         state().platformSettings().keepScreenOn,
-        { state { AppState.platformSettings.web.keepScreenOn set it } }
+        { state { AppState.platformSettings.web.keepScreenOn set it } },
     ) {
         Text("Keep screen on")
     }
     SettingsImportIntoPicker(
         importInto = state().platformSettings().importInto,
-        setImportInto = { state { AppState.platformSettings.web.importInto set it } }
+        setImportInto = { state { AppState.platformSettings.web.importInto set it } },
     )
 }

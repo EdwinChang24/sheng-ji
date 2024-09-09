@@ -54,7 +54,7 @@ fun AnimatedContentScope.PossibleTrumpsDisplay(
     state: AppState.Prop,
     navigator: Navigator,
     displayScale: Float,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val scale by
         transition.animateFloat({ tween(1000) }) { s ->
@@ -76,7 +76,7 @@ fun AnimatedContentScope.PossibleTrumpsDisplay(
                             onClick = { navigator.navigate(Dialog.EditPossibleTrumps) }
                         )
                         .padding(24.dp)
-                        .pressEmphasis()
+                        .pressEmphasis(),
             ) {
                 Text("No possible trumps added")
                 OutlinedButton(onClick = { navigator.navigate(Dialog.EditPossibleTrumps) }) {
@@ -100,7 +100,7 @@ fun AnimatedContentScope.PossibleTrumpsDisplay(
                                 )
                             else Modifier
                         )
-                        .pressEmphasis()
+                        .pressEmphasis(),
             )
         }
     }
@@ -110,7 +110,7 @@ fun AnimatedContentScope.PossibleTrumpsDisplay(
 private fun PossibleTrumps(
     state: AppState.Prop,
     displayScale: Float,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier) {
         val width = with(LocalDensity.current) { constraints.maxWidth.toFloat().toDp() }
@@ -121,7 +121,7 @@ private fun PossibleTrumps(
             infiniteTransition.animateFloat(
                 0f,
                 2f * PI.toFloat(),
-                animationSpec = infiniteRepeatable(animation = tween(7500, easing = LinearEasing))
+                animationSpec = infiniteRepeatable(animation = tween(7500, easing = LinearEasing)),
             )
         state().possibleTrumps.forEach { possibleTrump ->
             val angle =
@@ -145,7 +145,7 @@ private fun PossibleTrumps(
                         style =
                             LocalTextStyle.current.copy(
                                 fontSize = 56.sp * displayScale,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
                             ),
                         onTextLayout = { baseline = it.lastBaseline },
                         modifier =
@@ -158,23 +158,23 @@ private fun PossibleTrumps(
                                                 Offset(
                                                     size.width / 2 -
                                                         (size.width / 4 * underlineLength),
-                                                    bl + size.height / 8
+                                                    bl + size.height / 8,
                                                 ),
                                             end =
                                                 Offset(
                                                     size.width / 2 +
                                                         (size.width / 4 * underlineLength),
-                                                    bl + size.height / 8
-                                                )
+                                                    bl + size.height / 8,
+                                                ),
                                         )
                                     }
                                 }
-                            }
+                            },
                     )
                 },
                 modifier =
                     Modifier.absoluteOffset(width / 2, height / 2)
-                        .absoluteOffset(radius * sin(angle), radius * -cos(angle))
+                        .absoluteOffset(radius * sin(angle), radius * -cos(angle)),
             ) { measurables, constraints ->
                 val placeable = measurables.first().measure(constraints)
                 layout(placeable.width, placeable.height) {

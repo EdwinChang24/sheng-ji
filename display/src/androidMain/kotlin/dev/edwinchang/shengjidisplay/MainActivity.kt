@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
             val state by viewModel.state.collectAsStateWithLifecycle()
             App(
                 state = AppState.Prop(state) { copy -> viewModel.state.value = state.copy(copy) },
-                importUrl = importUrl
+                importUrl = importUrl,
             )
         }
     }

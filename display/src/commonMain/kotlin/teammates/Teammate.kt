@@ -63,7 +63,7 @@ fun BoxWithConstraintsScope.Teammate(
     setDragging: (Boolean) -> Unit,
     delete: () -> Unit,
     modifier: Modifier = Modifier,
-    new: Boolean = false
+    new: Boolean = false,
 ) {
     val mainButtonRadiusPx = mainButtonRadiusPx
     val width = constraints.maxWidth.toFloat()
@@ -85,7 +85,7 @@ fun BoxWithConstraintsScope.Teammate(
         with(offset) {
             Offset(
                 animateFloatAsState(x, if (isDragging) snap() else springSpec).value,
-                animateFloatAsState(y, if (isDragging) snap() else springSpec).value
+                animateFloatAsState(y, if (isDragging) snap() else springSpec).value,
             )
         }
     if (calcOffset.getDistanceSquared() > mainButtonRadiusPx.pow(2)) {
@@ -95,14 +95,14 @@ fun BoxWithConstraintsScope.Teammate(
         val intersectionTopBottom =
             Offset(
                 x = calcOffset.x / calcOffset.y.absoluteValue * yBound,
-                y = if (calcOffset.y > 0) yBound else -yBound
+                y = if (calcOffset.y > 0) yBound else -yBound,
             )
         val endpoint =
             if (intersectionTopBottom.x.absoluteValue < xBound) intersectionTopBottom
             else
                 Offset(
                     x = if (calcOffset.x > 0) xBound else -xBound,
-                    y = calcOffset.y / calcOffset.x.absoluteValue * xBound
+                    y = calcOffset.y / calcOffset.x.absoluteValue * xBound,
                 )
         val arrowLength = with(LocalDensity.current) { 8.dp.roundToPx().toFloat() }
         val endArrow1 =
@@ -135,40 +135,40 @@ fun BoxWithConstraintsScope.Teammate(
                     Brush.Companion.radialGradient(
                         0.05f to fadeColor,
                         0.5f to color,
-                        center = Offset.Zero
+                        center = Offset.Zero,
                     ),
                     start = Offset.Zero,
                     end = endpoint,
                     strokeWidth = strokeRadius * 2,
-                    cap = StrokeCap.Round
+                    cap = StrokeCap.Round,
                 )
                 drawLine(
                     color,
                     start = endpoint,
                     end = endArrow1,
                     strokeWidth = strokeRadius * 2,
-                    cap = StrokeCap.Round
+                    cap = StrokeCap.Round,
                 )
                 drawLine(
                     color,
                     start = endpoint,
                     end = endArrow2,
                     strokeWidth = strokeRadius * 2,
-                    cap = StrokeCap.Round
+                    cap = StrokeCap.Round,
                 )
                 drawLine(
                     color,
                     start = getRestingOffset(calcOffset),
                     end = midArrow1,
                     strokeWidth = strokeRadius * 2,
-                    cap = StrokeCap.Round
+                    cap = StrokeCap.Round,
                 )
                 drawLine(
                     color,
                     start = getRestingOffset(calcOffset),
                     end = midArrow2,
                     strokeWidth = strokeRadius * 2,
-                    cap = StrokeCap.Round
+                    cap = StrokeCap.Round,
                 )
             }
         }
@@ -190,11 +190,11 @@ fun BoxWithConstraintsScope.Teammate(
                     .border(
                         animateDpAsState(
                                 if (isDragging) 5.dp else 3.dp,
-                                spring(stiffness = Spring.StiffnessHigh)
+                                spring(stiffness = Spring.StiffnessHigh),
                             )
                             .value,
                         MaterialTheme.colorScheme.primary,
-                        CircleShape
+                        CircleShape,
                     )
                     .then(
                         if (editing)
@@ -202,7 +202,7 @@ fun BoxWithConstraintsScope.Teammate(
                                     detectDragGestures(
                                         onDragStart = { pressed = true },
                                         onDragEnd = { pressed = false },
-                                        onDragCancel = { pressed = false }
+                                        onDragCancel = { pressed = false },
                                     ) { change, dragAmount ->
                                         change.consume()
                                         moveOffset(dragAmount)
@@ -211,12 +211,12 @@ fun BoxWithConstraintsScope.Teammate(
                                 .pointerInput(true) {
                                     detectTapGestures(
                                         onPress = { pressed = true },
-                                        onTap = { pressed = false }
+                                        onTap = { pressed = false },
                                     )
                                 }
                                 .pointerHoverIcon(PointerIcon.Hand)
                         else Modifier
-                    )
+                    ),
         ) {
             Icon(
                 iconRes(Res.drawable.ic_drag_pan),
@@ -225,10 +225,10 @@ fun BoxWithConstraintsScope.Teammate(
                     Modifier.scale(
                         animateFloatAsState(
                                 if (isDragging) 1.1f else 0.9f,
-                                spring(stiffness = Spring.StiffnessHigh)
+                                spring(stiffness = Spring.StiffnessHigh),
                             )
                             .value
-                    )
+                    ),
             )
         }
 }

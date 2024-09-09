@@ -23,7 +23,7 @@ import model.Call
 fun CallFoundText(
     call: Call,
     modifier: Modifier = Modifier,
-    style: TextStyle = LocalTextStyle.current
+    style: TextStyle = LocalTextStyle.current,
 ) {
     val spacing = with(LocalDensity.current) { 4.dp.roundToPx() }
     Layout(
@@ -40,13 +40,13 @@ fun CallFoundText(
                         }
                         .using(SizeTransform(clip = false))
                 },
-                label = ""
+                label = "",
             ) { target ->
                 Text(
                     target.toString(),
                     style = style.copy(fontWeight = FontWeight.Bold),
                     maxLines = 1,
-                    overflow = TextOverflow.Visible
+                    overflow = TextOverflow.Visible,
                 )
             }
             Text("/", style = style, maxLines = 1, overflow = TextOverflow.Visible)
@@ -62,23 +62,23 @@ fun CallFoundText(
                         }
                         .using(SizeTransform(clip = false))
                 },
-                label = ""
+                label = "",
             ) { target ->
                 Text(
                     target.toString(),
                     style = style.copy(fontWeight = FontWeight.Bold),
                     maxLines = 1,
-                    overflow = TextOverflow.Visible
+                    overflow = TextOverflow.Visible,
                 )
             }
         },
-        modifier = modifier
+        modifier = modifier,
     ) { measurables, constraints ->
         val placeables = measurables.map { it.measure(constraints) }
         val itemWidth = placeables.maxOf { it.width }
         layout(
             width = itemWidth * placeables.size + spacing * (placeables.size - 1),
-            height = placeables.maxOf { it.height }
+            height = placeables.maxOf { it.height },
         ) {
             var x = 0
             placeables.forEach { placeable ->

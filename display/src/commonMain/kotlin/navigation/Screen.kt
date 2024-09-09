@@ -19,7 +19,7 @@ sealed interface Screen {
         val Saver =
             Saver<Screen, String>(
                 save = { Json.encodeToString(it) },
-                restore = { Json.decodeFromString(it) }
+                restore = { Json.decodeFromString(it) },
             )
     }
 }

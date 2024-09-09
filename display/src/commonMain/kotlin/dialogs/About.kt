@@ -68,30 +68,30 @@ fun AboutDialog(navigator: Navigator, state: AppState.Prop, modifier: Modifier =
         Column(
             verticalArrangement = Arrangement.spacedBy(24.dp),
             modifier =
-                modifier.verticalScroll(rememberScrollState()).widthIn(0.dp, 480.dp).padding(24.dp)
+                modifier.verticalScroll(rememberScrollState()).widthIn(0.dp, 480.dp).padding(24.dp),
         ) {
             Text(
                 "About",
                 style = MaterialTheme.typography.headlineMedium,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
             )
             Image(
                 painter = painterResource(Res.drawable.logo_sheng_ji_display),
                 null,
-                modifier = Modifier.size(128.dp).align(Alignment.CenterHorizontally)
+                modifier = Modifier.size(128.dp).align(Alignment.CenterHorizontally),
             )
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.expandWidth().padding(horizontal = 16.dp)
+                modifier = Modifier.expandWidth().padding(horizontal = 16.dp),
             ) {
                 ProvideTextStyle(MaterialTheme.typography.titleLarge) { AppName() }
                 Text(
                     "Version $appVersion for $PlatformName",
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
             val uriHandler = LocalUriHandler.current
@@ -103,7 +103,7 @@ fun AboutDialog(navigator: Navigator, state: AppState.Prop, modifier: Modifier =
                         .clip(MaterialTheme.shapes.medium)
                         .clickable { uriHandler.openUri("https://edwinchang.dev") }
                         .pointerHoverIcon(PointerIcon.Hand)
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
             ) {
                 ProvideTextStyle(MaterialTheme.typography.bodyLarge) {
                     Text("Made with ", maxLines = 1, overflow = TextOverflow.Ellipsis)
@@ -116,7 +116,7 @@ fun AboutDialog(navigator: Navigator, state: AppState.Prop, modifier: Modifier =
                                 with(LocalDensity.current) {
                                     LocalTextStyle.current.fontSize.toDp()
                                 }
-                            )
+                            ),
                     )
                     Text(
                         buildAnnotatedString {
@@ -124,7 +124,7 @@ fun AboutDialog(navigator: Navigator, state: AppState.Prop, modifier: Modifier =
                             withStyle(SpanStyle(fontWeight = FontWeight.Medium)) { append("Edwin") }
                         },
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
                     )
                 }
             }
@@ -132,17 +132,17 @@ fun AboutDialog(navigator: Navigator, state: AppState.Prop, modifier: Modifier =
                 horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 maxItemsInEachRow = 2,
-                modifier = Modifier.align(Alignment.CenterHorizontally).padding(horizontal = 16.dp)
+                modifier = Modifier.align(Alignment.CenterHorizontally).padding(horizontal = 16.dp),
             ) {
                 OutlinedButtonWithEmphasis(
                     text = "Website",
                     icon = iconRes(Res.drawable.ic_public),
-                    onClick = { uriHandler.openUri("https://shengji.edwinchang.dev") }
+                    onClick = { uriHandler.openUri("https://shengji.edwinchang.dev") },
                 )
                 OutlinedButtonWithEmphasis(
                     text = "Source code",
                     icon = iconRes(Res.drawable.ic_code),
-                    onClick = { uriHandler.openUri("https://github.com/EdwinChang24/sheng-ji") }
+                    onClick = { uriHandler.openUri("https://github.com/EdwinChang24/sheng-ji") },
                 )
                 OutlinedButtonWithEmphasis(
                     text = "Dependencies",
@@ -151,7 +151,7 @@ fun AboutDialog(navigator: Navigator, state: AppState.Prop, modifier: Modifier =
                         uriHandler.openUri(
                             "https://github.com/EdwinChang24/sheng-ji/blob/-/display/NOTICE"
                         )
-                    }
+                    },
                 )
                 OutlinedButtonWithEmphasis(
                     text = "License",
@@ -160,7 +160,7 @@ fun AboutDialog(navigator: Navigator, state: AppState.Prop, modifier: Modifier =
                         uriHandler.openUri(
                             "https://github.com/EdwinChang24/sheng-ji/blob/-/LICENSE"
                         )
-                    }
+                    },
                 )
             }
             val credits1 =
@@ -178,7 +178,7 @@ fun AboutDialog(navigator: Navigator, state: AppState.Prop, modifier: Modifier =
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.expandWidth()
+                modifier = Modifier.expandWidth(),
             ) {
                 Image(
                     painter =
@@ -193,7 +193,7 @@ fun AboutDialog(navigator: Navigator, state: AppState.Prop, modifier: Modifier =
                             .clickable { uriHandler.openUri("https://shengji.edwinchang.dev") }
                             .pointerHoverIcon(PointerIcon.Hand)
                             .padding(16.dp)
-                            .size(64.dp)
+                            .size(64.dp),
                 )
                 Image(
                     painter =
@@ -208,7 +208,7 @@ fun AboutDialog(navigator: Navigator, state: AppState.Prop, modifier: Modifier =
                             .clickable { uriHandler.openUri("https://edwinchang.dev") }
                             .pointerHoverIcon(PointerIcon.Hand)
                             .padding(16.dp)
-                            .size(64.dp)
+                            .size(64.dp),
                 )
             }
             val year = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year
@@ -222,13 +222,13 @@ fun AboutDialog(navigator: Navigator, state: AppState.Prop, modifier: Modifier =
                         .clip(MaterialTheme.shapes.medium)
                         .clickable { uriHandler.openUri("https://edwinchang.dev") }
                         .pointerHoverIcon(PointerIcon.Hand)
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
             )
             ButtonWithEmphasis(
                 text = "Done",
                 icon = iconRes(Res.drawable.ic_done),
                 onClick = { navigator.closeDialog() },
-                modifier = Modifier.align(Alignment.End)
+                modifier = Modifier.align(Alignment.End),
             )
         }
     }

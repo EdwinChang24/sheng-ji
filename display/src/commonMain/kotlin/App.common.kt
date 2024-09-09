@@ -69,12 +69,12 @@ fun App(
     state: AppState.Prop,
     importUrl: String? = null,
     importDisambig: Boolean = false,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     ShengJiDisplayTheme(state) {
         Surface(
             color = MaterialTheme.colorScheme.background,
-            modifier = modifier.fillMaxSize().windowInsetsPadding(WindowInsets(0))
+            modifier = modifier.fillMaxSize().windowInsetsPadding(WindowInsets(0)),
         ) {
             val density = LocalDensity.current
             var currentScreen by
@@ -87,7 +87,7 @@ fun App(
                             positionalThreshold = { it * 0.5f },
                             velocityThreshold = { with(density) { 125.dp.toPx() } },
                             snapAnimationSpec = SpringSpec(),
-                            decayAnimationSpec = exponentialDecay()
+                            decayAnimationSpec = exponentialDecay(),
                         )
                 ) {
                     AnchoredDraggableState(
@@ -95,7 +95,7 @@ fun App(
                         positionalThreshold = { it * 0.5f },
                         velocityThreshold = { with(density) { 125.dp.toPx() } },
                         snapAnimationSpec = SpringSpec(),
-                        decayAnimationSpec = exponentialDecay()
+                        decayAnimationSpec = exponentialDecay(),
                     )
                 }
             var currentDialog by
@@ -138,14 +138,14 @@ fun App(
                 currentScreen,
                 settingsDragState.targetValue,
                 currentDialog,
-                navigator
+                navigator,
             )
             AnimatedContent(
                 targetState = currentScreen,
                 transitionSpec = {
                     fadeIn(tween(250, delayMillis = 250)) togetherWith fadeOut(tween(250))
                 },
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             ) { targetScreen ->
                 when (targetScreen) {
                     Screen.Home -> HomePage(navigator, state)
@@ -154,7 +154,7 @@ fun App(
                             targetScreen.scheme,
                             targetScreen.editTeammates,
                             navigator,
-                            state
+                            state,
                         )
                 }
             }
@@ -163,7 +163,7 @@ fun App(
                 currentDialog != null,
                 enter = fadeIn(),
                 exit = fadeOut(),
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             ) {
                 Box(
                     modifier =
@@ -175,7 +175,7 @@ fun App(
                                 detectDragGestures(
                                     onDragEnd = { currentDialog = null },
                                     onDragCancel = { currentDialog = null },
-                                    onDrag = { _, _ -> }
+                                    onDrag = { _, _ -> },
                                 )
                             }
                 )
@@ -186,7 +186,7 @@ fun App(
                     fadeIn(tween(200)) + slideInVertically { it / 16 } togetherWith
                         fadeOut(tween(200)) + slideOutVertically { -it / 8 }
                 },
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             ) { targetDialog ->
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                     if (targetDialog != null) {
@@ -197,7 +197,7 @@ fun App(
                                     containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
                                 ),
                             modifier =
-                                Modifier.windowInsetsPadding(WindowInsets.systemBars).padding(8.dp)
+                                Modifier.windowInsetsPadding(WindowInsets.systemBars).padding(8.dp),
                         ) {
                             when (targetDialog) {
                                 is Dialog.EditCall ->
@@ -224,7 +224,7 @@ fun App(
 private fun SettingsPane(
     dragState: AnchoredDraggableState<Boolean>,
     navigator: Navigator,
-    state: AppState.Prop
+    state: AppState.Prop,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val windowWidth = calculateWindowWidth()
@@ -254,7 +254,7 @@ private fun SettingsPane(
                         Modifier.pointerInput(true) { detectTapGestures { closeSettings() } }
                             .anchoredDraggable(
                                 state = dragState,
-                                orientation = Orientation.Horizontal
+                                orientation = Orientation.Horizontal,
                             )
                 )
     )
@@ -268,9 +268,9 @@ private fun SettingsPane(
                             true at 0f
                             false at it.width.toFloat()
                         },
-                    newTarget = dragState.currentValue
+                    newTarget = dragState.currentValue,
                 )
-            }
+            },
     ) {
         Surface(
             color = MaterialTheme.colorScheme.surfaceContainer,
@@ -282,11 +282,11 @@ private fun SettingsPane(
                                 IntOffset(
                                     (dragState.offset.takeIf { !it.isNaN() } ?: Float.MAX_VALUE)
                                         .toInt(),
-                                    0
+                                    0,
                                 )
                             }
                             .anchoredDraggable(state = dragState, Orientation.Horizontal)
-                    )
+                    ),
         ) {
             SettingsPage(navigator, state)
         }

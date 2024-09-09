@@ -56,7 +56,7 @@ fun EditCallDialog(id: String, navigator: Navigator, state: AppState.Prop) {
                                         found =
                                             this[index].found.let {
                                                 if (it > number) number else it
-                                            }
+                                            },
                                     )
                             } ?: add(Call(id, PlayingCard(r, s), number, 0))
                     }
@@ -68,28 +68,26 @@ fun EditCallDialog(id: String, navigator: Navigator, state: AppState.Prop) {
     ExpandWidths {
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.verticalScroll(rememberScrollState()).padding(vertical = 24.dp)
+            modifier = Modifier.verticalScroll(rememberScrollState()).padding(vertical = 24.dp),
         ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Text(
                     "Edit call",
                     style = MaterialTheme.typography.headlineMedium,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(horizontal = 24.dp)
+                    modifier = Modifier.padding(horizontal = 24.dp),
                 )
                 Column(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.expandWidth()
+                    modifier = Modifier.expandWidth(),
                 ) {
                     Text(
                         "Rank",
                         style = MaterialTheme.typography.labelMedium,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(horizontal = 24.dp)
+                        modifier = Modifier.padding(horizontal = 24.dp),
                     )
                     RankPicker(
                         rank,
@@ -97,30 +95,30 @@ fun EditCallDialog(id: String, navigator: Navigator, state: AppState.Prop) {
                         modifier =
                             Modifier.align(Alignment.CenterHorizontally)
                                 .horizontalScroll(rememberScrollState())
-                                .padding(horizontal = 24.dp)
+                                .padding(horizontal = 24.dp),
                     )
                 }
                 Column(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.expandWidth().padding(horizontal = 24.dp)
+                    modifier = Modifier.expandWidth().padding(horizontal = 24.dp),
                 ) {
                     Text(
                         "Suit",
                         style = MaterialTheme.typography.labelMedium,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
                     )
                     SuitPicker(suit, { suit = it }, state, modifier = Modifier.expandWidth())
                 }
                 Column(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.expandWidth().padding(horizontal = 24.dp)
+                    modifier = Modifier.expandWidth().padding(horizontal = 24.dp),
                 ) {
                     Text(
                         "Number",
                         style = MaterialTheme.typography.labelMedium,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
                     )
                     NumberPicker(number, { number = it }, modifier = Modifier.expandWidth())
                 }
@@ -130,18 +128,18 @@ fun EditCallDialog(id: String, navigator: Navigator, state: AppState.Prop) {
                 modifier =
                     Modifier.expandWidth()
                         .horizontalScroll(rememberScrollState(), reverseScrolling = true)
-                        .padding(horizontal = 24.dp)
+                        .padding(horizontal = 24.dp),
             ) {
                 OutlinedButtonWithEmphasis(
                     text = "Cancel",
                     icon = iconRes(Res.drawable.ic_close),
-                    onClick = navigator::closeDialog
+                    onClick = navigator::closeDialog,
                 )
                 ButtonWithEmphasis(
                     text = "Done",
                     icon = iconRes(Res.drawable.ic_done),
                     onClick = { onDone() },
-                    enabled = rank != null && suit != null
+                    enabled = rank != null && suit != null,
                 )
             }
         }

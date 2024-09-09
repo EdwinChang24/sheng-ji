@@ -41,17 +41,15 @@ fun EditPossibleTrumpsDialog(navigator: Navigator, state: AppState.Prop) {
     ExpandWidths {
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.verticalScroll(rememberScrollState()).padding(vertical = 24.dp)
+            modifier = Modifier.verticalScroll(rememberScrollState()).padding(vertical = 24.dp),
         ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Text(
                     "Edit possible trumps",
                     style = MaterialTheme.typography.headlineMedium,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(horizontal = 24.dp)
+                    modifier = Modifier.padding(horizontal = 24.dp),
                 )
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.expandWidth()) {
                     PossibleTrumpsPicker(
@@ -66,7 +64,7 @@ fun EditPossibleTrumpsDialog(navigator: Navigator, state: AppState.Prop) {
                             undoClearValue = {
                                 recentlyCleared?.let { selected = it }
                                 recentlyCleared = null
-                            }
+                            },
                         )
                     )
                 }
@@ -76,12 +74,12 @@ fun EditPossibleTrumpsDialog(navigator: Navigator, state: AppState.Prop) {
                 modifier =
                     Modifier.expandWidth()
                         .horizontalScroll(rememberScrollState(), reverseScrolling = true)
-                        .padding(horizontal = 24.dp)
+                        .padding(horizontal = 24.dp),
             ) {
                 OutlinedButtonWithEmphasis(
                     icon = iconRes(Res.drawable.ic_close),
                     text = "Cancel",
-                    onClick = navigator::closeDialog
+                    onClick = navigator::closeDialog,
                 )
                 ButtonWithEmphasis(
                     text = "Done",
@@ -89,7 +87,7 @@ fun EditPossibleTrumpsDialog(navigator: Navigator, state: AppState.Prop) {
                     onClick = {
                         state { AppState.possibleTrumps set selected }
                         navigator.closeDialog()
-                    }
+                    },
                 )
             }
         }

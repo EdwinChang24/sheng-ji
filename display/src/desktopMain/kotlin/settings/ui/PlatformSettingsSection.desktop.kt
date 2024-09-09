@@ -15,12 +15,12 @@ actual fun PlatformSettingsSection(
     sectionHeader: @Composable (text: String, modifier: Modifier) -> Unit,
     booleanPicker:
         @Composable
-        (value: Boolean, setValue: (Boolean) -> Unit, label: @Composable () -> Unit) -> Unit
+        (value: Boolean, setValue: (Boolean) -> Unit, label: @Composable () -> Unit) -> Unit,
 ) {
     sectionHeader("Desktop settings", Modifier)
     booleanPicker(
         state().platformSettings().fullScreen,
-        { state { AppState.platformSettings.desktop.fullScreen set it } }
+        { state { AppState.platformSettings.desktop.fullScreen set it } },
     ) {
         Text("Full screen")
     }

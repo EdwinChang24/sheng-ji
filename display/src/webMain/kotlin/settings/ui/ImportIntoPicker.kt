@@ -33,19 +33,19 @@ import util.iconRes
 fun SettingsImportIntoPicker(
     importInto: ImportInto,
     setImportInto: (ImportInto) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val focusManager = LocalFocusManager.current
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = modifier.padding(horizontal = 24.dp, vertical = 8.dp)
+        modifier = modifier.padding(horizontal = 24.dp, vertical = 8.dp),
     ) {
         Text("Import quick transfers into", maxLines = 2, overflow = TextOverflow.Ellipsis)
         var expanded by rememberSaveable { mutableStateOf(false) }
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = { expanded = it },
-            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand, overrideDescendants = true)
+            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand, overrideDescendants = true),
         ) {
             OutlinedTextField(
                 value = importInto.readableName,
@@ -54,7 +54,7 @@ fun SettingsImportIntoPicker(
                 leadingIcon = { Icon(iconRes(importInto.icon), null) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
                 colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
-                modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
             )
             DropdownMenu(
                 expanded = expanded,
@@ -62,7 +62,7 @@ fun SettingsImportIntoPicker(
                     expanded = false
                     focusManager.clearFocus()
                 },
-                modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
+                modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
             ) {
                 for (selection in listOf(ImportInto.Here, ImportInto.Android, ImportInto.Ask)) {
                     DropdownMenuItem(
@@ -70,7 +70,7 @@ fun SettingsImportIntoPicker(
                             Text(
                                 selection.readableName,
                                 maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
+                                overflow = TextOverflow.Ellipsis,
                             )
                         },
                         leadingIcon = { Icon(iconRes(selection.icon), null) },
@@ -81,7 +81,7 @@ fun SettingsImportIntoPicker(
                             setImportInto(selection)
                             expanded = false
                             focusManager.clearFocus()
-                        }
+                        },
                     )
                 }
             }

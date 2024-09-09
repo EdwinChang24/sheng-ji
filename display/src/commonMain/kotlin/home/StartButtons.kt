@@ -21,13 +21,13 @@ fun StartButtons(navigator: Navigator, modifier: Modifier = Modifier) {
             text = "Start possible trumps display",
             icon = iconRes(Res.drawable.ic_smart_display),
             onClick = { navigator.navigate(Screen.Display(scheme = DisplayScheme.PossibleTrumps)) },
-            elevation = ButtonDefaults.buttonElevation(6.dp, 6.dp, 6.dp, 8.dp, 6.dp)
+            elevation = ButtonDefaults.buttonElevation(6.dp, 6.dp, 6.dp, 8.dp, 6.dp),
         )
         ButtonWithEmphasis(
             text = "Start main display",
             icon = iconRes(Res.drawable.ic_smart_display),
             onClick = { navigator.navigate(Screen.Display(scheme = DisplayScheme.Main)) },
-            elevation = ButtonDefaults.buttonElevation(6.dp, 6.dp, 6.dp, 8.dp, 6.dp)
+            elevation = ButtonDefaults.buttonElevation(6.dp, 6.dp, 6.dp, 8.dp, 6.dp),
         )
     }
 }

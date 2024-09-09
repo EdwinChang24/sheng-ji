@@ -23,7 +23,7 @@ fun TeammatesActionButtons(
     canClear: Boolean,
     onPressClear: () -> Unit,
     onDone: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier) {
         OutlinedButtonWithEmphasis(
@@ -36,14 +36,14 @@ fun TeammatesActionButtons(
             enabled = canClear || hasRecentlyCleared,
             colors =
                 ButtonDefaults.outlinedButtonColors()
-                    .copy(containerColor = MaterialTheme.colorScheme.surface)
+                    .copy(containerColor = MaterialTheme.colorScheme.surface),
         )
         Spacer(modifier = Modifier.height(mainButtonRadiusDp * 2 + 16.dp))
         ButtonWithEmphasis(
             text = "Done",
             icon = iconRes(Res.drawable.ic_done),
             onClick = onDone,
-            elevation = ButtonDefaults.buttonElevation(6.dp, 6.dp, 6.dp, 8.dp, 6.dp)
+            elevation = ButtonDefaults.buttonElevation(6.dp, 6.dp, 6.dp, 8.dp, 6.dp),
         )
     }
 }

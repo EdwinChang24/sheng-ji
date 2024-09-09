@@ -32,7 +32,7 @@ actual fun ShengJiDisplayTheme(state: AppState.Prop, content: @Composable () -> 
             if (state().settings.general.theme.computesToDark()) defaultDarkTheme
             else defaultLightTheme,
         typography = getTypography(fontFamily ?: FontFamily.SansSerif),
-        content = content
+        content = content,
     )
 }
 
@@ -51,6 +51,6 @@ suspend fun getInterWeb(): FontFamily {
         Font("inter_extralight", regular, weight = FontWeight.ExtraLight),
         Font("inter_light", regular, weight = FontWeight.Light),
         Font("inter_extrabold", bold, weight = FontWeight.ExtraBold),
-        Font("inter_black", bold, weight = FontWeight.Black)
+        Font("inter_black", bold, weight = FontWeight.Black),
     )
 }

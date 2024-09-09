@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 data class Settings(
     val general: General = General(),
     val mainDisplay: MainDisplay = MainDisplay(),
-    val possibleTrumpsDisplay: PossibleTrumpsDisplay = PossibleTrumpsDisplay()
+    val possibleTrumpsDisplay: PossibleTrumpsDisplay = PossibleTrumpsDisplay(),
 ) {
     companion object {
         @Serializable
@@ -20,7 +20,7 @@ data class Settings(
             val autoSwitchSeconds: Int = 5,
             val showClock: Boolean = true,
             val clockOrientation: Boolean = true,
-            val underline6And9: Boolean = true
+            val underline6And9: Boolean = true,
         ) {
             companion object
         }
@@ -31,7 +31,7 @@ data class Settings(
             val scale: Float = 1f,
             val autoHideCalls: Boolean = true,
             val displayOrder: MainDisplayOrder = MainDisplayOrder.Auto,
-            val tapTrumpToEdit: Boolean = false
+            val tapTrumpToEdit: Boolean = false,
         ) {
             companion object
         }

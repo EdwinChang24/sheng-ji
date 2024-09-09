@@ -13,7 +13,7 @@ fun Modifier.rotate90(negative: Boolean = false) =
         object : LayoutModifier {
                 override fun MeasureScope.measure(
                     measurable: Measurable,
-                    constraints: Constraints
+                    constraints: Constraints,
                 ): MeasureResult {
                     val placeable =
                         measurable.measure(
@@ -21,13 +21,13 @@ fun Modifier.rotate90(negative: Boolean = false) =
                                 minWidth = constraints.minHeight,
                                 maxWidth = constraints.maxHeight,
                                 minHeight = constraints.minWidth,
-                                maxHeight = constraints.maxWidth
+                                maxHeight = constraints.maxWidth,
                             )
                         )
                     return layout(width = placeable.height, height = placeable.width) {
                         placeable.place(
                             x = -(placeable.width - placeable.height) / 2,
-                            y = (placeable.width - placeable.height) / 2
+                            y = (placeable.width - placeable.height) / 2,
                         )
                     }
                 }

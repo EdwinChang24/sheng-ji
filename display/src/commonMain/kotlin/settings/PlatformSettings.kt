@@ -16,7 +16,7 @@ sealed interface PlatformSettings {
     data class Android(
         val fullScreen: Boolean = true,
         val lockOrientation: Boolean = true,
-        val keepScreenOn: Boolean = true
+        val keepScreenOn: Boolean = true,
     ) : PlatformSettings {
         companion object
     }

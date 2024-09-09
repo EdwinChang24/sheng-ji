@@ -20,7 +20,7 @@ private fun ActionMenuPreview() {
                 pause = false,
                 showTeammates = true,
                 editingTeammates = false,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             )
         }
     }

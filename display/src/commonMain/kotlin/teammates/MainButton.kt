@@ -33,9 +33,11 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
-import com.benasher44.uuid.uuid4
 import kotlin.math.pow
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
+@OptIn(ExperimentalUuidApi::class)
 @Composable
 fun BoxWithConstraintsScope.TeammatesMainButton(
     editing: Boolean,
@@ -44,7 +46,7 @@ fun BoxWithConstraintsScope.TeammatesMainButton(
     setDraggingNew: (Boolean) -> Unit,
     getRestingOffset: (Offset) -> Offset,
     addNewTeammate: (Pair<String, Offset>) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val width = constraints.maxWidth.toFloat()
     val height = constraints.maxHeight.toFloat()
@@ -87,7 +89,7 @@ fun BoxWithConstraintsScope.TeammatesMainButton(
                             else MaterialTheme.colorScheme.primary
                         )
                         .value,
-                    CircleShape
+                    CircleShape,
                 )
                 .then(
                     if (editing) {
@@ -98,30 +100,30 @@ fun BoxWithConstraintsScope.TeammatesMainButton(
                                         new?.let { new = it.copy(second = it.second + dragAmount) }
                                     },
                                     onDragEnd = onRelease,
-                                    onDragCancel = onRelease
+                                    onDragCancel = onRelease,
                                 )
                             }
                             .pointerInput(true) {
                                 detectTapGestures(
                                     onPress = {
                                         new =
-                                            uuid4().toString() to
+                                            Uuid.random().toString() to
                                                 it - Offset(mainButtonRadiusPx, mainButtonRadiusPx)
                                         setDraggingNew(true)
                                     },
-                                    onTap = { onRelease() }
+                                    onTap = { onRelease() },
                                 )
                             }
                             .pointerHoverIcon(PointerIcon.Hand)
                     } else Modifier
-                )
+                ),
     ) {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize().padding(16.dp)) {
             Text(
                 if (deleting) "Release to delete"
                 else if (dragging) "Move here to delete" else "Drag to add",
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.labelLarge
+                style = MaterialTheme.typography.labelLarge,
             )
         }
     }
@@ -136,7 +138,7 @@ fun BoxWithConstraintsScope.TeammatesMainButton(
                 draggingOthers = false,
                 setDragging = {},
                 delete = {},
-                new = true
+                new = true,
             )
         }
     }

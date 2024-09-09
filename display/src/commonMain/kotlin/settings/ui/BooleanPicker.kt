@@ -16,7 +16,7 @@ import util.WeightRow
 fun ExpandWidthsScope.SettingsBooleanPicker(
     value: Boolean,
     setValue: (Boolean) -> Unit,
-    label: @Composable () -> Unit
+    label: @Composable () -> Unit,
 ) {
     WeightRow(
         modifier =

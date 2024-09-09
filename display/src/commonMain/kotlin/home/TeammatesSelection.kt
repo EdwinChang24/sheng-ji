@@ -40,7 +40,7 @@ fun TeammatesSelection(
     teammatesState: ClearableState<Map<String, Float>>,
     cardColors: CardColors,
     navigator: Navigator,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Card(
         colors = cardColors,
@@ -52,28 +52,28 @@ fun TeammatesSelection(
                         Screen.Display(scheme = DisplayScheme.Main, editTeammates = true)
                     )
                 }
-                .pointerHoverIcon(PointerIcon.Hand)
+                .pointerHoverIcon(PointerIcon.Hand),
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.padding(vertical = 24.dp)
+            modifier = Modifier.padding(vertical = 24.dp),
         ) {
             Text(
                 "Teammates",
                 style = MaterialTheme.typography.titleLarge,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(horizontal = 24.dp)
+                modifier = Modifier.padding(horizontal = 24.dp),
             )
             AnimatedContent(
                 targetState = teammatesState.value.size,
                 transitionSpec = { DefaultTransition using SizeTransform(clip = false) },
-                modifier = Modifier.padding(horizontal = 24.dp)
+                modifier = Modifier.padding(horizontal = 24.dp),
             ) { targetState ->
                 Text(
                     "$targetState teammate${if (targetState == 1) "" else "s"} added",
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
             Row(
@@ -82,7 +82,7 @@ fun TeammatesSelection(
                 modifier =
                     Modifier.fillMaxWidth()
                         .horizontalScroll(rememberScrollState())
-                        .padding(horizontal = 24.dp)
+                        .padding(horizontal = 24.dp),
             ) {
                 OutlinedButtonWithEmphasis(
                     text = "Edit",
@@ -91,7 +91,7 @@ fun TeammatesSelection(
                         navigator.navigate(
                             Screen.Display(scheme = DisplayScheme.Main, editTeammates = true)
                         )
-                    }
+                    },
                 )
                 OutlinedButtonWithEmphasis(
                     text = if (teammatesState.canUndoClear) "Undo clear" else "Clear",
@@ -104,7 +104,7 @@ fun TeammatesSelection(
                         if (teammatesState.canUndoClear) teammatesState.undoClearValue()
                         else teammatesState.clearValue()
                     },
-                    enabled = teammatesState.canUndoClear || teammatesState.value.isNotEmpty()
+                    enabled = teammatesState.canUndoClear || teammatesState.value.isNotEmpty(),
                 )
             }
         }

@@ -15,7 +15,7 @@ data class AppState(
     val teammates: Map<String, Float> = emptyMap(),
     val possibleTrumps: Set<String> = emptySet(),
     val settings: Settings = Settings(),
-    val platformSettings: PlatformSettings = defaultPlatformSettings
+    val platformSettings: PlatformSettings = defaultPlatformSettings,
 ) {
     data class Prop(val state: AppState, val update: (Copy<AppState>.() -> Unit) -> Unit) {
         operator fun invoke() = state

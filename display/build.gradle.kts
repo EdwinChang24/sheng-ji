@@ -56,7 +56,7 @@ kotlin {
         val commonMain by getting {
             kotlin.srcDirs(
                 "build/generated/ksp/metadata/commonMain/kotlin",
-                "build/generated/version/commonMain"
+                "build/generated/version/commonMain",
             )
             dependencies {
                 implementation(compose.material3)
@@ -67,7 +67,6 @@ kotlin {
                 implementation(libs.lifecycle.viewmodel.compose)
                 implementation(libs.kotlinx.datetime)
                 implementation(libs.kotlinx.serialization)
-                implementation(libs.uuid)
                 implementation(libs.arrow.optics)
                 implementation(libs.reorderable)
             }

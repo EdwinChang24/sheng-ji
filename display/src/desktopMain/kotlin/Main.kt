@@ -84,7 +84,7 @@ fun main() {
                     }
                 }
                 return@Window false
-            }
+            },
         ) {
             CompositionLocalProvider(LocalWindowState provides windowState) {
                 App(AppState.Prop(state) { copy -> appState.value = state.copy(copy) })

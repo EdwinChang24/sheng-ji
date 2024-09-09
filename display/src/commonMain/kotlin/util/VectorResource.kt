@@ -15,7 +15,7 @@ fun iconRes(res: DrawableResource) =
                     defaultWidth = 24.dp,
                     defaultHeight = 24.dp,
                     viewportWidth = 1f,
-                    viewportHeight = 1f
+                    viewportHeight = 1f,
                 )
                 .build()
     )
@@ -28,7 +28,7 @@ fun suitIconRes(res: DrawableResource) =
                     defaultWidth = 64.dp,
                     defaultHeight = 64.dp,
                     viewportWidth = 1f,
-                    viewportHeight = 1f
+                    viewportHeight = 1f,
                 )
                 .build()
     )

@@ -43,7 +43,7 @@ actual fun QrImage(data: String, state: AppState.Prop, modifier: Modifier) {
                 modifier
                     .clip(MaterialTheme.shapes.medium)
                     .background(if (useDarkTheme) Color.Black else Color.White)
-                    .padding(8.dp)
+                    .padding(8.dp),
         )
     }
 }

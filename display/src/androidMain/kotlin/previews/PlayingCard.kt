@@ -19,7 +19,7 @@ private fun PlayingCardPreview() {
             PlayingCard(
                 card = PlayingCard("A", Suit.SPADES),
                 state = AppState.Prop(AppState()) {},
-                textStyle = LocalTextStyle.current.copy(fontSize = 128.sp)
+                textStyle = LocalTextStyle.current.copy(fontSize = 128.sp),
             )
         }
     }

@@ -28,7 +28,7 @@ fun SuitPicker(
     suit: Suit?,
     setSuit: (Suit) -> Unit,
     state: AppState.Prop,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     ExpandWidths(modifier = modifier) {
         WeightRow(spacing = 16.dp) {
@@ -47,15 +47,15 @@ fun SuitPicker(
                                             targetValue =
                                                 if (suit == it) 4.dp
                                                 else CardDefaults.outlinedCardBorder().width,
-                                            label = ""
+                                            label = "",
                                         )
                                         .value,
                                 color =
                                     if (suit == it) MaterialTheme.colorScheme.primary
-                                    else MaterialTheme.colorScheme.outlineVariant
+                                    else MaterialTheme.colorScheme.outlineVariant,
                             ),
                         interactionSource = interactionSource,
-                        modifier = Modifier.weight().pointerHoverIcon(PointerIcon.Hand)
+                        modifier = Modifier.weight().pointerHoverIcon(PointerIcon.Hand),
                     ) {
                         Image(
                             suitIconRes(it.icon),
@@ -71,7 +71,7 @@ fun SuitPicker(
                                 Modifier.pressEmphasis()
                                     .padding(12.dp)
                                     .size(32.dp)
-                                    .align(Alignment.CenterHorizontally)
+                                    .align(Alignment.CenterHorizontally),
                         )
                     }
                 }

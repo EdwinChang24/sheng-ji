@@ -10,6 +10,6 @@ actual fun ShengJiDisplayTheme(state: AppState.Prop, content: @Composable () -> 
     MaterialTheme(
         colorScheme = if (useDarkTheme) defaultDarkTheme else defaultLightTheme,
         typography = getTypography(Inter),
-        content = content
+        content = content,
     )
 }

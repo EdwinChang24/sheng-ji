@@ -15,7 +15,7 @@ sealed interface ContentRotationSetting {
             listOf(
                 ContentRotation.TopTowardsRight,
                 ContentRotation.Center,
-                ContentRotation.BottomTowardsRight
+                ContentRotation.BottomTowardsRight,
             )
     }
 

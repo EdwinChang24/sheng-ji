@@ -32,7 +32,7 @@ import util.rotate90
 fun ExpandWidthsScope.SettingsMainDisplayOrderPicker(state: AppState.Prop) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.padding(vertical = 16.dp)
+        modifier = Modifier.padding(vertical = 16.dp),
     ) {
         Text("Display order", modifier = Modifier.padding(horizontal = 24.dp))
         ExpandHeights(
@@ -54,16 +54,16 @@ fun ExpandWidthsScope.SettingsMainDisplayOrderPicker(state: AppState.Prop) {
                             selected =
                                 state().settings.mainDisplay.displayOrder == MainDisplayOrder.Auto,
                             interactionSource = interactionSource,
-                            modifier = Modifier.weight()
+                            modifier = Modifier.weight(),
                         ) {
                             Box(
                                 contentAlignment = Alignment.Center,
-                                modifier = Modifier.expandHeight().expandWidth().pressEmphasis()
+                                modifier = Modifier.expandHeight().expandWidth().pressEmphasis(),
                             ) {
                                 Text(
                                     "Auto switch",
                                     textAlign = TextAlign.Center,
-                                    modifier = Modifier.padding(16.dp)
+                                    modifier = Modifier.padding(16.dp),
                                 )
                             }
                         }
@@ -80,34 +80,34 @@ fun ExpandWidthsScope.SettingsMainDisplayOrderPicker(state: AppState.Prop) {
                                 state().settings.mainDisplay.displayOrder ==
                                     MainDisplayOrder.TrumpOnTop,
                             interactionSource = interactionSource,
-                            modifier = Modifier.weight()
+                            modifier = Modifier.weight(),
                         ) {
                             if (state().settings.general.displayRotationVertical) {
                                 WeightColumn(
                                     spacing = 8.dp,
-                                    modifier = Modifier.pressEmphasis().padding(16.dp)
+                                    modifier = Modifier.pressEmphasis().padding(16.dp),
                                 ) {
                                     Text(
                                         "Trump",
                                         textAlign = TextAlign.Center,
-                                        modifier = Modifier.weight().expandWidth().rotate(180f)
+                                        modifier = Modifier.weight().expandWidth().rotate(180f),
                                     )
                                     HorizontalDivider(modifier = Modifier.expandWidth())
                                     Text(
                                         "Calls",
                                         textAlign = TextAlign.Center,
-                                        modifier = Modifier.weight().expandWidth()
+                                        modifier = Modifier.weight().expandWidth(),
                                     )
                                 }
                             } else {
                                 WeightRow(
                                     spacing = 8.dp,
-                                    modifier = Modifier.pressEmphasis().padding(16.dp)
+                                    modifier = Modifier.pressEmphasis().padding(16.dp),
                                 ) {
                                     Text(
                                         "Trump",
                                         textAlign = TextAlign.Center,
-                                        modifier = Modifier.weight().expandHeight().rotate90()
+                                        modifier = Modifier.weight().expandHeight().rotate90(),
                                     )
                                     VerticalDivider(modifier = Modifier.expandHeight())
                                     Text(
@@ -116,7 +116,7 @@ fun ExpandWidthsScope.SettingsMainDisplayOrderPicker(state: AppState.Prop) {
                                         modifier =
                                             Modifier.weight()
                                                 .expandHeight()
-                                                .rotate90(negative = true)
+                                                .rotate90(negative = true),
                                     )
                                 }
                             }
@@ -134,34 +134,34 @@ fun ExpandWidthsScope.SettingsMainDisplayOrderPicker(state: AppState.Prop) {
                                 state().settings.mainDisplay.displayOrder ==
                                     MainDisplayOrder.CallsOnTop,
                             interactionSource = interactionSource,
-                            modifier = Modifier.weight()
+                            modifier = Modifier.weight(),
                         ) {
                             if (state().settings.general.displayRotationVertical) {
                                 WeightColumn(
                                     spacing = 8.dp,
-                                    modifier = Modifier.pressEmphasis().padding(16.dp)
+                                    modifier = Modifier.pressEmphasis().padding(16.dp),
                                 ) {
                                     Text(
                                         "Calls",
                                         textAlign = TextAlign.Center,
-                                        modifier = Modifier.weight().expandWidth().rotate(180f)
+                                        modifier = Modifier.weight().expandWidth().rotate(180f),
                                     )
                                     HorizontalDivider(modifier = Modifier.expandWidth())
                                     Text(
                                         "Trump",
                                         textAlign = TextAlign.Center,
-                                        modifier = Modifier.weight().expandWidth()
+                                        modifier = Modifier.weight().expandWidth(),
                                     )
                                 }
                             } else {
                                 WeightRow(
                                     spacing = 8.dp,
-                                    modifier = Modifier.pressEmphasis().padding(16.dp)
+                                    modifier = Modifier.pressEmphasis().padding(16.dp),
                                 ) {
                                     Text(
                                         "Calls",
                                         textAlign = TextAlign.Center,
-                                        modifier = Modifier.weight().expandHeight().rotate90()
+                                        modifier = Modifier.weight().expandHeight().rotate90(),
                                     )
                                     VerticalDivider(modifier = Modifier.expandHeight())
                                     Text(
@@ -170,7 +170,7 @@ fun ExpandWidthsScope.SettingsMainDisplayOrderPicker(state: AppState.Prop) {
                                         modifier =
                                             Modifier.weight()
                                                 .expandHeight()
-                                                .rotate90(negative = true)
+                                                .rotate90(negative = true),
                                     )
                                 }
                             }

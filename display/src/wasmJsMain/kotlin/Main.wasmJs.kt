@@ -85,7 +85,7 @@ fun main() {
         App(
             AppState.Prop(state) { copy -> appState.value = state.copy(copy) },
             importUrl = importUrl,
-            importDisambig = importDisambig
+            importDisambig = importDisambig,
         )
     }
 }

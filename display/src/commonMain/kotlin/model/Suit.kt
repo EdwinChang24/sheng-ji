@@ -19,7 +19,7 @@ enum class Suit(val asString: String, val icon: DrawableResource) {
     CLUBS("clubs", Res.drawable.clubs),
     DIAMONDS("diamonds", Res.drawable.diamonds),
     HEARTS("hearts", Res.drawable.hearts),
-    SPADES("spades", Res.drawable.spades)
+    SPADES("spades", Res.drawable.spades),
 }
 
 class SuitSerializer : KSerializer<Suit> {

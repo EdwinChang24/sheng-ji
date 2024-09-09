@@ -34,24 +34,24 @@ import util.iconRes
 fun SettingsAutoSwitchSecondsPicker(
     autoSwitchSeconds: Int,
     setAutoSwitchSeconds: (Int) -> Unit,
-    enabled: Boolean
+    enabled: Boolean,
 ) {
     val focusManager = LocalFocusManager.current
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
+        modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
     ) {
         Text(
             "Auto switch interval",
             color = LocalContentColor.current.copy(alpha = if (enabled) 1f else 0.5f),
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
         )
         var expanded by rememberSaveable { mutableStateOf(false) }
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = { expanded = it },
-            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand, overrideDescendants = true)
+            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand, overrideDescendants = true),
         ) {
             OutlinedTextField(
                 value = autoSwitchIntervals[autoSwitchSeconds] ?: "$autoSwitchSeconds seconds",
@@ -61,7 +61,7 @@ fun SettingsAutoSwitchSecondsPicker(
                 leadingIcon = { Icon(iconRes(Res.drawable.ic_timer), null) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
                 colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
-                modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
             )
             DropdownMenu(
                 expanded = expanded,
@@ -69,7 +69,7 @@ fun SettingsAutoSwitchSecondsPicker(
                     expanded = false
                     focusManager.clearFocus()
                 },
-                modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
+                modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
             ) {
                 autoSwitchIntervals.forEach { (seconds, name) ->
                     DropdownMenuItem(
@@ -82,7 +82,7 @@ fun SettingsAutoSwitchSecondsPicker(
                             setAutoSwitchSeconds(seconds)
                             expanded = false
                             focusManager.clearFocus()
-                        }
+                        },
                     )
                 }
             }
@@ -98,5 +98,5 @@ private val autoSwitchIntervals =
         20 to "20 seconds",
         60 to "1 minute",
         300 to "5 minutes",
-        1_577_847_600 to "50 years"
+        1_577_847_600 to "50 years",
     )

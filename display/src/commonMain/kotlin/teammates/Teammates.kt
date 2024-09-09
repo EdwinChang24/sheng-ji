@@ -42,7 +42,7 @@ fun Teammates(
     savedTeammatesRad: Map<String, Float>,
     setSavedTeammatesRad: (Map<String, Float>) -> Unit,
     onDone: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
         Box(
@@ -64,7 +64,7 @@ fun Teammates(
                             calculateRestingOffset(
                                 angleRad,
                                 (width / 2 - mainButtonRadiusPx) / 2 + mainButtonRadiusPx,
-                                (height / 2 - mainButtonRadiusPx) / 2 + mainButtonRadiusPx
+                                (height / 2 - mainButtonRadiusPx) / 2 + mainButtonRadiusPx,
                             )
                     }
                     .toTypedArray()
@@ -74,7 +74,7 @@ fun Teammates(
             calculateRestingOffset(
                 angleRadians = offset.atan2(),
                 (width / 2 - mainButtonRadiusPx) / 2 + mainButtonRadiusPx,
-                (height / 2 - mainButtonRadiusPx) / 2 + mainButtonRadiusPx
+                (height / 2 - mainButtonRadiusPx) / 2 + mainButtonRadiusPx,
             )
         }
         val dragging = remember {
@@ -88,7 +88,7 @@ fun Teammates(
                         calculateRestingOffset(
                             rad,
                             (width / 2 - mainButtonRadiusPx) / 2 + mainButtonRadiusPx,
-                            (height / 2 - mainButtonRadiusPx) / 2 + mainButtonRadiusPx
+                            (height / 2 - mainButtonRadiusPx) / 2 + mainButtonRadiusPx,
                         )
                 }
             }
@@ -111,7 +111,7 @@ fun Teammates(
                 },
             setDraggingNew = { draggingNew = it },
             getRestingOffset,
-            addNewTeammate = { (id, offset) -> teammateOffsets[id] = offset }
+            addNewTeammate = { (id, offset) -> teammateOffsets[id] = offset },
         )
         teammateOffsets.forEach { (id, offset) ->
             key(id) {
@@ -125,7 +125,7 @@ fun Teammates(
                     getRestingOffset = getRestingOffset,
                     draggingOthers = dragging.any { id != it.key && it.value } || draggingNew,
                     setDragging = { dragging[id] = it },
-                    delete = { teammateOffsets.remove(id) }
+                    delete = { teammateOffsets.remove(id) },
                 )
             }
         }
@@ -145,7 +145,7 @@ fun Teammates(
                             calculateRestingOffset(
                                 angleRad,
                                 (width / 2 - mainButtonRadiusPx) / 2 + mainButtonRadiusPx,
-                                (height / 2 - mainButtonRadiusPx) / 2 + mainButtonRadiusPx
+                                (height / 2 - mainButtonRadiusPx) / 2 + mainButtonRadiusPx,
                             )
                         }
                     )
@@ -161,14 +161,14 @@ fun Teammates(
             visible = editing,
             enter = fadeIn() + scaleIn(spring(stiffness = Spring.StiffnessHigh)),
             exit = fadeOut() + scaleOut(spring(stiffness = Spring.StiffnessHigh)),
-            modifier = Modifier.align(Alignment.Center).zIndex(2f)
+            modifier = Modifier.align(Alignment.Center).zIndex(2f),
         ) {
             if (dragging.none { it.value } && !draggingNew) {
                 TeammatesActionButtons(
                     hasRecentlyCleared = recentlyCleared != null,
                     canClear = teammateOffsets.isNotEmpty(),
                     onPressClear = onPressClear,
-                    onDone = onDone
+                    onDone = onDone,
                 )
             }
         }

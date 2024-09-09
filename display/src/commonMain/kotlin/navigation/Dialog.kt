@@ -27,7 +27,7 @@ sealed interface Dialog {
         val Saver =
             Saver<Dialog?, String>(
                 save = { Json.encodeToString(it) },
-                restore = { Json.decodeFromString(it) }
+                restore = { Json.decodeFromString(it) },
             )
     }
 }

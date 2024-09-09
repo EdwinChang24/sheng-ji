@@ -23,12 +23,12 @@ private fun TeammatesPreview() {
                             PI.toFloat(),
                             3f * (PI / 2).toFloat(),
                             4f,
-                            5f
+                            5f,
                         )
                         .mapIndexed { index, fl -> "$index" to fl }
                         .toMap(),
                 setSavedTeammatesRad = {},
-                onDone = {}
+                onDone = {},
             )
         }
     }

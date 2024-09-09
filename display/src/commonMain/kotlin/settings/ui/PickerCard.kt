@@ -18,7 +18,7 @@ fun SettingsPickerCard(
     selected: Boolean,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     OutlinedCard(
         onClick = onClick,
@@ -27,15 +27,15 @@ fun SettingsPickerCard(
                 width =
                     animateDpAsState(
                             if (selected) 4.dp else CardDefaults.outlinedCardBorder().width,
-                            label = ""
+                            label = "",
                         )
                         .value,
                 color =
                     if (selected) MaterialTheme.colorScheme.primary
-                    else MaterialTheme.colorScheme.outlineVariant
+                    else MaterialTheme.colorScheme.outlineVariant,
             ),
         interactionSource = interactionSource,
         modifier = modifier,
-        content = content
+        content = content,
     )
 }

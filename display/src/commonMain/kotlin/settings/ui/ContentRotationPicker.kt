@@ -33,7 +33,7 @@ import util.rotate90
 fun ExpandWidthsScope.SettingsContentRotationPicker(state: AppState.Prop) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.padding(vertical = 16.dp)
+        modifier = Modifier.padding(vertical = 16.dp),
     ) {
         Text("Content rotation", modifier = Modifier.padding(horizontal = 24.dp))
         ExpandHeights(
@@ -56,16 +56,16 @@ fun ExpandWidthsScope.SettingsContentRotationPicker(state: AppState.Prop) {
                                 state().settings.general.contentRotation ==
                                     ContentRotationSetting.Auto,
                             interactionSource = interactionSource,
-                            modifier = Modifier.weight()
+                            modifier = Modifier.weight(),
                         ) {
                             Box(
                                 contentAlignment = Alignment.Center,
-                                modifier = Modifier.expandWidth().expandHeight().pressEmphasis()
+                                modifier = Modifier.expandWidth().expandHeight().pressEmphasis(),
                             ) {
                                 Text(
                                     "Auto switch",
                                     textAlign = TextAlign.Center,
-                                    modifier = Modifier.padding(16.dp)
+                                    modifier = Modifier.padding(16.dp),
                                 )
                             }
                         }
@@ -82,20 +82,20 @@ fun ExpandWidthsScope.SettingsContentRotationPicker(state: AppState.Prop) {
                                 state().settings.general.contentRotation ==
                                     ContentRotationSetting.Center,
                             interactionSource = interactionSource,
-                            modifier = Modifier.weight()
+                            modifier = Modifier.weight(),
                         ) {
                             if (state().settings.general.displayRotationVertical) {
                                 WeightColumn(
                                     spacing = 8.dp,
                                     modifier =
-                                        Modifier.expandHeight().pressEmphasis().padding(16.dp)
+                                        Modifier.expandHeight().pressEmphasis().padding(16.dp),
                                 ) {
                                     Text(
                                         "Aa",
                                         textAlign = TextAlign.Center,
                                         maxLines = 1,
                                         overflow = TextOverflow.Visible,
-                                        modifier = Modifier.weight().expandWidth().rotate(180f)
+                                        modifier = Modifier.weight().expandWidth().rotate(180f),
                                     )
                                     HorizontalDivider(modifier = Modifier.expandWidth())
                                     Text(
@@ -103,21 +103,21 @@ fun ExpandWidthsScope.SettingsContentRotationPicker(state: AppState.Prop) {
                                         textAlign = TextAlign.Center,
                                         maxLines = 1,
                                         overflow = TextOverflow.Visible,
-                                        modifier = Modifier.weight().expandWidth()
+                                        modifier = Modifier.weight().expandWidth(),
                                     )
                                 }
                             } else {
                                 WeightRow(
                                     spacing = 8.dp,
                                     modifier =
-                                        Modifier.expandHeight().pressEmphasis().padding(16.dp)
+                                        Modifier.expandHeight().pressEmphasis().padding(16.dp),
                                 ) {
                                     Text(
                                         "Aa",
                                         textAlign = TextAlign.Center,
                                         maxLines = 1,
                                         overflow = TextOverflow.Visible,
-                                        modifier = Modifier.weight().expandHeight().rotate90()
+                                        modifier = Modifier.weight().expandHeight().rotate90(),
                                     )
                                     VerticalDivider(modifier = Modifier.expandHeight())
                                     Text(
@@ -128,7 +128,7 @@ fun ExpandWidthsScope.SettingsContentRotationPicker(state: AppState.Prop) {
                                         modifier =
                                             Modifier.weight()
                                                 .expandHeight()
-                                                .rotate90(negative = true)
+                                                .rotate90(negative = true),
                                     )
                                 }
                             }
@@ -146,37 +146,37 @@ fun ExpandWidthsScope.SettingsContentRotationPicker(state: AppState.Prop) {
                                 state().settings.general.contentRotation ==
                                     ContentRotationSetting.TopTowardsRight,
                             interactionSource = interactionSource,
-                            modifier = Modifier.weight()
+                            modifier = Modifier.weight(),
                         ) {
                             if (state().settings.general.displayRotationVertical) {
                                 WeightColumn(
                                     spacing = 8.dp,
                                     modifier =
-                                        Modifier.expandHeight().pressEmphasis().padding(16.dp)
+                                        Modifier.expandHeight().pressEmphasis().padding(16.dp),
                                 ) {
                                     Box(
                                         contentAlignment = Alignment.Center,
-                                        modifier = Modifier.weight().expandWidth()
+                                        modifier = Modifier.weight().expandWidth(),
                                     ) {
                                         Text(
                                             "Aa",
                                             textAlign = TextAlign.Center,
                                             maxLines = 1,
                                             overflow = TextOverflow.Visible,
-                                            modifier = Modifier.rotate90(negative = true)
+                                            modifier = Modifier.rotate90(negative = true),
                                         )
                                     }
                                     HorizontalDivider(modifier = Modifier.expandWidth())
                                     Box(
                                         contentAlignment = Alignment.Center,
-                                        modifier = Modifier.weight().expandWidth()
+                                        modifier = Modifier.weight().expandWidth(),
                                     ) {
                                         Text(
                                             "Aa",
                                             textAlign = TextAlign.Center,
                                             maxLines = 1,
                                             overflow = TextOverflow.Visible,
-                                            modifier = Modifier.rotate90()
+                                            modifier = Modifier.rotate90(),
                                         )
                                     }
                                 }
@@ -184,30 +184,30 @@ fun ExpandWidthsScope.SettingsContentRotationPicker(state: AppState.Prop) {
                                 WeightRow(
                                     spacing = 8.dp,
                                     modifier =
-                                        Modifier.expandHeight().pressEmphasis().padding(16.dp)
+                                        Modifier.expandHeight().pressEmphasis().padding(16.dp),
                                 ) {
                                     Box(
                                         contentAlignment = Alignment.Center,
-                                        modifier = Modifier.weight().expandHeight()
+                                        modifier = Modifier.weight().expandHeight(),
                                     ) {
                                         Text(
                                             "Aa",
                                             textAlign = TextAlign.Center,
                                             maxLines = 1,
                                             overflow = TextOverflow.Visible,
-                                            modifier = Modifier.rotate(180f)
+                                            modifier = Modifier.rotate(180f),
                                         )
                                     }
                                     VerticalDivider(modifier = Modifier.expandHeight())
                                     Box(
                                         contentAlignment = Alignment.Center,
-                                        modifier = Modifier.weight().expandHeight()
+                                        modifier = Modifier.weight().expandHeight(),
                                     ) {
                                         Text(
                                             "Aa",
                                             textAlign = TextAlign.Center,
                                             maxLines = 1,
-                                            overflow = TextOverflow.Visible
+                                            overflow = TextOverflow.Visible,
                                         )
                                     }
                                 }
@@ -226,37 +226,37 @@ fun ExpandWidthsScope.SettingsContentRotationPicker(state: AppState.Prop) {
                                 state().settings.general.contentRotation ==
                                     ContentRotationSetting.BottomTowardsRight,
                             interactionSource = interactionSource,
-                            modifier = Modifier.weight()
+                            modifier = Modifier.weight(),
                         ) {
                             if (state().settings.general.displayRotationVertical) {
                                 WeightColumn(
                                     spacing = 8.dp,
                                     modifier =
-                                        Modifier.expandHeight().pressEmphasis().padding(16.dp)
+                                        Modifier.expandHeight().pressEmphasis().padding(16.dp),
                                 ) {
                                     Box(
                                         contentAlignment = Alignment.Center,
-                                        modifier = Modifier.weight().expandWidth()
+                                        modifier = Modifier.weight().expandWidth(),
                                     ) {
                                         Text(
                                             "Aa",
                                             textAlign = TextAlign.Center,
                                             maxLines = 1,
                                             overflow = TextOverflow.Visible,
-                                            modifier = Modifier.rotate90()
+                                            modifier = Modifier.rotate90(),
                                         )
                                     }
                                     HorizontalDivider(modifier = Modifier.expandWidth())
                                     Box(
                                         contentAlignment = Alignment.Center,
-                                        modifier = Modifier.weight().expandWidth()
+                                        modifier = Modifier.weight().expandWidth(),
                                     ) {
                                         Text(
                                             "Aa",
                                             textAlign = TextAlign.Center,
                                             maxLines = 1,
                                             overflow = TextOverflow.Visible,
-                                            modifier = Modifier.rotate90(negative = true)
+                                            modifier = Modifier.rotate90(negative = true),
                                         )
                                     }
                                 }
@@ -264,30 +264,30 @@ fun ExpandWidthsScope.SettingsContentRotationPicker(state: AppState.Prop) {
                                 WeightRow(
                                     spacing = 8.dp,
                                     modifier =
-                                        Modifier.expandHeight().pressEmphasis().padding(16.dp)
+                                        Modifier.expandHeight().pressEmphasis().padding(16.dp),
                                 ) {
                                     Box(
                                         contentAlignment = Alignment.Center,
-                                        modifier = Modifier.weight().expandHeight()
-                                    ) {
-                                        Text(
-                                            "Aa",
-                                            textAlign = TextAlign.Center,
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Visible
-                                        )
-                                    }
-                                    VerticalDivider(modifier = Modifier.expandHeight())
-                                    Box(
-                                        contentAlignment = Alignment.Center,
-                                        modifier = Modifier.weight().expandHeight()
+                                        modifier = Modifier.weight().expandHeight(),
                                     ) {
                                         Text(
                                             "Aa",
                                             textAlign = TextAlign.Center,
                                             maxLines = 1,
                                             overflow = TextOverflow.Visible,
-                                            modifier = Modifier.rotate(180f)
+                                        )
+                                    }
+                                    VerticalDivider(modifier = Modifier.expandHeight())
+                                    Box(
+                                        contentAlignment = Alignment.Center,
+                                        modifier = Modifier.weight().expandHeight(),
+                                    ) {
+                                        Text(
+                                            "Aa",
+                                            textAlign = TextAlign.Center,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Visible,
+                                            modifier = Modifier.rotate(180f),
                                         )
                                     }
                                 }

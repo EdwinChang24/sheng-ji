@@ -56,7 +56,7 @@ fun main() {
                     else if (it.key == themeStorageKey) updateTheme()
                 }
             }
-        }
+        },
     )
     GlobalScope.launch {
         appState.collectLatest { state ->
@@ -94,7 +94,7 @@ fun main() {
             App(
                 AppState.Prop(state) { copy -> appState.value = state.copy(copy) },
                 importUrl = importUrl,
-                importDisambig = importDisambig
+                importDisambig = importDisambig,
             )
         }
     }

@@ -40,7 +40,7 @@ open class ExpandWidthsScope(val expandWidths: Boolean) {
 fun ExpandWidthsScope.WeightRow(
     spacing: Dp = 0.dp,
     modifier: Modifier = Modifier,
-    content: @Composable ExpandWidthsScope.WeightRowScope.() -> Unit
+    content: @Composable ExpandWidthsScope.WeightRowScope.() -> Unit,
 ) {
     val density = LocalDensity.current
     val spacingPx = with(density) { spacing.roundToPx() }
@@ -72,7 +72,7 @@ fun ExpandWidthsScope.WeightRow(
                         else
                             constraints.copy(
                                 minWidth = 0,
-                                maxWidth = (constraints.maxWidth - x).coerceAtLeast(0)
+                                maxWidth = (constraints.maxWidth - x).coerceAtLeast(0),
                             )
                     )
                 finalPlaceables[x] = placeable
@@ -112,12 +112,12 @@ fun ExpandWidthsScope.WeightRow(
                             if (measurable.parentData == ExpandWidthsScope.Weight)
                                 constraints.copy(
                                     minWidth = newWeightedWidth,
-                                    maxWidth = newWeightedWidth
+                                    maxWidth = newWeightedWidth,
                                 )
                             else
                                 constraints.copy(
                                     minWidth = 0,
-                                    maxWidth = (constraints.maxWidth - x).coerceAtLeast(0)
+                                    maxWidth = (constraints.maxWidth - x).coerceAtLeast(0),
                                 )
                         )
                     maxHeight = maxOf(placeable.height, maxHeight)
@@ -133,7 +133,7 @@ fun ExpandWidthsScope.WeightRow(
                                 if (it.parentData == ExpandWidthsScope.Weight)
                                     constraints.copy(
                                         minWidth = weightedWidth,
-                                        maxWidth = weightedWidth
+                                        maxWidth = weightedWidth,
                                     )
                                 else constraints.copy(minWidth = 0, maxWidth = constraints.maxWidth)
                             )
@@ -141,7 +141,7 @@ fun ExpandWidthsScope.WeightRow(
                 layout(
                     width =
                         finalPlaceables.sumOf { it.width } + spacingPx * (finalPlaceables.size - 1),
-                    height = finalPlaceables.maxOf { it.height }
+                    height = finalPlaceables.maxOf { it.height },
                 ) {}
             }
         }

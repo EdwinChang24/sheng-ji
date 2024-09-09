@@ -97,7 +97,7 @@ fun DisplayPage(
     navigator: Navigator,
     state: AppState.Prop,
     displayViewModel: DisplayViewModel =
-        viewModel(key = Json.encodeToString(displayScheme)) { DisplayViewModel() }
+        viewModel(key = Json.encodeToString(displayScheme)) { DisplayViewModel() },
 ) {
     val windowWidth = calculateWindowWidth()
     val windowHeight = calculateWindowHeight()
@@ -112,13 +112,13 @@ fun DisplayPage(
         displayScheme.getPossibleContentPairs(state()),
         state().settings.general.contentRotation.possibleRotations,
         pause,
-        state().settings.general.autoSwitchSeconds
+        state().settings.general.autoSwitchSeconds,
     ) {
         displayViewModel.onStateUpdate(
             newPossibleContentPairs = displayScheme.getPossibleContentPairs(state()),
             newPossibleRotations = state().settings.general.contentRotation.possibleRotations,
             newPause = pause,
-            newAutoSwitchSeconds = state().settings.general.autoSwitchSeconds
+            newAutoSwitchSeconds = state().settings.general.autoSwitchSeconds,
         )
     }
     LaunchedEffect(true) {
@@ -134,7 +134,7 @@ fun DisplayPage(
     AnimatedContent(
         targetState = state().settings.general.displayRotationVertical,
         transitionSpec = { fadeIn(tween(200, delayMillis = 200)) togetherWith fadeOut(tween(200)) },
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) { displayRotationVertical ->
         if (displayRotationVertical) {
             DisplayVertical(
@@ -144,7 +144,7 @@ fun DisplayPage(
                 state,
                 windowWidth,
                 currentTimeMs,
-                { editingTeammates = true }
+                { editingTeammates = true },
             )
         } else {
             DisplayHorizontal(
@@ -154,7 +154,7 @@ fun DisplayPage(
                 state,
                 windowHeight,
                 currentTimeMs,
-                { editingTeammates = true }
+                { editingTeammates = true },
             )
         }
     }
@@ -163,7 +163,7 @@ fun DisplayPage(
             editing = editingTeammates,
             savedTeammatesRad = state().teammates,
             setSavedTeammatesRad = { state { AppState.teammates set it } },
-            onDone = { editingTeammates = false }
+            onDone = { editingTeammates = false },
         )
     }
     ActionMenu(
@@ -183,13 +183,13 @@ fun DisplayPage(
                 state().settings.general.contentRotation.possibleRotations.size > 1,
         pause = pause,
         showTeammates = displayScheme.showTeammates,
-        editingTeammates = editingTeammates
+        editingTeammates = editingTeammates,
     )
     AnimatedVisibility(
         visible = editingScale,
         enter = fadeIn() + scaleIn(),
         exit = fadeOut() + scaleOut(),
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) {
         Scale(state, displayScheme, { editingScale = false })
     }
@@ -205,19 +205,19 @@ fun DisplayPage(
 private fun DisplayLabel(
     content: DisplayContent,
     vertical: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     AnimatedContent(content.name, modifier = modifier) { label ->
         Box(
             contentAlignment = Alignment.Center,
             modifier =
                 Modifier.then(if (vertical) Modifier.fillMaxWidth() else Modifier.fillMaxHeight())
-                    .padding(8.dp)
+                    .padding(8.dp),
         ) {
             Text(
                 label,
                 style = MaterialTheme.typography.labelLarge,
-                modifier = if (vertical) Modifier else Modifier.rotate90(negative = true)
+                modifier = if (vertical) Modifier else Modifier.rotate90(negative = true),
             )
         }
     }
@@ -232,7 +232,7 @@ private fun DisplayVertical(
     windowWidth: WindowWidth,
     currentTimeMs: Long,
     onEditTeammates: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxSize()) {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.weight(1f).fillMaxWidth()) {
@@ -242,7 +242,7 @@ private fun DisplayVertical(
                 displayRotationVertical = true,
                 state,
                 displayScheme,
-                navigator
+                navigator,
             )
             DisplayLabel(
                 content = content.displayContentPair.topContent,
@@ -251,11 +251,11 @@ private fun DisplayVertical(
                     Modifier.background(
                             Brush.verticalGradient(
                                 0f to Color.Transparent,
-                                1f to MaterialTheme.colorScheme.surface
+                                1f to MaterialTheme.colorScheme.surface,
                             )
                         )
                         .align(Alignment.BottomCenter)
-                        .rotate(180f)
+                        .rotate(180f),
             )
         }
         Row(
@@ -264,7 +264,7 @@ private fun DisplayVertical(
             modifier =
                 Modifier.fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surfaceContainer)
-                    .padding(8.dp)
+                    .padding(8.dp),
         ) {
             if (state().settings.general.showClock) {
                 Clock(
@@ -274,7 +274,7 @@ private fun DisplayVertical(
                         state { AppState.settings.general.clockOrientation set it }
                     },
                     displayVertical = true,
-                    leftSide = true
+                    leftSide = true,
                 )
             }
             Box(contentAlignment = Alignment.CenterEnd, modifier = Modifier.weight(1f)) {
@@ -300,7 +300,7 @@ private fun DisplayVertical(
                         state { AppState.settings.general.clockOrientation set it }
                     },
                     displayVertical = true,
-                    leftSide = false
+                    leftSide = false,
                 )
             }
         }
@@ -311,7 +311,7 @@ private fun DisplayVertical(
                 displayRotationVertical = true,
                 state,
                 displayScheme,
-                navigator
+                navigator,
             )
             DisplayLabel(
                 content = content.displayContentPair.bottomContent,
@@ -320,10 +320,10 @@ private fun DisplayVertical(
                     Modifier.background(
                             Brush.verticalGradient(
                                 0f to MaterialTheme.colorScheme.surface,
-                                1f to Color.Transparent
+                                1f to Color.Transparent,
                             )
                         )
-                        .align(Alignment.TopCenter)
+                        .align(Alignment.TopCenter),
             )
         }
     }
@@ -338,7 +338,7 @@ private fun DisplayHorizontal(
     windowHeight: WindowHeight,
     currentTimeMs: Long,
     onEditTeammates: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier.fillMaxSize()) {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.weight(1f).fillMaxHeight()) {
@@ -348,7 +348,7 @@ private fun DisplayHorizontal(
                 displayRotationVertical = false,
                 state,
                 displayScheme,
-                navigator
+                navigator,
             )
             DisplayLabel(
                 content = content.displayContentPair.topContent,
@@ -357,11 +357,11 @@ private fun DisplayHorizontal(
                     Modifier.background(
                             Brush.horizontalGradient(
                                 0f to Color.Transparent,
-                                1f to MaterialTheme.colorScheme.surface
+                                1f to MaterialTheme.colorScheme.surface,
                             )
                         )
                         .align(Alignment.CenterEnd)
-                        .rotate(180f)
+                        .rotate(180f),
             )
         }
         Column(
@@ -370,7 +370,7 @@ private fun DisplayHorizontal(
             modifier =
                 Modifier.fillMaxHeight()
                     .background(MaterialTheme.colorScheme.surfaceContainer)
-                    .padding(8.dp)
+                    .padding(8.dp),
         ) {
             if (state().settings.general.showClock) {
                 Clock(
@@ -380,7 +380,7 @@ private fun DisplayHorizontal(
                         state { AppState.settings.general.clockOrientation set it }
                     },
                     displayVertical = false,
-                    leftSide = true
+                    leftSide = true,
                 )
             }
             Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier.weight(1f)) {
@@ -406,7 +406,7 @@ private fun DisplayHorizontal(
                         state { AppState.settings.general.clockOrientation set it }
                     },
                     displayVertical = false,
-                    leftSide = false
+                    leftSide = false,
                 )
             }
         }
@@ -417,7 +417,7 @@ private fun DisplayHorizontal(
                 displayRotationVertical = false,
                 state,
                 displayScheme,
-                navigator
+                navigator,
             )
             DisplayLabel(
                 content = content.displayContentPair.bottomContent,
@@ -426,10 +426,10 @@ private fun DisplayHorizontal(
                     Modifier.background(
                             Brush.horizontalGradient(
                                 0f to MaterialTheme.colorScheme.surface,
-                                1f to Color.Transparent
+                                1f to Color.Transparent,
                             )
                         )
-                        .align(Alignment.CenterStart)
+                        .align(Alignment.CenterStart),
             )
         }
     }
@@ -442,7 +442,7 @@ private fun Clock(
     setOrientation: (Boolean) -> Unit,
     leftSide: Boolean,
     displayVertical: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val timeFormat =
         LocalDateTime.Format {
@@ -463,20 +463,20 @@ private fun Clock(
                 .clip(MaterialTheme.shapes.small)
                 .clickable { setOrientation(!orientation) }
                 .pointerHoverIcon(PointerIcon.Hand)
-                .padding(8.dp)
+                .padding(8.dp),
     ) { targetOrientation ->
         Text(
             clockText,
             style =
                 MaterialTheme.typography.bodyLarge.copy(
                     fontSize = 26.sp,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
                 ),
             maxLines = 1,
             overflow = TextOverflow.Clip,
             modifier =
                 Modifier.rotate((if (targetOrientation xor leftSide) 0f else 180f))
-                    .then(if (displayVertical) Modifier else Modifier.rotate90())
+                    .then(if (displayVertical) Modifier else Modifier.rotate90()),
         )
     }
 }
@@ -489,7 +489,7 @@ private fun DisplayContent(
     state: AppState.Prop,
     displayScheme: DisplayScheme,
     navigator: Navigator,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     AnimatedContent(
         (if (top) content.displayContentPair.topContent
@@ -498,7 +498,7 @@ private fun DisplayContent(
             (fadeIn(tween(1000)) togetherWith fadeOut(tween(1000))) using
                 SizeTransform(clip = false)
         },
-        modifier = modifier.fillMaxSize().clipToBounds()
+        modifier = modifier.fillMaxSize().clipToBounds(),
     ) { (displayContent, contentRotation) ->
         val slide by
             transition.animateFloat(transitionSpec = { tween(1000) }) { s ->
@@ -539,13 +539,13 @@ private fun DisplayContent(
                                     ContentRotation.TopTowardsRight,
                                     ContentRotation.BottomTowardsRight -> maxWidth
                                 } * slide / 3
-                        )
+                        ),
             ) { measurables, constraints ->
                 val placeable = measurables.first().measure(Constraints())
                 layout(constraints.maxWidth, constraints.maxHeight) {
                     placeable.place(
                         (constraints.maxWidth - placeable.width) / 2,
-                        (constraints.maxHeight - placeable.height) / 2
+                        (constraints.maxHeight - placeable.height) / 2,
                     )
                 }
             }

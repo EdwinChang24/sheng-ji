@@ -2,6 +2,6 @@
   "name": "sheng-ji",
   "license": "MIT",
   "devDependencies": {
-    "wrangler": "^3.72.2"
+    "wrangler": "^3.75.0"
   }
 }

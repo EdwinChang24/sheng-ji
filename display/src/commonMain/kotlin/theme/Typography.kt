@@ -28,7 +28,7 @@ val Inter
             Font(Res.font.inter_extralight, weight = FontWeight.ExtraLight),
             Font(Res.font.inter_light, weight = FontWeight.Light),
             Font(Res.font.inter_extrabold, weight = FontWeight.ExtraBold),
-            Font(Res.font.inter_black, weight = FontWeight.Black)
+            Font(Res.font.inter_black, weight = FontWeight.Black),
         )
 
 @Composable
@@ -53,6 +53,6 @@ fun getTypography(fontFamily: FontFamily) =
             bodySmall = bodySmall.copy(fontFamily = fontFamily, fontWeight = FontWeight.Normal),
             labelLarge = labelLarge.copy(fontFamily = fontFamily, fontWeight = FontWeight.Medium),
             labelMedium = labelMedium.copy(fontFamily = fontFamily, fontWeight = FontWeight.Medium),
-            labelSmall = labelSmall.copy(fontFamily = fontFamily, fontWeight = FontWeight.Medium)
+            labelSmall = labelSmall.copy(fontFamily = fontFamily, fontWeight = FontWeight.Medium),
         )
     }

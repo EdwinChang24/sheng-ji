@@ -32,7 +32,7 @@ fun NumberPicker(
     value: Int,
     setValue: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    range: IntRange = 1..Int.MAX_VALUE
+    range: IntRange = 1..Int.MAX_VALUE,
 ) {
     LaunchedEffect(value) { if (value !in range) setValue(value.coerceIn(range)) }
     ExpandWidths {
@@ -50,16 +50,16 @@ fun NumberPicker(
                                 .then(
                                     if (enabled) Modifier.pointerHoverIcon(PointerIcon.Hand)
                                     else Modifier
-                                )
+                                ),
                     ) {
                         Box(
                             contentAlignment = Alignment.Center,
-                            modifier = Modifier.expandHeight().expandWidth()
+                            modifier = Modifier.expandHeight().expandWidth(),
                         ) {
                             Icon(
                                 iconRes(Res.drawable.ic_remove),
                                 null,
-                                modifier = Modifier.pressEmphasis()
+                                modifier = Modifier.pressEmphasis(),
                             )
                         }
                     }
@@ -76,7 +76,7 @@ fun NumberPicker(
                                         fadeOut() + slideOutVertically { -it }
                                 }
                                 .using(SizeTransform(clip = false))
-                        }
+                        },
                     ) { target ->
                         Text(target.toString())
                     }
@@ -93,16 +93,16 @@ fun NumberPicker(
                                 .then(
                                     if (enabled) Modifier.pointerHoverIcon(PointerIcon.Hand)
                                     else Modifier
-                                )
+                                ),
                     ) {
                         Box(
                             contentAlignment = Alignment.Center,
-                            modifier = Modifier.expandHeight().expandWidth()
+                            modifier = Modifier.expandHeight().expandWidth(),
                         ) {
                             Icon(
                                 iconRes(Res.drawable.ic_add),
                                 null,
-                                modifier = Modifier.pressEmphasis()
+                                modifier = Modifier.pressEmphasis(),
                             )
                         }
                     }

@@ -1,16 +1,19 @@
 package model
 
 import arrow.optics.optics
-import com.benasher44.uuid.uuid4
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
 @optics
-data class Call(
-    val id: String = uuid4().toString(),
+data class Call
+@OptIn(ExperimentalUuidApi::class)
+constructor(
+    val id: String = Uuid.random().toString(),
     val card: PlayingCard,
     val number: Int,
-    val found: Int
+    val found: Int,
 ) {
     companion object
 }

@@ -17,24 +17,24 @@ actual fun PlatformSettingsSection(
     sectionHeader: @Composable (text: String, modifier: Modifier) -> Unit,
     booleanPicker:
         @Composable
-        (value: Boolean, setValue: (Boolean) -> Unit, label: @Composable () -> Unit) -> Unit
+        (value: Boolean, setValue: (Boolean) -> Unit, label: @Composable () -> Unit) -> Unit,
 ) {
     sectionHeader("Android settings", Modifier)
     booleanPicker(
         state().platformSettings().fullScreen,
-        { state { AppState.platformSettings.android.fullScreen set it } }
+        { state { AppState.platformSettings.android.fullScreen set it } },
     ) {
         Text("Full screen")
     }
     booleanPicker(
         state().platformSettings().lockOrientation,
-        { state { AppState.platformSettings.android.lockOrientation set it } }
+        { state { AppState.platformSettings.android.lockOrientation set it } },
     ) {
         Text("Lock screen orientation to portrait")
     }
     booleanPicker(
         state().platformSettings().keepScreenOn,
-        { state { AppState.platformSettings.android.keepScreenOn set it } }
+        { state { AppState.platformSettings.android.keepScreenOn set it } },
     ) {
         Text("Keep screen on")
     }

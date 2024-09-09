@@ -33,13 +33,13 @@ private fun RankButton(rank: String, setRank: (String) -> Unit, selected: Boolea
                 if (selected) IconButtonDefaults.filledIconButtonColors()
                 else IconButtonDefaults.iconButtonColors(),
             interactionSource = interactionSource,
-            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
+            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
         ) {
             Text(
                 rank,
                 maxLines = 1,
                 overflow = TextOverflow.Visible,
-                modifier = Modifier.pressEmphasis()
+                modifier = Modifier.pressEmphasis(),
             )
         }
     }

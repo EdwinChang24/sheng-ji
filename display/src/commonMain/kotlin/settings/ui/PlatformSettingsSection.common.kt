@@ -10,5 +10,5 @@ expect fun PlatformSettingsSection(
     sectionHeader: @Composable (text: String, modifier: Modifier) -> Unit,
     booleanPicker:
         @Composable
-        (value: Boolean, setValue: (Boolean) -> Unit, label: @Composable () -> Unit) -> Unit
+        (value: Boolean, setValue: (Boolean) -> Unit, label: @Composable () -> Unit) -> Unit,
 )

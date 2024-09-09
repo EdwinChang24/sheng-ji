@@ -39,7 +39,7 @@ actual fun QrImage(data: String, state: AppState.Prop, modifier: Modifier) {
                         if (cell)
                             Offset(
                                 (colIndex.toFloat() + 0.5f) * size.width / result.size,
-                                (rowIndex.toFloat() + 0.5f) * size.height / result.size
+                                (rowIndex.toFloat() + 0.5f) * size.height / result.size,
                             )
                         else null
                     }
@@ -49,7 +49,7 @@ actual fun QrImage(data: String, state: AppState.Prop, modifier: Modifier) {
                 pointMode = PointMode.Points,
                 color = if (useDarkTheme) Color.White else Color.Black,
                 strokeWidth = ceil(size.maxDimension / result.size) + 1f,
-                cap = StrokeCap.Square
+                cap = StrokeCap.Square,
             )
         }
     }

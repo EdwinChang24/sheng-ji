@@ -21,27 +21,27 @@ actual fun PressableWithEmphasis(content: @Composable PressableWithEmphasisScope
                     1f,
                     SpringSpec(
                         dampingRatio = Spring.DampingRatioMediumBouncy,
-                        stiffness = Spring.StiffnessHigh
-                    )
+                        stiffness = Spring.StiffnessHigh,
+                    ),
                 )
                 scale.animateTo(
                     0.85f,
                     SpringSpec(
                         dampingRatio = Spring.DampingRatioMediumBouncy,
-                        stiffness = Spring.StiffnessHigh
-                    )
+                        stiffness = Spring.StiffnessHigh,
+                    ),
                 )
             } else if (it is PressInteraction.Cancel || it is PressInteraction.Release) {
                 scale.animateTo(
                     0.85f,
                     SpringSpec(
                         dampingRatio = Spring.DampingRatioMediumBouncy,
-                        stiffness = Spring.StiffnessHigh
-                    )
+                        stiffness = Spring.StiffnessHigh,
+                    ),
                 )
                 scale.animateTo(
                     1f,
-                    SpringSpec(dampingRatio = Spring.DampingRatioLowBouncy, stiffness = 1000f)
+                    SpringSpec(dampingRatio = Spring.DampingRatioLowBouncy, stiffness = 1000f),
                 )
             }
         }

@@ -51,7 +51,7 @@ fun TrumpCardSelection(
     windowWidth: WindowWidth,
     navigator: Navigator,
     state: AppState.Prop,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Card(
         colors = cardColors,
@@ -63,36 +63,36 @@ fun TrumpCardSelection(
                         Modifier.clickable { navigator.navigate(Dialog.EditTrump) }
                             .pointerHoverIcon(PointerIcon.Hand)
                     else Modifier
-                )
+                ),
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.padding(vertical = 24.dp)
+            modifier = Modifier.padding(vertical = 24.dp),
         ) {
             Text(
                 "Trump card",
                 style = MaterialTheme.typography.titleLarge,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(horizontal = 24.dp)
+                modifier = Modifier.padding(horizontal = 24.dp),
             )
             if (windowWidth >= WindowWidth.Large) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     AnimatedContent(
                         targetState = state().trump,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     ) { targetTrump ->
                         Row(
                             horizontalArrangement =
                                 Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(16.dp)
+                            modifier = Modifier.padding(16.dp),
                         ) {
                             if (targetTrump != null) {
                                 PlayingCard(
                                     targetTrump,
                                     state,
-                                    textStyle = LocalTextStyle.current.copy(fontSize = 32.sp)
+                                    textStyle = LocalTextStyle.current.copy(fontSize = 32.sp),
                                 )
                                 IconButtonWithEmphasis(
                                     onClick = { state { AppState.trump set null } }
@@ -103,32 +103,32 @@ fun TrumpCardSelection(
                                 Text(
                                     "No trump card selected",
                                     maxLines = 2,
-                                    overflow = TextOverflow.Ellipsis
+                                    overflow = TextOverflow.Ellipsis,
                                 )
                             }
                         }
                     }
                     Column(
                         verticalArrangement = Arrangement.spacedBy(12.dp),
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp)
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
                     ) {
                         Text("Rank", style = MaterialTheme.typography.labelMedium)
                         RankPicker(
                             tempTrumpRank,
                             setTempTrumpRank,
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
                         )
                     }
                     Column(
                         verticalArrangement = Arrangement.spacedBy(12.dp),
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp)
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
                     ) {
                         Text("Suit", style = MaterialTheme.typography.labelMedium)
                         SuitPicker(
                             tempTrumpSuit,
                             setTempTrumpSuit,
                             state,
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
                         )
                     }
                 }
@@ -139,7 +139,7 @@ fun TrumpCardSelection(
                             contentAlignment = Alignment.Center,
                             modifier =
                                 Modifier.fillMaxWidth()
-                                    .padding(horizontal = 24.dp, vertical = 16.dp)
+                                    .padding(horizontal = 24.dp, vertical = 16.dp),
                         ) {
                             PressableWithEmphasis {
                                 Row(
@@ -151,13 +151,13 @@ fun TrumpCardSelection(
                                             .clickableForEmphasis {
                                                 navigator.navigate(Dialog.EditTrump)
                                             }
-                                            .padding(8.dp)
+                                            .padding(8.dp),
                                 ) {
                                     PlayingCard(
                                         targetTrump,
                                         state,
                                         modifier = Modifier.padding(8.dp).pressEmphasis(),
-                                        textStyle = LocalTextStyle.current.copy(fontSize = 32.sp)
+                                        textStyle = LocalTextStyle.current.copy(fontSize = 32.sp),
                                     )
                                     IconButtonWithEmphasis(
                                         onClick = { state { AppState.trump set null } }
@@ -171,18 +171,18 @@ fun TrumpCardSelection(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier =
-                                Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp)
+                                Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp),
                         ) {
                             Text(
                                 "No trump card selected",
                                 maxLines = 2,
                                 overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.weight(1f).padding(end = 16.dp)
+                                modifier = Modifier.weight(1f).padding(end = 16.dp),
                             )
                             ButtonWithEmphasis(
                                 text = "Add",
                                 icon = iconRes(Res.drawable.ic_add),
-                                onClick = { navigator.navigate(Dialog.EditTrump) }
+                                onClick = { navigator.navigate(Dialog.EditTrump) },
                             )
                         }
                     }

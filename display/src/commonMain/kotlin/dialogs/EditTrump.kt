@@ -39,7 +39,7 @@ fun EditTrumpDialog(navigator: Navigator, state: AppState.Prop) {
     ExpandWidths {
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.verticalScroll(rememberScrollState()).padding(vertical = 24.dp)
+            modifier = Modifier.verticalScroll(rememberScrollState()).padding(vertical = 24.dp),
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Text(
@@ -47,18 +47,18 @@ fun EditTrumpDialog(navigator: Navigator, state: AppState.Prop) {
                     style = MaterialTheme.typography.headlineMedium,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(horizontal = 24.dp)
+                    modifier = Modifier.padding(horizontal = 24.dp),
                 )
                 Column(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.expandWidth()
+                    modifier = Modifier.expandWidth(),
                 ) {
                     Text(
                         "Rank",
                         style = MaterialTheme.typography.labelMedium,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(horizontal = 24.dp)
+                        modifier = Modifier.padding(horizontal = 24.dp),
                     )
                     RankPicker(
                         rank,
@@ -66,18 +66,18 @@ fun EditTrumpDialog(navigator: Navigator, state: AppState.Prop) {
                         modifier =
                             Modifier.align(Alignment.CenterHorizontally)
                                 .horizontalScroll(rememberScrollState())
-                                .padding(horizontal = 24.dp)
+                                .padding(horizontal = 24.dp),
                     )
                 }
                 Column(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.expandWidth().padding(horizontal = 24.dp)
+                    modifier = Modifier.expandWidth().padding(horizontal = 24.dp),
                 ) {
                     Text(
                         "Suit",
                         style = MaterialTheme.typography.labelMedium,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
                     )
                     SuitPicker(suit, { suit = it }, state, modifier = Modifier.expandWidth())
                 }
@@ -87,12 +87,12 @@ fun EditTrumpDialog(navigator: Navigator, state: AppState.Prop) {
                 modifier =
                     Modifier.expandWidth()
                         .horizontalScroll(rememberScrollState(), reverseScrolling = true)
-                        .padding(horizontal = 24.dp)
+                        .padding(horizontal = 24.dp),
             ) {
                 OutlinedButtonWithEmphasis(
                     text = "Cancel",
                     icon = iconRes(Res.drawable.ic_close),
-                    onClick = navigator::closeDialog
+                    onClick = navigator::closeDialog,
                 )
                 ButtonWithEmphasis(
                     text = "Done",
@@ -105,7 +105,7 @@ fun EditTrumpDialog(navigator: Navigator, state: AppState.Prop) {
                             }
                         }
                     },
-                    enabled = rank != null && suit != null
+                    enabled = rank != null && suit != null,
                 )
             }
         }

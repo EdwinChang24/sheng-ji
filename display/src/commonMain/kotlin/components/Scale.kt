@@ -50,7 +50,7 @@ fun Scale(
     state: AppState.Prop,
     displayScheme: DisplayScheme,
     onDone: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val density = LocalDensity.current
     var cardPosition by rememberSaveable { mutableFloatStateOf(Float.MAX_VALUE) }
@@ -80,14 +80,14 @@ fun Scale(
                                         cardPosition =
                                             cardPosition.coerceIn(
                                                 0f,
-                                                with(density) { maxHeight.toPx() } - cardHeight
+                                                with(density) { maxHeight.toPx() } - cardHeight,
                                             )
-                                    }
-                                )
+                                    },
+                                ),
                     ) {
                         Column(
                             verticalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier.fillMaxWidth().padding(24.dp)
+                            modifier = Modifier.fillMaxWidth().padding(24.dp),
                         ) {
                             Slider(
                                 when (displayScheme) {
@@ -106,12 +106,12 @@ fun Scale(
                                     }
                                 },
                                 valueRange = 0.2f..4f,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth(),
                             )
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                                 verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth(),
                             ) {
                                 val schemeName =
                                     when (displayScheme) {
@@ -129,18 +129,18 @@ fun Scale(
                                     maxLines = 2,
                                     overflow = TextOverflow.Ellipsis,
                                     style = MaterialTheme.typography.bodySmall,
-                                    modifier = Modifier.weight(1f)
+                                    modifier = Modifier.weight(1f),
                                 )
                                 ButtonWithEmphasis(
                                     text = "Done",
                                     icon = iconRes(Res.drawable.ic_done),
-                                    onClick = onDone
+                                    onClick = onDone,
                                 )
                             }
                         }
                     }
                 },
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             ) { measurables, constraints ->
                 val placeable = measurables.first().measure(constraints.copy(minHeight = 0))
                 layout(constraints.maxWidth, constraints.maxHeight) {
@@ -148,7 +148,7 @@ fun Scale(
                         0,
                         cardPosition
                             .toInt()
-                            .coerceIn(0, (constraints.maxHeight - cardHeight).toInt())
+                            .coerceIn(0, (constraints.maxHeight - cardHeight).toInt()),
                     )
                 }
             }

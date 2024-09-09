@@ -31,7 +31,7 @@ fun ButtonWithEmphasis(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    elevation: ButtonElevation = ButtonDefaults.buttonElevation()
+    elevation: ButtonElevation = ButtonDefaults.buttonElevation(),
 ) {
     PressableWithEmphasis {
         Button(
@@ -42,22 +42,22 @@ fun ButtonWithEmphasis(
             modifier =
                 modifier.then(
                     if (enabled) Modifier.pointerHoverIcon(PointerIcon.Hand) else Modifier
-                )
+                ),
         ) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.pressEmphasis()
+                modifier = Modifier.pressEmphasis(),
             ) {
                 AnimatedContent(
                     targetState = icon,
-                    transitionSpec = { DefaultTransition using SizeTransform(clip = false) }
+                    transitionSpec = { DefaultTransition using SizeTransform(clip = false) },
                 ) { iconState ->
                     iconState?.let { Icon(it, null) }
                 }
                 AnimatedContent(
                     targetState = text,
-                    transitionSpec = { DefaultTransition using SizeTransform(clip = false) }
+                    transitionSpec = { DefaultTransition using SizeTransform(clip = false) },
                 ) { textState ->
                     Text(textState, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
@@ -73,7 +73,7 @@ fun OutlinedButtonWithEmphasis(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    colors: ButtonColors = ButtonDefaults.outlinedButtonColors()
+    colors: ButtonColors = ButtonDefaults.outlinedButtonColors(),
 ) {
     PressableWithEmphasis {
         OutlinedButton(
@@ -84,22 +84,22 @@ fun OutlinedButtonWithEmphasis(
             modifier =
                 modifier.then(
                     if (enabled) Modifier.pointerHoverIcon(PointerIcon.Hand) else Modifier
-                )
+                ),
         ) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.pressEmphasis()
+                modifier = Modifier.pressEmphasis(),
             ) {
                 AnimatedContent(
                     targetState = icon,
-                    transitionSpec = { DefaultTransition using SizeTransform(clip = false) }
+                    transitionSpec = { DefaultTransition using SizeTransform(clip = false) },
                 ) { iconState ->
                     iconState?.let { Icon(it, null) }
                 }
                 AnimatedContent(
                     targetState = text,
-                    transitionSpec = { DefaultTransition using SizeTransform(clip = false) }
+                    transitionSpec = { DefaultTransition using SizeTransform(clip = false) },
                 ) { textState ->
                     Text(textState, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
@@ -113,7 +113,7 @@ fun IconButtonWithEmphasis(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     PressableWithEmphasis {
         IconButton(
@@ -123,7 +123,7 @@ fun IconButtonWithEmphasis(
             modifier =
                 modifier.then(
                     if (enabled) Modifier.pointerHoverIcon(PointerIcon.Hand) else Modifier
-                )
+                ),
         ) {
             Box(modifier = Modifier.pressEmphasis()) { content() }
         }

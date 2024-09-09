@@ -44,7 +44,7 @@ val defaultLightTheme =
         surfaceContainerLow = Color(0xFFF4F3FA),
         surfaceContainer = Color(0xFFEEEDF4),
         surfaceContainerHigh = Color(0xFFE8E7EF),
-        surfaceContainerHighest = Color(0xFFE3E2E9)
+        surfaceContainerHighest = Color(0xFFE3E2E9),
     )
 
 val defaultDarkTheme =
@@ -83,5 +83,5 @@ val defaultDarkTheme =
         surfaceContainerLow = Color(0xFF1A1B21),
         surfaceContainer = Color(0xFF1E1F25),
         surfaceContainerHigh = Color(0xFF292A2F),
-        surfaceContainerHighest = Color(0xFF34343A)
+        surfaceContainerHighest = Color(0xFF34343A),
     )

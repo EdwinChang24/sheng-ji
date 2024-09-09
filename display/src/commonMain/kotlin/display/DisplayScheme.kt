@@ -25,7 +25,7 @@ sealed interface DisplayScheme {
                     MainDisplayOrder.Auto ->
                         listOf(
                             DisplayContent.Trump and DisplayContent.Calls,
-                            DisplayContent.Calls and DisplayContent.Trump
+                            DisplayContent.Calls and DisplayContent.Trump,
                         )
                     MainDisplayOrder.TrumpOnTop ->
                         listOf(DisplayContent.Trump and DisplayContent.Calls)

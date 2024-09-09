@@ -34,14 +34,14 @@ fun SettingsThemePicker(theme: ThemeSetting, setTheme: (ThemeSetting) -> Unit) {
     val focusManager = LocalFocusManager.current
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
+        modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
     ) {
         Text("Theme", maxLines = 1, overflow = TextOverflow.Ellipsis)
         var expanded by rememberSaveable { mutableStateOf(false) }
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = { expanded = it },
-            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand, overrideDescendants = true)
+            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand, overrideDescendants = true),
         ) {
             OutlinedTextField(
                 value = theme.readableName,
@@ -50,7 +50,7 @@ fun SettingsThemePicker(theme: ThemeSetting, setTheme: (ThemeSetting) -> Unit) {
                 leadingIcon = { Icon(iconRes(theme.icon), null) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
                 colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
-                modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
             )
             DropdownMenu(
                 expanded = expanded,
@@ -58,7 +58,7 @@ fun SettingsThemePicker(theme: ThemeSetting, setTheme: (ThemeSetting) -> Unit) {
                     expanded = false
                     focusManager.clearFocus()
                 },
-                modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
+                modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
             ) {
                 for (themeSelection in
                     listOf(ThemeSetting.System, ThemeSetting.Dark, ThemeSetting.Light)) {
@@ -67,7 +67,7 @@ fun SettingsThemePicker(theme: ThemeSetting, setTheme: (ThemeSetting) -> Unit) {
                             Text(
                                 themeSelection.readableName,
                                 maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
+                                overflow = TextOverflow.Ellipsis,
                             )
                         },
                         leadingIcon = { Icon(iconRes(themeSelection.icon), null) },
@@ -78,7 +78,7 @@ fun SettingsThemePicker(theme: ThemeSetting, setTheme: (ThemeSetting) -> Unit) {
                             setTheme(themeSelection)
                             expanded = false
                             focusManager.clearFocus()
-                        }
+                        },
                     )
                 }
             }

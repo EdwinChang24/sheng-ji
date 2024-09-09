@@ -16,6 +16,6 @@ fun SettingsSectionHeader(text: String, modifier: Modifier = Modifier) {
         color = MaterialTheme.colorScheme.primary,
         maxLines = 2,
         overflow = TextOverflow.Ellipsis,
-        modifier = modifier.padding(start = 24.dp, end = 24.dp, top = 24.dp, bottom = 12.dp)
+        modifier = modifier.padding(start = 24.dp, end = 24.dp, top = 24.dp, bottom = 12.dp),
     )
 }

@@ -30,12 +30,12 @@ fun TrumpDisplay(
     state: AppState.Prop,
     navigator: Navigator,
     displayScale: Float,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     AnimatedContent(
         targetState = state().trump,
         transitionSpec = { DefaultTransition using SizeTransform(clip = false) },
-        modifier = modifier
+        modifier = modifier,
     ) { targetTrump ->
         PressableWithEmphasis {
             targetTrump?.let {
@@ -53,7 +53,7 @@ fun TrumpDisplay(
                             )
                             .padding(24.dp)
                             .pressEmphasis(),
-                    textStyle = LocalTextStyle.current.copy(fontSize = 112.sp * displayScale)
+                    textStyle = LocalTextStyle.current.copy(fontSize = 112.sp * displayScale),
                 )
             }
                 ?: Column(
@@ -65,13 +65,13 @@ fun TrumpDisplay(
                                 onClick = { navigator.navigate(Dialog.EditTrump) }
                             )
                             .padding(24.dp)
-                            .pressEmphasis()
+                            .pressEmphasis(),
                 ) {
                     Text("No trump card selected")
                     OutlinedButtonWithEmphasis(
                         text = "Add",
                         icon = iconRes(Res.drawable.ic_add),
-                        onClick = { navigator.navigate(Dialog.EditTrump) }
+                        onClick = { navigator.navigate(Dialog.EditTrump) },
                     )
                 }
         }

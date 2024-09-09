@@ -52,7 +52,7 @@ fun SettingsPage(navigator: Navigator, state: AppState.Prop, modifier: Modifier 
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.expandWidth().padding(12.dp)
+                modifier = Modifier.expandWidth().padding(12.dp),
             ) {
                 IconButtonWithEmphasis(onClick = { navigator.toggleSettings() }) {
                     Icon(iconRes(Res.drawable.ic_arrow_back), null)
@@ -63,7 +63,7 @@ fun SettingsPage(navigator: Navigator, state: AppState.Prop, modifier: Modifier 
                 SettingsSectionHeader("General")
                 SettingsThemePicker(
                     theme = state().settings.general.theme,
-                    setTheme = { state { AppState.settings.general.theme set it } }
+                    setTheme = { state { AppState.settings.general.theme set it } },
                 )
                 SettingsContentRotationPicker(state)
                 SettingsAutoSwitchSecondsPicker(
@@ -73,17 +73,17 @@ fun SettingsPage(navigator: Navigator, state: AppState.Prop, modifier: Modifier 
                     },
                     enabled =
                         state().settings.mainDisplay.displayOrder == MainDisplayOrder.Auto ||
-                            state().settings.general.contentRotation == ContentRotationSetting.Auto
+                            state().settings.general.contentRotation == ContentRotationSetting.Auto,
                 )
                 SettingsBooleanPicker(
                     value = state().settings.general.showClock,
-                    setValue = { state { AppState.settings.general.showClock set it } }
+                    setValue = { state { AppState.settings.general.showClock set it } },
                 ) {
                     Text("Show clock")
                 }
                 SettingsBooleanPicker(
                     value = state().settings.general.underline6And9,
-                    setValue = { state { AppState.settings.general.underline6And9 set it } }
+                    setValue = { state { AppState.settings.general.underline6And9 set it } },
                 ) {
                     Text("Underline 6s and 9s")
                 }
@@ -91,13 +91,13 @@ fun SettingsPage(navigator: Navigator, state: AppState.Prop, modifier: Modifier 
                 SettingsMainDisplayOrderPicker(state)
                 SettingsBooleanPicker(
                     value = state().settings.mainDisplay.autoHideCalls,
-                    setValue = { state { AppState.settings.mainDisplay.autoHideCalls set it } }
+                    setValue = { state { AppState.settings.mainDisplay.autoHideCalls set it } },
                 ) {
                     Text("Hide calls when all are found")
                 }
                 SettingsBooleanPicker(
                     value = state().settings.mainDisplay.tapTrumpToEdit,
-                    setValue = { state { AppState.settings.mainDisplay.tapTrumpToEdit set it } }
+                    setValue = { state { AppState.settings.mainDisplay.tapTrumpToEdit set it } },
                 ) {
                     Text("Tap trump card in display to edit")
                 }
@@ -106,14 +106,14 @@ fun SettingsPage(navigator: Navigator, state: AppState.Prop, modifier: Modifier 
                     value = state().settings.possibleTrumpsDisplay.tapToEdit,
                     setValue = {
                         state { AppState.settings.possibleTrumpsDisplay.tapToEdit set it }
-                    }
+                    },
                 ) {
                     Text("Tap display to edit")
                 }
                 PlatformSettingsSection(
                     state,
                     { text, modifier1 -> SettingsSectionHeader(text, modifier1) },
-                    { value, setValue, label -> SettingsBooleanPicker(value, setValue, label) }
+                    { value, setValue, label -> SettingsBooleanPicker(value, setValue, label) },
                 )
                 Spacer(modifier = Modifier.height(64.dp))
             }

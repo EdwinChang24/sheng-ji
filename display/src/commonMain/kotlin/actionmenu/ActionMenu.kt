@@ -80,7 +80,7 @@ fun ActionMenu(
     pause: Boolean,
     showTeammates: Boolean,
     editingTeammates: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val windowHeight = calculateWindowHeight()
     var menuState by
@@ -91,7 +91,7 @@ fun ActionMenu(
         visible = menuState !is ActionMenuState.Closed,
         enter = fadeIn(),
         exit = fadeOut(),
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) {
         Box(
             modifier =
@@ -116,23 +116,23 @@ fun ActionMenu(
                 ActionButtonDef(
                     Action.PauseResume(canPause, pause),
                     x = -ButtonSizeWithPadding / 2,
-                    y = -ButtonSizeWithPadding
+                    y = -ButtonSizeWithPadding,
                 ),
                 ActionButtonDef(
                     Action.Settings,
                     x = ButtonSizeWithPadding / 2,
-                    y = -ButtonSizeWithPadding
+                    y = -ButtonSizeWithPadding,
                 ),
                 ActionButtonDef(
                     Action.Rotate,
                     x = -ButtonSizeWithPadding / 2,
-                    y = ButtonSizeWithPadding
+                    y = ButtonSizeWithPadding,
                 ),
                 ActionButtonDef(
                     Action.Scale,
                     x = ButtonSizeWithPadding / 2,
-                    y = ButtonSizeWithPadding
-                )
+                    y = ButtonSizeWithPadding,
+                ),
             )
         val actionButtonsEnabled = actionButtons.associate { it.action to it.action.enabled() }
         fun getDragSelection() =
@@ -168,7 +168,7 @@ fun ActionMenu(
                                 is ActionMenuState.Dragging,
                                 ActionMenuState.Opened -> definedOffset
                             },
-                        tween(200)
+                        tween(200),
                     )
                 val scale =
                     animateFloatAsState(
@@ -180,7 +180,7 @@ fun ActionMenu(
                                 is ActionMenuState.Dragging,
                                 ActionMenuState.Opened -> 1f
                             },
-                        tween(200)
+                        tween(200),
                     )
                 val alpha =
                     animateFloatAsState(
@@ -189,7 +189,7 @@ fun ActionMenu(
                             (menuState as? ActionMenuState.Closed)?.let {
                                 if (it.action == actionButton.action) 600 else null
                             } ?: 200
-                        )
+                        ),
                     )
                 ActionButton(
                     actionButton.action,
@@ -207,7 +207,7 @@ fun ActionMenu(
                             .offset { offset.value }
                             .scale(scale.value)
                             .alpha(alpha.value)
-                            .zIndex(1f)
+                            .zIndex(1f),
                 )
             }
         }
@@ -241,7 +241,7 @@ fun ActionMenu(
                                                                     -ActionMenuButtonSize
                                                                         .roundToPx() / 2,
                                                                     -ActionMenuButtonSize
-                                                                        .roundToPx() / 2
+                                                                        .roundToPx() / 2,
                                                                 )
                                                             }
                                                     )
@@ -253,7 +253,7 @@ fun ActionMenu(
                                                 if (menuState == ActionMenuState.Opened)
                                                     ActionMenuState.Closed()
                                                 else ActionMenuState.Opened
-                                        }
+                                        },
                                     )
                                 }
                                 .pointerInput(canPause, showTeammates) {
@@ -275,23 +275,23 @@ fun ActionMenu(
                                                 menuState =
                                                     it.copy(offset = it.offset + dragAmount.round())
                                             }
-                                        }
+                                        },
                                     )
                                 }
                                 .focusable(interactionSource = interactionSource)
                                 .pointerHoverIcon(PointerIcon.Hand)
                         }
-                    )
+                    ),
         ) {
             AnimatedContent(
                 menuState == ActionMenuState.Opened,
                 transitionSpec = { fadeIn() + scaleIn() togetherWith fadeOut() + scaleOut() },
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             ) { opened ->
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                     Icon(
                         iconRes(if (opened) Res.drawable.ic_close else Res.drawable.ic_action_menu),
-                        null
+                        null,
                     )
                 }
             }
@@ -300,32 +300,32 @@ fun ActionMenu(
             AnimatedContent(
                 targetState = hintedAction,
                 transitionSpec = { fadeIn() togetherWith fadeOut() },
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             ) { targetState ->
                 BoxWithConstraints(modifier = Modifier.fillMaxSize().padding(24.dp)) {
                     targetState?.let {
                         Column(
                             verticalArrangement = Arrangement.spacedBy(16.dp),
                             modifier =
-                                Modifier.widthIn(max = maxWidth * 0.6f).align(Alignment.TopCenter)
+                                Modifier.widthIn(max = maxWidth * 0.6f).align(Alignment.TopCenter),
                         ) {
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                verticalAlignment = Alignment.CenterVertically
+                                verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Icon(iconRes(it.icon()), null)
                                 Text(
                                     it.name(),
                                     style = MaterialTheme.typography.titleSmall,
                                     maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
+                                    overflow = TextOverflow.Ellipsis,
                                 )
                             }
                             Text(
                                 it.description(),
                                 style = MaterialTheme.typography.bodyMedium,
                                 maxLines = 3,
-                                overflow = TextOverflow.Ellipsis
+                                overflow = TextOverflow.Ellipsis,
                             )
                         }
                     }
@@ -342,7 +342,7 @@ private fun ActionButton(
     onPress: () -> Unit,
     menuState: ActionMenuState,
     dragSelected: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     PressableWithEmphasis {
         var pressed1 by remember { mutableStateOf(false) }
@@ -367,7 +367,7 @@ private fun ActionButton(
                     .border(
                         4.dp,
                         MaterialTheme.colorScheme.primary.copy(alpha = borderAlpha.value),
-                        shape = MaterialTheme.shapes.medium
+                        shape = MaterialTheme.shapes.medium,
                     )
                     .then(
                         if (action.enabled() && menuState !is ActionMenuState.Closed)
@@ -382,7 +382,7 @@ private fun ActionButton(
                                             pressed1 = false
                                             interactionSource.emit(PressInteraction.Release(press))
                                         },
-                                        onTap = { onClick() }
+                                        onTap = { onClick() },
                                     )
                                 }
                                 .pointerHoverIcon(PointerIcon.Hand)
@@ -397,14 +397,14 @@ private fun ActionButton(
                 Column(
                     verticalArrangement = Arrangement.SpaceEvenly,
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxSize().padding(8.dp).pressEmphasis()
+                    modifier = Modifier.fillMaxSize().padding(8.dp).pressEmphasis(),
                 ) {
                     Icon(iconRes(action.icon()), null)
                     Text(
                         action.name(),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.labelMedium
+                        style = MaterialTheme.typography.labelMedium,
                     )
                 }
             }
