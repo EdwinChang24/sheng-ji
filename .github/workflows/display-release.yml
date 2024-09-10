@@ -12,7 +12,7 @@ jobs:
       - id: get-version
         run: |
           version="$(cat display/version.txt | tr -d '\n')"
-          echo "version=${version}"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
   deb:
     runs-on: ubuntu-latest
     steps:
@@ -63,3 +63,27 @@ jobs:
         with:
           name: apk
           path: display/build/outputs/apk/release/*.apk
+  release:
+    runs-on: ubuntu-latest
+    needs: [get-version, deb, exe, apk]
+    env:
+      VERSION: ${{ needs.get-version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag display/$VERSION
+          git push origin --tags
+      - uses: actions/download-artifact@v4
+        with:
+          path: ~/artifacts
+          merge-multiple: true
+      - run: |
+          find ~/artifacts -name "*.deb" -type f -print0 -exec mv -f "{}" ~/artifacts/sheng-ji-display-$VERSION.deb \;
+          find ~/artifacts -name "*.exe" -type f -print0 -exec mv -f "{}" ~/artifacts/sheng-ji-display-$VERSION.exe \;
+          find ~/artifacts -name "*.apk" -type f -print0 -exec mv -f "{}" ~/artifacts/sheng-ji-display-$VERSION.apk \;
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-assets
+          path: ~/artifacts
