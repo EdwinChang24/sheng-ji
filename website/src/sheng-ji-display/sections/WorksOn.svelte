@@ -10,8 +10,8 @@
             <p class="inline text-nowrap">升级 Display</p>
             <p class="inline">
                 has downloads available for your Android, Windows, or Linux device, and is available
-                on your other devices through the web. Whether you're on a phone, tablet, or something
-                else,
+                on your other devices through the web. Whether you're on a phone, a tablet, or
+                something else,
             </p>
             <p class="inline text-nowrap">升级 Display</p>
             <p class="inline">adapts to your screen for a great experience.</p>
