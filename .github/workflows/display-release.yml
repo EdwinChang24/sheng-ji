@@ -1,4 +1,4 @@
-name: Build 升级 Display
+name: Release 升级 Display
 
 on: workflow_dispatch
 
