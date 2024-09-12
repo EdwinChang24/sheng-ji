@@ -250,12 +250,7 @@ private fun SettingsPane(
                 )
                 .then(
                     if (!dragState.currentValue) Modifier
-                    else
-                        Modifier.pointerInput(true) { detectTapGestures { closeSettings() } }
-                            .anchoredDraggable(
-                                state = dragState,
-                                orientation = Orientation.Horizontal,
-                            )
+                    else Modifier.pointerInput(true) { detectTapGestures { closeSettings() } }
                 )
     )
     Box(
