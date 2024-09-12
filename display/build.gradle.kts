@@ -183,7 +183,7 @@ compose.desktop {
         }
         nativeDistributions {
             packageName = "Sheng Ji Display"
-            packageVersion = "2.0.0"
+            packageVersion = appVersion
             licenseFile.set(rootProject.file("LICENSE"))
             targetFormats(TargetFormat.Exe, TargetFormat.Deb)
             windows {
