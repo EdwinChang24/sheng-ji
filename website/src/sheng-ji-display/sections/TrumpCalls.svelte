@@ -15,7 +15,7 @@
 <svelte:window bind:innerHeight={height} />
 
 <div class="bg-slate-875">
-    <ScrollAnim animHeight={height} opacityLimit={1.75} bind:animState>
+    <ScrollAnim animHeight={height} opacityLimit={2} bind:animState>
         <div
             class="flex flex-col justify-center text-center"
             style:opacity
@@ -25,7 +25,7 @@
             <div class="rotate-180 mb-16 mx-8 flex justify-center scale-75">
                 <img src={trumpDisplayPreview.src} alt="Trump Display" class="h-48 w-auto" />
             </div>
-            <div class="text-6xl font-bold">
+            <div class="text-5xl -my-8 sm:my-0 sm:text-6xl font-bold">
                 <p class="inline">Know the</p>
                 <p
                     class="inline bg-clip-text text-transparent bg-gradient-to-tr from-red-700 to-white"

@@ -18,13 +18,13 @@
 <svelte:window bind:innerHeight={height} />
 
 <div class="bg-slate-900">
-    <ScrollAnim animHeight={height} opacityLimit={1.3} bind:animState>
+    <ScrollAnim animHeight={height} opacityLimit={1.4} bind:animState>
         <div style:opacity>
             <div
                 style:scale
                 class="relative z-10 drop-shadow-[black_0_0_2em] flex justify-center mx-4"
             >
-                <div class="text-6xl font-bold text-center">
+                <div class="text-5xl sm:text-6xl font-bold text-center">
                     <p class="inline">Play your</p>
                     <p
                         class="inline bg-clip-text text-transparent bg-gradient-to-tr from-red-700 to-white"
