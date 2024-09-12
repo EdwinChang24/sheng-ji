@@ -163,8 +163,8 @@ android {
 val buildWebApp: Task by
     tasks.creating(Copy::class) {
         group = "custom"
-        val wasm = "wasmJsBrowserDevelopmentExecutableDistribution"
-        val js = "jsBrowserDevelopmentExecutableDistribution"
+        val wasm = "wasmJsBrowserDistribution"
+        val js = "jsBrowserDistribution"
         dependsOn(wasm, js)
         doFirst { layout.buildDirectory.file("webApp").get().asFile.delete() }
         from(tasks.named(wasm).get().outputs.files)
