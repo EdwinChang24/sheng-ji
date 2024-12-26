@@ -1,4 +1,12 @@
-import "./globals.scss";
+import { Metadata } from "next";
+import SiteHeader from "../components/siteHeader";
+import "../styles/global.scss";
+import "../styles/inter.scss";
+import SideBar from "../components/sideBar";
+
+export const metadata: Metadata = {
+    other: { "darkreader-lock": "true" },
+};
 
 export default function RootLayout({
     children,
@@ -7,11 +15,12 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body>
-                <header className="sticky top-0 w-full flex flex-row p-4 space-x-4 justify-between">
-                    <p>Sheng Ji Guide</p>
-                </header>
-                {children}
+            <body className="bg-red-50-50">
+                <SiteHeader />
+                <div className="flex flex-row space-x-16">
+                    <SideBar />
+                    <div>{children}</div>
+                </div>
             </body>
         </html>
     );

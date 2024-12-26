@@ -1,0 +1,12 @@
+@use "app/styles/tailwind";
+
+@use "app/styles/inter";
+@use "app/styles/notoSansSC";
+
+html {
+    font-family: "Inter", "Noto Sans SC", sans-serif;
+    font-feature-settings:
+        "liga" 1,
+        "calt" 1;
+    font-optical-sizing: none;
+}
