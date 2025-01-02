@@ -1,6 +1,0 @@
-@use "~inter-ui/default" with (
-    $inter-font-display: swap,
-    $inter-font-path: "~inter-ui/web"
-);
-
-@include default.all;

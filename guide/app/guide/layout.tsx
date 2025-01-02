@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import SiteHeader from "../components/siteHeader";
 import "../styles/global.scss";
-import "../styles/inter.scss";
+import "inter-ui/inter.css";
 import SideBar from "../components/sideBar";
 
 export const metadata: Metadata = {
